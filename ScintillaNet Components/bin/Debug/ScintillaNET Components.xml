@@ -1231,5 +1231,304 @@
             the contents of this method with the code editor.
             </summary>
         </member>
+        <member name="T:ScintillaNET_Components.SuggestionDropDown">
+            <summary>
+            Class to display a list of suggested code completion items.
+            Implements <see cref="T:System.Windows.Forms.IMessageFilter"/> to catch clicks outside the dropdown using low-level calls.
+            </summary>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionDropDown.#ctor(ScintillaNET_Components.Suggestions)">
+            <summary>
+            Constructs a new <see cref="T:ScintillaNET_Components.SuggestionDropDown"/>.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.SuggestionDropDown.Theme">
+            <summary>
+            Gets or sets the color theme.
+            </summary>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionDropDown.OnClosed(System.Windows.Forms.ToolStripDropDownClosedEventArgs)">
+            <summary>
+            Handles when the dropdown is closed and raises the <see cref="E:System.Windows.Forms.ToolStripDropDown.Closed"/> event.
+            </summary>
+            <param name="e">The info about the toolstrip close event.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionDropDown.ShowSuggestionBox(System.Drawing.Point)">
+            <summary>
+            Display the <see cref="T:ScintillaNET_Components.SuggestionDropDown"/>.
+            </summary>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionDropDown.AddItems(System.Collections.Generic.List{ScintillaNET_Components.SuggestionItem})">
+            <summary>
+            Adds the given items to the <see cref="T:ScintillaNET_Components.SuggestionDropDown"/>.
+            </summary>
+            <param name="items"><see cref="T:System.Collections.Generic.List`1"/> containing items to display.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionDropDown.OnSizeChanged(System.EventArgs)">
+            <summary>
+            Handle resizing of the <see cref="T:ScintillaNET_Components.SuggestionDropDown"/> and raise the <see cref="E:System.Windows.Forms.Control.SizeChanged"/> event.
+            </summary>
+            <param name="e">Event data.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionDropDown.PreFilterMessage(System.Windows.Forms.Message@)">
+            <summary>
+            Monitor messages in order to detect if the user clicks outside the dropdown.
+            </summary>
+        </member>
+        <member name="T:ScintillaNET_Components.SuggestionItem">
+            <summary>
+            Class to represent an item in a <see cref="T:ScintillaNET_Components.Suggestions"/>.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.SuggestionItem.Manager">
+            <summary>
+            Gets the <see cref="T:ScintillaNET_Components.Suggestions"/> the contains the suggestion.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.SuggestionItem.InsertText">
+            <summary>
+            Gets or sets the text for inserting when selected.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.SuggestionItem.DisplayText">
+            <summary>
+            Gets or sets the text to be displayed in the suggestion list.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.SuggestionItem.ToolTipTitle">
+            <summary>
+            Gets or sets the title of the tooltip. If null, the tooltip is disabled.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.SuggestionItem.ToolTipText">
+            <summary>
+            Gets or sets the tooltip text. <see cref="P:ScintillaNET_Components.SuggestionItem.ToolTipTitle"/> must not be null to enable tooltip.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.SuggestionItem.IconIndex">
+            <summary>
+            Gets or sets the index for the suggestion icon.
+            </summary>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionItem.#ctor(System.String)">
+            <summary>
+            Constructs a suggestion with the given insertion text.
+            </summary>
+            <param name="insertText">Text to be inserted if the suggestion is selected.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionItem.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+            Constructs a suggestion with the given insertion text, display text, and tooltip.
+            </summary>
+            <param name="insertText">Text to be inserted if the suggestion is selected.</param>
+            <param name="displayText">Text to be displayed in the suggestion box.</param>
+            <param name="toolTipTitle">Title text to be displayed at the start of the tooltip.</param>
+            <param name="toolTipText">Text to be displayed in the tooltip.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionItem.GetReplacementText">
+            <summary>
+            Gets the text that will be used to replace the target fragment.
+            </summary>
+            <returns>The text that will replace the target fragment.</returns>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionItem.GetDisplayText">
+            <summary>
+            Gets the text that will be used to display the suggestion in the list.
+            </summary>
+            <returns><see cref="P:ScintillaNET_Components.SuggestionItem.DisplayText"/> if it is not null, otherwise <see cref="P:ScintillaNET_Components.SuggestionItem.InsertText"/>.</returns>
+        </member>
+        <member name="T:ScintillaNET_Components.DisplayState">
+            <summary>
+            Enumeration of display states for a <see cref="T:ScintillaNET_Components.SuggestionItem"/>.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET_Components.DisplayState.Disabled">
+            <summary>
+            Suggestion will not be displayed.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET_Components.DisplayState.Enabled">
+            <summary>
+            Suggestion will be displayed.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET_Components.DisplayState.Selected">
+            <summary>
+            Suggestion will be displayed and selected.
+            </summary>
+        </member>
+        <member name="T:ScintillaNET_Components.SuggestionListBox">
+            <summary>
+            Class to implement a list of <see cref="T:ScintillaNET_Components.SuggestionItem"/> items.
+            Primary reason to implement as a subclass is to make use of ControlStyles and overrides to reduce flicker.
+            </summary>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionListBox.#ctor">
+            <summary>
+            Constructs a new <see cref="T:ScintillaNET_Components.SuggestionListBox"/>
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.SuggestionListBox.HighlightedItemIndex">
+            <summary>
+            Gets or sets the highlighted item index.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.SuggestionListBox.Theme">
+            <summary>
+            Gets or sets the color theme.
+            </summary>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionListBox.OnDrawItem(System.Windows.Forms.DrawItemEventArgs)">
+            <summary>
+            Handles drawing an item in the listbox and raises the <see cref="E:System.Windows.Forms.ListBox.DrawItem"/> event.
+            </summary>
+            <param name="e">The draw info about the item that needs to be drawn.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionListBox.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Handles repainting the listbox with reduced flicker and raises the <see cref="E:System.Windows.Forms.Control.Paint"/> event.
+            </summary>
+            <param name="e">The paint info about the item that needs to be painted.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionListBox.OnFontChanged(System.EventArgs)">
+            <summary>
+            Handles the font property changing and raises the <see cref="E:System.Windows.Forms.Control.FontChanged"/> event.
+            </summary>
+            <param name="e">Event data.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionListBox.OnSelectedIndexChanged(System.EventArgs)">
+            <summary>
+            Handles the selected item index changing in the listbox and raises the <see cref="E:System.Windows.Forms.ListBox.SelectedIndexChanged"/> event.
+            </summary>
+            <param name="e">Event data.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionListBox.OnMouseLeave(System.EventArgs)">
+            <summary>
+            Handles the mouse leaving the listbox and raises the <see cref="E:System.Windows.Forms.Control.MouseLeave"/> event.
+            </summary>
+            <param name="e">The mouse info about the mouse leave event.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionListBox.OnMouseMove(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles the mouse moving inside the listbox and raises the <see cref="E:System.Windows.Forms.Control.MouseMove"/> event.
+            </summary>
+            <param name="e">The mouse info about the mouse move event.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionListBox.OnMouseClick(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles mouse clicks on the listbox and raises the <see cref="E:System.Windows.Forms.Control.MouseClick"/> event.
+            </summary>
+            <param name="e">The mouse info about the mouse click.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionListBox.OnMouseDoubleClick(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Handles double mouse clicks on the listbox and raises the <see cref="E:System.Windows.Forms.Control.MouseDoubleClick"/> event.
+            </summary>
+            <param name="e">The mouse info about the mouse double click.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionListBox.Dispose(System.Boolean)">
+            <summary>
+            Cleanup.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:ScintillaNET_Components.SuggestionListBox.ShowToolTip(ScintillaNET_Components.SuggestionItem)">
+            <summary>
+            Shows a tooltip for the given item.
+            </summary>
+            <param name="item"><see cref="T:ScintillaNET_Components.SuggestionItem"/> for which the tooltip will be displayed.</param>
+        </member>
+        <member name="T:ScintillaNET_Components.Theme">
+            <summary>
+            Class to represent the color theme of a <see cref="T:ScintillaNET_Components.SuggestionListBox"/>.
+            </summary>
+        </member>
+        <member name="M:ScintillaNET_Components.Theme.#ctor">
+            <summary>
+            Construct the default theme.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.Theme.ForeColor">
+            <summary>
+            Foreground color.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.Theme.BackColorEven">
+            <summary>
+            Background color for even-numbered rows.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.Theme.BackColorOdd">
+            <summary>
+            Background color for odd-numbered rows.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.Theme.SelectedBackColor">
+            <summary>
+            Selected item background color.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.Theme.SelectedBorderColor">
+            <summary>
+            Selected item border color.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.Theme.HighlightedBackColor">
+            <summary>
+            Highlighted item color.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.Theme.HighlightedBorderColor">
+            <summary>
+            Selected item border color.
+            </summary>
+        </member>
+        <member name="T:ScintillaNET_Components.Suggestions">
+            <summary>
+            Component to 
+            </summary>
+        </member>
+        <member name="M:ScintillaNET_Components.Suggestions.#ctor(ScintillaNET.Scintilla)">
+            <summary>
+            Constructs a new <see cref="T:ScintillaNET_Components.Suggestions"/> instance with associated <see cref="T:ScintillaNET_Components.SuggestionDropDown"/> instance.
+            </summary>
+            <param name="editor">>The <see cref="T:ScintillaNET.Scintilla"/> editor to which the <see cref="T:ScintillaNET_Components.Suggestions"/> is attached.</param>
+        </member>
+        <member name="M:ScintillaNET_Components.Suggestions.#ctor">
+            <summary>
+            Constructs a new <see cref="T:ScintillaNET_Components.Suggestions"/> instance.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.Suggestions.Editor">
+            <summary>
+            Gets or sets the associated <see cref="T:ScintillaNET.Scintilla"/> control that <see cref="T:ScintillaNET_Components.Suggestions"/> can act upon.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.Suggestions.MaxVisibleItems">
+            <summary>
+            Gets or sets the maximum number of items that will be displayed in the list.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.Suggestions.MaximumWidth">
+            <summary>
+            Gets or sets the maximum width in pixels of the list.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET_Components.Suggestions.Theme">
+            <summary>
+            Gets or sets the color theme for the suggestion menu.
+            </summary>
+        </member>
+        <member name="M:ScintillaNET_Components.Suggestions.ShowSuggestions(System.Boolean)">
+            <summary>
+            Displays the list of suggestions.
+            </summary>
+        </member>
+        <member name="M:ScintillaNET_Components.Suggestions.SetSuggestions(System.Collections.Generic.List{ScintillaNET_Components.SuggestionItem})">
+            <summary>
+            Sets the list of <see cref="T:ScintillaNET_Components.SuggestionItem"/> objects that can be displayed if a matching query is found.
+            </summary>
+            <param name="suggestions"><see cref="T:System.Collections.Generic.List`1"/> to be stored.</param>
+        </member>
     </members>
 </doc>

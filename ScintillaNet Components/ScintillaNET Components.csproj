@@ -92,6 +92,16 @@
       <DependentUpon>GoToDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Suggestions\SuggestionDropDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Suggestions\SuggestionItem.cs" />
+    <Compile Include="Suggestions\SuggestionListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Suggestions\Suggestions.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FindReplace\FindReplaceDialog.resx">
@@ -107,6 +117,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Suggestions\SuggestionDropDown.resx">
+      <DependentUpon>SuggestionDropDown.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

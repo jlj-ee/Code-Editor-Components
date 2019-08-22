@@ -14,6 +14,7 @@ namespace Demo
     {
         private FindReplace MyFindReplace;
         private GoTo MyGoTo;
+        private Suggestions MySuggestions;
 
         public TestForm() {
             InitializeComponent();
@@ -30,6 +31,27 @@ namespace Demo
             MyGoTo = new GoTo(scintilla1);
 
             incrementalSearcherToolStrip.Manager = MyFindReplace;
+
+            MySuggestions = new Suggestions(scintilla1);
+            var items = new List<SuggestionItem> {
+                new SuggestionItem("Scintilla") {
+                    ToolTipTitle = "Scintilla Text Editor",
+                    ToolTipText = @"
+Scintilla is a free source code editing component. It comes with complete source code and a license that permits use in any free project or commercial product.
+
+As well as features found in standard text editing components, Scintilla includes features especially useful when editing and debugging source code.
+These include support for syntax styling, error indicators, code completion and call tips.
+The selection margin can contain markers like those used in debuggers to indicate breakpoints and the current line.
+Styling choices are more open than with many editors, allowing the use of proportional fonts, bold and italics, multiple foreground and background colours and multiple fonts.",
+                },
+                new SuggestionItem("Item 1"),
+                new SuggestionItem("Item 2"),
+                new SuggestionItem("Item 3"),
+                new SuggestionItem("Item 4"),
+                new SuggestionItem("Item 5"),
+                new SuggestionItem("Item 6")
+            };
+            MySuggestions.SetSuggestions(items);
         }
 
         private void Form_TabChanged(object sender, EventArgs e) {
@@ -79,6 +101,7 @@ namespace Demo
             else if (e.KeyCode == Keys.Escape) {
                 MyFindReplace.HideIncrementalSearch();
                 MyFindReplace.HideFindReplace();
+                MySuggestions.HideSuggestions();
             }
         }
 
@@ -91,6 +114,7 @@ namespace Demo
         private void GenericScintilla_Enter(object sender, EventArgs e) {
             MyFindReplace.Editor = (Scintilla)sender;
             MyGoTo.Editor = (Scintilla)sender;
+            MySuggestions.Editor = (Scintilla)sender;
         }
 
         private void GenericScintilla_Enter(object sender, MouseEventArgs e) {
