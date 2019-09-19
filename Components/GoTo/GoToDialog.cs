@@ -103,15 +103,15 @@ namespace ScintillaNET_Components
                 //	Line numbers are zero-indexed
                 _goToLineNumber = parseResult - 1;
                 // Coerce to min (0)
-                if (_goToLineNumber < 0) {
+                if (GoToLineNumber < 0) {
                     _manager.GoToLine(0);
                 }
                 // Coerce to max
-                else if (_goToLineNumber >= _maximumLineNumber) {
-                    _manager.GoToLine(_maximumLineNumber);
+                else if (GoToLineNumber >= MaximumLineNumber) {
+                    _manager.GoToLine(MaximumLineNumber);
                 }
                 else {
-                    _manager.GoToLine(_goToLineNumber);
+                    _manager.GoToLine(GoToLineNumber);
                 }
                 Hide();
             }

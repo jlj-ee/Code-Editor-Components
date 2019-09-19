@@ -47,8 +47,8 @@ namespace ScintillaNET_Components
         /// <returns><see cref="Font"/> that the control is using, scaled by the zoom factor.</returns>
         public Font GetEditorFont() {
             // Copy font from Scintilla
-            Style editorStyle = _editor.Styles[Style.Default];
-            return new Font(editorStyle.Font, editorStyle.Size + _editor.Zoom - 1, GraphicsUnit.Point); // Font size seems to be off by one...why?
+            Style editorStyle = Editor.Styles[Style.Default];
+            return new Font(editorStyle.Font, editorStyle.Size + Editor.Zoom - 1, GraphicsUnit.Point); // Font size seems to be off by one...why?
         }
 
         #region Position

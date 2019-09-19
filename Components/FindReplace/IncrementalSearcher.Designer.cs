@@ -30,32 +30,19 @@ namespace ScintillaNET_Components
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IncrementalSearcher));
-            this.txtFind = new System.Windows.Forms.TextBox();
             this.panel = new System.Windows.Forms.TableLayoutPanel();
             this.chkRegex = new System.Windows.Forms.CheckBox();
             this.chkMatchCase = new System.Windows.Forms.CheckBox();
             this.chkWholeWord = new System.Windows.Forms.CheckBox();
             this.chkWrap = new System.Windows.Forms.CheckBox();
             this.chkHighlightAll = new System.Windows.Forms.CheckBox();
+            this.txtFind = new ScintillaNET_Components.CueTextBox();
             this.btnNext = new System.Windows.Forms.Button();
             this.brnPrevious = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panel.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // txtFind
-            // 
-            this.txtFind.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtFind.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtFind.Location = new System.Drawing.Point(136, 3);
-            this.txtFind.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
-            this.txtFind.MaximumSize = new System.Drawing.Size(135, 20);
-            this.txtFind.Name = "txtFind";
-            this.txtFind.Size = new System.Drawing.Size(135, 20);
-            this.txtFind.TabIndex = 1;
-            this.txtFind.TextChanged += new System.EventHandler(this.TxtFind_TextChanged);
-            this.txtFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtFind_KeyDown);
             // 
             // panel
             // 
@@ -199,6 +186,24 @@ namespace ScintillaNET_Components
             this.chkHighlightAll.UseVisualStyleBackColor = true;
             this.chkHighlightAll.Click += new System.EventHandler(this.BtnHighlightAll_Click);
             // 
+            // txtFind
+            // 
+            this.txtFind.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFind.CueActiveColor = System.Drawing.Color.Gray;
+            this.txtFind.CueColor = System.Drawing.Color.LightGray;
+            this.txtFind.CueFont = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFind.CueText = "Find...";
+            this.txtFind.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtFind.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFind.Location = new System.Drawing.Point(136, 3);
+            this.txtFind.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.txtFind.MaximumSize = new System.Drawing.Size(135, 20);
+            this.txtFind.Name = "txtFind";
+            this.txtFind.Size = new System.Drawing.Size(135, 20);
+            this.txtFind.TabIndex = 1;
+            this.txtFind.TextChanged += new System.EventHandler(this.TxtFind_TextChanged);
+            this.txtFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtFind_KeyDown);
+            // 
             // btnNext
             // 
             this.btnNext.AutoSize = true;
@@ -276,10 +281,10 @@ namespace ScintillaNET_Components
         private System.Windows.Forms.CheckBox chkHighlightAll;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Label lblStatus;
-        internal System.Windows.Forms.TextBox txtFind;
         private System.Windows.Forms.CheckBox chkWrap;
         private System.Windows.Forms.CheckBox chkWholeWord;
         private System.Windows.Forms.CheckBox chkRegex;
         private System.Windows.Forms.CheckBox chkMatchCase;
+        internal ScintillaNET_Components.CueTextBox txtFind;
     }
 }

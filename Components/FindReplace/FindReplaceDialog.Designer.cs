@@ -57,7 +57,7 @@ namespace ScintillaNET_Components
             this.btnFindPrevious = new System.Windows.Forms.Button();
             this.btnFindNext = new System.Windows.Forms.Button();
             this.pnlFind = new System.Windows.Forms.Panel();
-            this.txtFind = new System.Windows.Forms.TextBox();
+            this.txtFind = new ScintillaNET_Components.CueTextBox();
             this.lblFind = new System.Windows.Forms.Label();
             this.cmdRecentFind = new System.Windows.Forms.Button();
             this.cmdExtCharAndRegExFind = new System.Windows.Forms.Button();
@@ -70,7 +70,7 @@ namespace ScintillaNET_Components
             this.lblReplace = new System.Windows.Forms.Label();
             this.cmdRecentReplace = new System.Windows.Forms.Button();
             this.cmdExtCharAndRegExReplace = new System.Windows.Forms.Button();
-            this.txtReplace = new System.Windows.Forms.TextBox();
+            this.txtReplace = new ScintillaNET_Components.CueTextBox();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.mnuExtendedChar = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -458,6 +458,10 @@ namespace ScintillaNET_Components
             // 
             this.txtFind.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFind.CueActiveColor = System.Drawing.Color.Gray;
+            this.txtFind.CueColor = System.Drawing.Color.LightGray;
+            this.txtFind.CueFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFind.CueText = "Find...";
             this.txtFind.Location = new System.Drawing.Point(59, 4);
             this.txtFind.Name = "txtFind";
             this.txtFind.Size = new System.Drawing.Size(370, 21);
@@ -610,6 +614,10 @@ namespace ScintillaNET_Components
             // 
             this.txtReplace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtReplace.CueActiveColor = System.Drawing.Color.Gray;
+            this.txtReplace.CueColor = System.Drawing.Color.LightGray;
+            this.txtReplace.CueFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtReplace.CueText = "Replace...";
             this.txtReplace.Location = new System.Drawing.Point(59, 4);
             this.txtReplace.Name = "txtReplace";
             this.txtReplace.Size = new System.Drawing.Size(370, 21);
@@ -1034,7 +1042,7 @@ namespace ScintillaNET_Components
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemExtCharLF;
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemExtCharCR;
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemExtCharNull;
-		internal System.Windows.Forms.TextBox txtFind;
+		internal ScintillaNET_Components.CueTextBox txtFind;
 		private System.Windows.Forms.Button cmdRecentFind;
 		private System.Windows.Forms.ContextMenuStrip mnuRecent;
 		private System.Windows.Forms.ToolTip toolTip;
@@ -1076,7 +1084,7 @@ namespace ScintillaNET_Components
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemGroupNamed;
         private System.Windows.Forms.Panel pnlSearchType;
         private System.Windows.Forms.TabPage tpgReplace;
-        private System.Windows.Forms.TextBox txtReplace;
+        private ScintillaNET_Components.CueTextBox txtReplace;
         private System.Windows.Forms.Button cmdExtCharAndRegExReplace;
         private System.Windows.Forms.Button btnReplaceAll;
         private System.Windows.Forms.Label lblReplace;

@@ -52,6 +52,16 @@
             Default index for the marker used to bookmark lines containing search results.
             </summary>
         </member>
+        <member name="T:ScintillaNET_Components.CueTextBox">
+            <summary>
+            Class that implements a <see cref="T:System.Windows.Forms.TextBox"/> extension to show a user-configurable text cue when text has not been entered.
+            </summary>
+        </member>
+        <member name="M:ScintillaNET_Components.CueTextBox.#ctor">
+            <summary>
+            Creates a new instance of a <see cref="T:ScintillaNET_Components.CueTextBox"/>.
+            </summary>
+        </member>
         <member name="T:ScintillaNET_Components.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.

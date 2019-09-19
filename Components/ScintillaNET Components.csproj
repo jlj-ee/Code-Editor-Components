@@ -36,9 +36,6 @@
     <DocumentationFile>bin\Release\ScintillaNET Components.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -50,21 +47,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CharacterRange.cs" />
-    <Compile Include="Constants.cs" />
+    <Compile Include="Common\CharacterRange.cs" />
+    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\CueTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ComponentManager.cs">
+    <Compile Include="Common\ComponentManager.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SearchTypes.cs" />
+    <Compile Include="FindReplace\SearchTypes.cs" />
     <Compile Include="GoTo\ValidatingTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Dialog.cs">
+    <Compile Include="Common\Dialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FindReplace\FindReplace.cs">
@@ -128,7 +128,6 @@
     <None Include="Resources\selection.png" />
     <None Include="Resources\match case.png" />
     <None Include="Resources\regex.png" />
-    <None Include="packages.config" />
     <None Include="Resources\swap.png" />
     <None Include="Resources\clear.png" />
     <None Include="Resources\history.png" />

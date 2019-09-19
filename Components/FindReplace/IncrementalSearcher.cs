@@ -4,6 +4,7 @@ namespace ScintillaNET_Components
 
     using ScintillaNET_Components.SearchTypes;
     using System;
+    using System.ComponentModel;
     using System.Drawing;
     using System.Text.RegularExpressions;
     using System.Windows.Forms;
@@ -45,11 +46,13 @@ namespace ScintillaNET_Components
         /// <summary>
         /// Gets the <see cref="FindReplace"/> instance that manages this <see cref="IncrementalSearcher"/>.
         /// </summary>
+        [Browsable(false)]
         public FindReplace Manager { get; set; }
 
         /// <summary>
         /// Gets or sets whether this <see cref="IncrementalSearcher"/> instance is a tool item, i.e. embedded on an external panel.
         /// </summary>
+        [Category("Tool Item"), DefaultValue(true)]
         public bool ToolItem {
             get { return _toolItem; }
             set {
@@ -169,7 +172,7 @@ namespace ScintillaNET_Components
                     break;
 
                 case Keys.Escape:
-                    if (!_toolItem) {
+                    if (!ToolItem) {
                         Hide();
                     }
                     break;
@@ -233,8 +236,8 @@ namespace ScintillaNET_Components
 
             if (findRange.cpMin != findRange.cpMax) {
                 query.SearchRange = new CharacterRange(0, length);
-                Manager.FindAll(query, false, chkHighlightAll.Checked);
             }
+            Manager.FindAll(query, false, chkHighlightAll.Checked);
 
             return findRange;
         }
@@ -260,7 +263,7 @@ namespace ScintillaNET_Components
             string statusText = string.Empty;
             if (txtFind.Text != string.Empty) {     
                 statusText = Manager.RunFindReplace(findReplace, addMru, searchUp);
-                if (!_toolItem) {
+                if (!ToolItem) {
                     Manager.EnsureVisible(Bounds);
                 }
             }
