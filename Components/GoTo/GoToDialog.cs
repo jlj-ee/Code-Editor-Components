@@ -17,7 +17,7 @@ namespace ScintillaNET_Components
         private int _currentLineNumber;
         private int _maximumLineNumber;
         private int _goToLineNumber;
-        private GoTo _manager;
+        private readonly GoTo _manager;
 
         #endregion Fields
 
@@ -93,7 +93,7 @@ namespace ScintillaNET_Components
         // Handle text validation of the GoTo line number.
         private void TxtGotoLine_TextValidating(object sender, TextValidatingEventArgs e) {
             // Cancel the text entry if the text is non-empty and cannot be parsed as an int
-            e.Cancel = (!(string.IsNullOrEmpty(e.NewText)) && !int.TryParse(e.NewText, out int i));
+            e.Cancel = (!(string.IsNullOrEmpty(e.NewText)) && !int.TryParse(e.NewText, out _));
         }
 
         // Handle ok button click.

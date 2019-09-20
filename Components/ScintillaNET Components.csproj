@@ -48,10 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\CharacterRange.cs" />
-    <Compile Include="Common\Constants.cs" />
-    <Compile Include="Common\CueTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -129,11 +125,21 @@
     <None Include="Resources\match case.png" />
     <None Include="Resources\regex.png" />
     <None Include="Resources\swap.png" />
-    <None Include="Resources\clear.png" />
     <None Include="Resources\history.png" />
     <None Include="Resources\marker.png" />
     <Content Include="Resources\next.png" />
     <Content Include="Resources\previous.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="jacobslusser.ScintillaNET">
+      <Version>3.6.3</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Generic Components\Generic Components.csproj">
+      <Project>{fd4f17b6-6b8c-4946-a46d-c7e24c38c4e4}</Project>
+      <Name>Generic Components</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

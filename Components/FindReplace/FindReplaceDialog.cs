@@ -19,7 +19,7 @@ namespace ScintillaNET_Components
 
         private CharacterRange _searchRange;
         private Control _menuSource;
-        private FindReplace _manager;
+        private readonly FindReplace _manager;
 
         #endregion Fields
 

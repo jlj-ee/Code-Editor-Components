@@ -207,7 +207,7 @@ namespace ScintillaNET_Components
         // Returns a search object representing the search query
         private Search GetQuery() {
             CharacterRange searchRange = Manager.GetEditorWholeRange();
-        
+
             if (chkRegex.Checked) {
                 try {
                     return new RegexSearch(searchRange, txtFind.Text, RegexOptions.None);
@@ -261,7 +261,7 @@ namespace ScintillaNET_Components
         private void ProcessFindReplace(Func<bool, CharacterRange> findReplace, Action addMru, bool searchUp) {
             txtFind.BackColor = SystemColors.Window;
             string statusText = string.Empty;
-            if (txtFind.Text != string.Empty) {     
+            if (txtFind.Text != string.Empty) {
                 statusText = Manager.RunFindReplace(findReplace, addMru, searchUp);
                 if (!ToolItem) {
                     Manager.EnsureVisible(Bounds);

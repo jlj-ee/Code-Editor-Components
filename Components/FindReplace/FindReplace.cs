@@ -20,6 +20,9 @@ namespace ScintillaNET_Components
     {
         #region Fields
 
+        private const int DEFAULT_FOUND_MARKER_INDEX = 10;
+        private const int DEFAULT_FOUND_INDICATOR_INDEX = 16;
+
         private readonly int _historyMaxCount = 10;
 
         #endregion Fields
@@ -87,13 +90,13 @@ namespace ScintillaNET_Components
             set {
                 base.Editor = value;
 
-                FoundMarker = new Marker(Editor, Constants.FoundMarkerIndex) {
+                FoundMarker = new Marker(Editor, DEFAULT_FOUND_MARKER_INDEX) {
                     Symbol = MarkerSymbol.SmallRect,
                 };
                 FoundMarker.SetForeColor(Color.DarkOrange);
                 FoundMarker.SetBackColor(Color.DarkOrange);
 
-                FoundIndicator = new Indicator(Editor, Constants.FoundIndicatorIndex) {
+                FoundIndicator = new Indicator(Editor, DEFAULT_FOUND_INDICATOR_INDEX) {
                     ForeColor = Color.DarkOrange,
                     Alpha = 100,
                     Style = IndicatorStyle.RoundBox,
