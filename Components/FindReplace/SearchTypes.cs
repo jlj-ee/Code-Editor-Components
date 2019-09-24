@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 #endregion Using Directives
 
-namespace Generic_Components.SearchTypes
+namespace CodeEditor_Components.SearchTypes
 {
     /// <summary>
     /// Class to encapsulate search/replace operations.

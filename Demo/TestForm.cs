@@ -2,7 +2,7 @@
 
 using ScintillaNET;
 using ScintillaNET_Components;
-using Generic_Components;
+using CodeEditor_Components;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;

@@ -1,8 +1,8 @@
-namespace Generic_Components
+namespace CodeEditor_Components
 {
     #region Using Directives
 
-    using Generic_Components.SearchTypes;
+    using CodeEditor_Components.SearchTypes;
     using System;
     using System.ComponentModel;
     using System.Drawing;

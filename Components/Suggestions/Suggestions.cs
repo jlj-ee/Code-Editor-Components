@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 #endregion Using Directives
 
-namespace Generic_Components
+namespace CodeEditor_Components
 {
     /// <summary>
     /// Component to 

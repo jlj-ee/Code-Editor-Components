@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 #endregion Using Directives
 
-namespace Generic_Components
+namespace CodeEditor_Components
 {
     /// <summary>
     /// Class to implement a list of <see cref="SuggestionItem"/> items.

@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 #endregion Using Directives
 
-namespace Generic_Components
+namespace CodeEditor_Components
 {
     /// <summary>
     /// Class for managing line navigation of a <see cref="IEditor"/> control, programmatically or through a <see cref="GoToDialog"/>.

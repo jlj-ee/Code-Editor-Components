@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 #endregion Using Directives
 
-namespace Generic_Components
+namespace CodeEditor_Components
 {
     /// <summary>
     /// Specifies a range of characters. If the cpMin and cpMax members are equal, the range is empty.

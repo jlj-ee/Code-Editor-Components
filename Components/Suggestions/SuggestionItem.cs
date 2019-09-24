@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace Generic_Components
+namespace CodeEditor_Components
 {
     /// <summary>
     /// Class to represent an item in a <see cref="Suggestions"/>.

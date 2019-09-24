@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 #endregion Using Directives
 
-namespace Generic_Components
+namespace CodeEditor_Components
 {
     /// <summary>
     /// Class to model a <see cref="Component"/> that interfaces with a <see cref="IEditor"/> control.

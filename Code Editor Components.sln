@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{CFD9151B-59C7-44A7-A93A-22EC9385738D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScintillaNET Components", "Components\ScintillaNET Components.csproj", "{548FD833-9A3B-41BB-9850-570AFE9A91B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScintillaNET Components", "ScintillaNET Components\ScintillaNET Components.csproj", "{548FD833-9A3B-41BB-9850-570AFE9A91B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generic Components", "Generic Components\Generic Components.csproj", "{FD4F17B6-6B8C-4946-A46D-C7E24C38C4E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Code Editor Components", "Components\Code Editor Components.csproj", "{FD4F17B6-6B8C-4946-A46D-C7E24C38C4E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

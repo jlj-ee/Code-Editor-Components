@@ -1,4 +1,4 @@
-namespace Generic_Components
+namespace CodeEditor_Components
 {
     partial class IncrementalSearcher
     {
@@ -36,7 +36,7 @@ namespace Generic_Components
             this.chkWholeWord = new System.Windows.Forms.CheckBox();
             this.chkWrap = new System.Windows.Forms.CheckBox();
             this.chkHighlightAll = new System.Windows.Forms.CheckBox();
-            this.txtFind = new Generic_Components.CueTextBox();
+            this.txtFind = new CodeEditor_Components.CueTextBox();
             this.btnNext = new System.Windows.Forms.Button();
             this.brnPrevious = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
@@ -92,7 +92,7 @@ namespace Generic_Components
             this.chkRegex.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkRegex.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.chkRegex.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkRegex.Image = global::Generic_Components.Properties.Resources.regex;
+            this.chkRegex.Image = global::CodeEditor_Components.Properties.Resources.regex;
             this.chkRegex.Location = new System.Drawing.Point(5, 3);
             this.chkRegex.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chkRegex.Name = "chkRegex";
@@ -134,7 +134,7 @@ namespace Generic_Components
             this.chkWholeWord.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkWholeWord.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.chkWholeWord.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkWholeWord.Image = global::Generic_Components.Properties.Resources.whole_word;
+            this.chkWholeWord.Image = global::CodeEditor_Components.Properties.Resources.whole_word;
             this.chkWholeWord.Location = new System.Drawing.Point(57, 3);
             this.chkWholeWord.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chkWholeWord.Name = "chkWholeWord";
@@ -157,7 +157,7 @@ namespace Generic_Components
             this.chkWrap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkWrap.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.chkWrap.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkWrap.Image = global::Generic_Components.Properties.Resources.wrap;
+            this.chkWrap.Image = global::CodeEditor_Components.Properties.Resources.wrap;
             this.chkWrap.Location = new System.Drawing.Point(83, 3);
             this.chkWrap.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chkWrap.Name = "chkWrap";
@@ -179,7 +179,7 @@ namespace Generic_Components
             this.chkHighlightAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkHighlightAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.chkHighlightAll.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkHighlightAll.Image = global::Generic_Components.Properties.Resources.marker;
+            this.chkHighlightAll.Image = global::CodeEditor_Components.Properties.Resources.marker;
             this.chkHighlightAll.Location = new System.Drawing.Point(109, 3);
             this.chkHighlightAll.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chkHighlightAll.Name = "chkHighlightAll";
@@ -217,7 +217,7 @@ namespace Generic_Components
             this.btnNext.FlatAppearance.BorderSize = 0;
             this.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnNext.Image = global::Generic_Components.Properties.Resources.next;
+            this.btnNext.Image = global::CodeEditor_Components.Properties.Resources.next;
             this.btnNext.Location = new System.Drawing.Point(301, 3);
             this.btnNext.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.btnNext.Name = "btnNext";
@@ -236,7 +236,7 @@ namespace Generic_Components
             this.brnPrevious.FlatAppearance.BorderSize = 0;
             this.brnPrevious.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.brnPrevious.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.brnPrevious.Image = global::Generic_Components.Properties.Resources.previous;
+            this.brnPrevious.Image = global::CodeEditor_Components.Properties.Resources.previous;
             this.brnPrevious.Location = new System.Drawing.Point(275, 3);
             this.brnPrevious.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.brnPrevious.Name = "brnPrevious";
@@ -289,6 +289,6 @@ namespace Generic_Components
         private System.Windows.Forms.CheckBox chkWholeWord;
         private System.Windows.Forms.CheckBox chkRegex;
         private System.Windows.Forms.CheckBox chkMatchCase;
-        internal Generic_Components.CueTextBox txtFind;
+        internal CodeEditor_Components.CueTextBox txtFind;
     }
 }

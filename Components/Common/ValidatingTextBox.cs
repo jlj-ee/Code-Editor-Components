@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using System.ComponentModel;
 
-namespace Generic_Components
+namespace CodeEditor_Components
 {
 
     /// <summary>

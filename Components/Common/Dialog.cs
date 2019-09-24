@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 #endregion Using Directives
 
-namespace Generic_Components
+namespace CodeEditor_Components
 {
     /// <summary>
     /// Class to encapsulate common capabilities of a utility dialog for a text control.

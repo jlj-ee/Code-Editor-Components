@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 #endregion Using Directives
 
-namespace Generic_Components
+namespace CodeEditor_Components
 {
     /// <summary>
     /// Class that implements a <see cref="TextBox"/> extension to show a user-configurable text cue when text has not been entered.

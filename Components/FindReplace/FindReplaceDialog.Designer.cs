@@ -1,4 +1,4 @@
-namespace Generic_Components
+namespace CodeEditor_Components
 {
 	partial class FindReplaceDialog
 	{
@@ -57,7 +57,7 @@ namespace Generic_Components
             this.btnFindPrevious = new System.Windows.Forms.Button();
             this.btnFindNext = new System.Windows.Forms.Button();
             this.pnlFind = new System.Windows.Forms.Panel();
-            this.txtFind = new Generic_Components.CueTextBox();
+            this.txtFind = new CodeEditor_Components.CueTextBox();
             this.lblFind = new System.Windows.Forms.Label();
             this.cmdRecentFind = new System.Windows.Forms.Button();
             this.cmdExtCharAndRegExFind = new System.Windows.Forms.Button();
@@ -70,7 +70,7 @@ namespace Generic_Components
             this.lblReplace = new System.Windows.Forms.Label();
             this.cmdRecentReplace = new System.Windows.Forms.Button();
             this.cmdExtCharAndRegExReplace = new System.Windows.Forms.Button();
-            this.txtReplace = new Generic_Components.CueTextBox();
+            this.txtReplace = new CodeEditor_Components.CueTextBox();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.mnuExtendedChar = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -484,7 +484,7 @@ namespace Generic_Components
             // cmdRecentFind
             // 
             this.cmdRecentFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmdRecentFind.BackgroundImage = global::Generic_Components.Properties.Resources.history;
+            this.cmdRecentFind.BackgroundImage = global::CodeEditor_Components.Properties.Resources.history;
             this.cmdRecentFind.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.cmdRecentFind.Enabled = false;
             this.cmdRecentFind.Location = new System.Drawing.Point(430, 3);
@@ -529,7 +529,7 @@ namespace Generic_Components
             this.btnSwap.FlatAppearance.BorderSize = 0;
             this.btnSwap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSwap.ForeColor = System.Drawing.Color.Transparent;
-            this.btnSwap.Image = global::Generic_Components.Properties.Resources.swap;
+            this.btnSwap.Image = global::CodeEditor_Components.Properties.Resources.swap;
             this.btnSwap.Location = new System.Drawing.Point(29, 18);
             this.btnSwap.Name = "btnSwap";
             this.btnSwap.Padding = new System.Windows.Forms.Padding(0, 0, 2, 1);
@@ -595,7 +595,7 @@ namespace Generic_Components
             // cmdRecentReplace
             // 
             this.cmdRecentReplace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmdRecentReplace.BackgroundImage = global::Generic_Components.Properties.Resources.history;
+            this.cmdRecentReplace.BackgroundImage = global::CodeEditor_Components.Properties.Resources.history;
             this.cmdRecentReplace.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.cmdRecentReplace.Enabled = false;
             this.cmdRecentReplace.Location = new System.Drawing.Point(430, 3);
@@ -1054,7 +1054,7 @@ namespace Generic_Components
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemExtCharLF;
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemExtCharCR;
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemExtCharNull;
-		internal Generic_Components.CueTextBox txtFind;
+		internal CodeEditor_Components.CueTextBox txtFind;
 		private System.Windows.Forms.Button cmdRecentFind;
 		private System.Windows.Forms.ContextMenuStrip mnuRecent;
 		private System.Windows.Forms.ToolTip toolTip;
@@ -1096,7 +1096,7 @@ namespace Generic_Components
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemGroupNamed;
         private System.Windows.Forms.Panel pnlSearchType;
         private System.Windows.Forms.TabPage tpgReplace;
-        private Generic_Components.CueTextBox txtReplace;
+        private CodeEditor_Components.CueTextBox txtReplace;
         private System.Windows.Forms.Button cmdExtCharAndRegExReplace;
         private System.Windows.Forms.Button btnReplaceAll;
         private System.Windows.Forms.Label lblReplace;

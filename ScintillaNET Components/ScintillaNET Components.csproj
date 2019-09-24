@@ -68,9 +68,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Generic Components\Generic Components.csproj">
+    <ProjectReference Include="..\Components\Code Editor Components.csproj">
       <Project>{fd4f17b6-6b8c-4946-a46d-c7e24c38c4e4}</Project>
-      <Name>Generic Components</Name>
+      <Name>Code Editor Components</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

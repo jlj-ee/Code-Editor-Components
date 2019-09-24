@@ -5,7 +5,7 @@ using ScintillaNET;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using Generic_Components;
+using CodeEditor_Components;
 
 #endregion Using Directives
 

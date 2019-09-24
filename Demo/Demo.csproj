@@ -106,19 +106,19 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Components\ScintillaNET Components.csproj">
-      <Project>{548fd833-9a3b-41bb-9850-570afe9a91b7}</Project>
-      <Name>ScintillaNET Components</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Generic Components\Generic Components.csproj">
-      <Project>{fd4f17b6-6b8c-4946-a46d-c7e24c38c4e4}</Project>
-      <Name>Generic Components</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="jacobslusser.ScintillaNET">
       <Version>3.6.3</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Components\Code Editor Components.csproj">
+      <Project>{fd4f17b6-6b8c-4946-a46d-c7e24c38c4e4}</Project>
+      <Name>Code Editor Components</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScintillaNET Components\ScintillaNET Components.csproj">
+      <Project>{548fd833-9a3b-41bb-9850-570afe9a91b7}</Project>
+      <Name>ScintillaNET Components</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

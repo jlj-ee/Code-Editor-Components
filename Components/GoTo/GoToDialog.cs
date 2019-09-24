@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 #endregion Using Directives
 
-namespace Generic_Components
+namespace CodeEditor_Components
 {
     /// <summary>
     /// Class to define the logic for a GoTo <see cref="Dialog"/>.
