@@ -1,8 +1,8 @@
-namespace ScintillaNET_Components
+namespace Generic_Components
 {
     #region Using Directives
 
-    using ScintillaNET_Components.SearchTypes;
+    using Generic_Components.SearchTypes;
     using System;
     using System.ComponentModel;
     using System.Drawing;
@@ -206,7 +206,7 @@ namespace ScintillaNET_Components
 
         // Returns a search object representing the search query
         private Search GetQuery() {
-            CharacterRange searchRange = Manager.GetEditorWholeRange();
+            TextRange searchRange = Manager.GetEditorWholeRange();
 
             if (chkRegex.Checked) {
                 try {
@@ -222,20 +222,20 @@ namespace ScintillaNET_Components
             }
         }
 
-        private CharacterRange SearchWrapper(bool searchUp) {
+        private TextRange SearchWrapper(bool searchUp) {
             Search query = GetQuery();
-            int pos = Manager.GetEditorSelectedRange().cpMin;
-            int length = Manager.GetEditorWholeRange().cpMax;
-            query.SearchRange = new CharacterRange(pos, length);
+            int pos = Manager.GetEditorSelectedRange().start;
+            int length = Manager.GetEditorWholeRange().end;
+            query.SearchRange = new TextRange(pos, length);
 
-            CharacterRange findRange = Manager.Find(query, false);
-            if (findRange.cpMin == findRange.cpMax) {
-                query.SearchRange = new CharacterRange(0, pos);
+            TextRange findRange = Manager.Find(query, false);
+            if (findRange.start == findRange.end) {
+                query.SearchRange = new TextRange(0, pos);
                 findRange = Manager.Find(query, false);
             }
 
-            if (findRange.cpMin != findRange.cpMax) {
-                query.SearchRange = new CharacterRange(0, length);
+            if (findRange.start != findRange.end) {
+                query.SearchRange = new TextRange(0, length);
             }
             Manager.FindAll(query, false, chkHighlightAll.Checked);
 
@@ -243,7 +243,7 @@ namespace ScintillaNET_Components
         }
 
         // Use the dialog configuration to search for a match.
-        private CharacterRange FindWrapper(bool searchUp) {
+        private TextRange FindWrapper(bool searchUp) {
             if (searchUp) {
                 _goNext = false;
                 return Manager.FindPrevious(GetQuery(), chkWrap.Checked);
@@ -258,14 +258,12 @@ namespace ScintillaNET_Components
         // - Update history
         // - Run search and navigate to first result
         // - Update status text
-        private void ProcessFindReplace(Func<bool, CharacterRange> findReplace, Action addMru, bool searchUp) {
+        private void ProcessFindReplace(Func<bool, TextRange> findReplace, Action addMru, bool searchUp) {
             txtFind.BackColor = SystemColors.Window;
             string statusText = string.Empty;
             if (txtFind.Text != string.Empty) {
                 statusText = Manager.RunFindReplace(findReplace, addMru, searchUp);
-                if (!ToolItem) {
-                    Manager.EnsureVisible(Bounds);
-                }
+                Manager.ScrollToCaret(ToolItem ? Rectangle.Empty : Bounds);
             }
             else {
                 Manager.Clear();
@@ -284,5 +282,9 @@ namespace ScintillaNET_Components
         }
 
         #endregion Methods
+
+        private void Option_Click(object sender, EventArgs e) {
+            ProcessFindReplace(SearchWrapper, AddFindHistory, false);
+        }
     }
 }

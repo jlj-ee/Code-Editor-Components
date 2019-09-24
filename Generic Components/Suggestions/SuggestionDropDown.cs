@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 #endregion Using Directives
 
-namespace ScintillaNET_Components
+namespace Generic_Components
 {
     /// <summary>
     /// Class to display a list of suggested code completion items.
@@ -111,7 +111,7 @@ namespace ScintillaNET_Components
                 int listHeight = (numVisibleItems * List.ItemHeight) + List.Margin.Size.Height + Padding.Size.Height;
                 Size = new Size(listWidth, listHeight);
                 List.SelectedIndex = -1;
-                Show(_manager.Editor, point, ToolStripDropDownDirection.BelowRight);
+                Show(_manager.Editor.Target, point, ToolStripDropDownDirection.BelowRight);
                 //Capture = true;
             }
         }

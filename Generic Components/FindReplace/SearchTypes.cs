@@ -1,13 +1,12 @@
 ﻿#region Using Directives
 
-using ScintillaNET;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 #endregion Using Directives
 
-namespace ScintillaNET_Components.SearchTypes
+namespace Generic_Components.SearchTypes
 {
     /// <summary>
     /// Class to encapsulate search/replace operations.
@@ -18,16 +17,16 @@ namespace ScintillaNET_Components.SearchTypes
         /// Constructs a new default <see cref="Search"/> instance.
         /// </summary>
         public Search() {
-            SearchRange = new CharacterRange();
+            SearchRange = new TextRange();
             SearchUp = false;
         }
 
         #region Properties
 
         /// <summary>
-        /// Gets or sets the <see cref="CharacterRange"/> to be searched.
+        /// Gets or sets the <see cref="TextRange"/> to be searched.
         /// </summary>
-        public CharacterRange SearchRange { get; set; }
+        public TextRange SearchRange { get; set; }
 
         /// <summary>
         /// Gets or sets the search direction. If true, the search is performed from the bottom up.
@@ -37,34 +36,34 @@ namespace ScintillaNET_Components.SearchTypes
         #endregion Properties
 
         /// <summary>
-        /// Search for the first match in the <see cref="Scintilla"/> text using the properties of this query object.
+        /// Search for the first match in the <see cref="IEditor"/> text using the properties of this query object.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to search.</param>
-        /// <returns><see cref="CharacterRange"/> where the result was found. 
-        /// <see cref="CharacterRange.cpMin"/> will be the same as <see cref="CharacterRange.cpMax"/> if no match was found.</returns>
-        public virtual CharacterRange Find(Scintilla editor) {
+        /// <param name="editor"><see cref="IEditor"/> control to search.</param>
+        /// <returns><see cref="TextRange"/> where the result was found. 
+        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        public virtual TextRange Find(IEditor editor) {
             // Search capability can be implemented by children
-            return new CharacterRange();
+            return new TextRange();
         }
 
         /// <summary>
-        /// Search for the first match in the <see cref="Scintilla"/> text using the properties of this query object.
+        /// Search for the first match in the <see cref="IEditor"/> text using the properties of this query object.
         /// If it is already selected, replace it with the given string.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to search.</param>
+        /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <param name="replaceString">String to replace any matches.</param>
         /// <param name="wrap">Set to true to allow the search to wrap back to the beginning of the text.</param>
-        /// <returns><see cref="CharacterRange"/> where the result was found. 
-        /// <see cref="CharacterRange.cpMin"/> will be the same as <see cref="CharacterRange.cpMax"/> if no match was found.</returns>
-        public virtual CharacterRange Replace(Scintilla editor, string replaceString, bool wrap) {
-            CharacterRange searchRange = SearchRange;
-            CharacterRange selRange = new CharacterRange(editor.Selections[0].Start, editor.Selections[0].End);
+        /// <returns><see cref="TextRange"/> where the result was found. 
+        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        public virtual TextRange Replace(IEditor editor, string replaceString, bool wrap) {
+            TextRange searchRange = SearchRange;
+            TextRange selRange = new TextRange(editor.SelectionStart, editor.SelectionEnd);
             SearchRange = selRange;
-            if ((selRange.cpMax - selRange.cpMin) > 0) {
+            if ((selRange.end - selRange.start) > 0) {
                 if (selRange.Equals(Find(editor))) {
                     ReplaceText(editor, replaceString);
                     if (SearchUp) {
-                        editor.GotoPosition(selRange.cpMin);
+                        editor.GoToPosition(selRange.start);
                     }
                 }
             }
@@ -73,42 +72,42 @@ namespace ScintillaNET_Components.SearchTypes
         }
 
         /// <summary>
-        /// Replace the selection in the <see cref="Scintilla"/> text with the given string.
+        /// Replace the selection in the <see cref="IEditor"/> text with the given string.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to edit.</param>
+        /// <param name="editor"><see cref="IEditor"/> control to edit.</param>
         /// <param name="replaceString">String to replace the selection.</param>
-        protected virtual void ReplaceText(Scintilla editor, string replaceString) {; }
+        protected virtual void ReplaceText(IEditor editor, string replaceString) {; }
 
         /// <summary>
-        /// Replace all matches in the <see cref="Scintilla"/> text with the given string, using the properties of this query object to search.
+        /// Replace all matches in the <see cref="IEditor"/> text with the given string, using the properties of this query object to search.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to search.</param>
+        /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <param name="replaceString">String to replace any matches.</param>
         /// <returns><see cref="List{CharacterRange}"/> containing the locations of every match. Empty if none were found.</returns>
-        public virtual List<CharacterRange> ReplaceAll(Scintilla editor, string replaceString) {
+        public virtual List<TextRange> ReplaceAll(IEditor editor, string replaceString) {
             // Replace all capability can be implemented by children
-            return new List<CharacterRange>();
+            return new List<TextRange>();
         }
 
         /// <summary>
-        /// Search for all matches in the <see cref="Scintilla"/> text using the properties of this query object.
+        /// Search for all matches in the <see cref="IEditor"/> text using the properties of this query object.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to search.</param>
+        /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <returns><see cref="List{CharacterRange}"/> containing the locations of every match. Empty if none were found.</returns>
-        public List<CharacterRange> FindAll(Scintilla editor) {
-            List<CharacterRange> results = new List<CharacterRange>();
-            CharacterRange searchRange = SearchRange;
+        public List<TextRange> FindAll(IEditor editor) {
+            List<TextRange> results = new List<TextRange>();
+            TextRange searchRange = SearchRange;
             int findCount = 0;
             while (true) {
                 // Keep searching until no more matches are found
-                CharacterRange findRange = Find(editor);
-                if (findRange.cpMin == findRange.cpMax) {
+                TextRange findRange = Find(editor);
+                if (findRange.start == findRange.end) {
                     break;
                 }
                 else {
                     results.Add(findRange);
                     findCount++;
-                    SearchRange = new CharacterRange(findRange.cpMax, SearchRange.cpMax);
+                    SearchRange = new TextRange(findRange.end, SearchRange.end);
                 }
             }
             SearchRange = searchRange;
@@ -116,29 +115,29 @@ namespace ScintillaNET_Components.SearchTypes
         }
 
         /// <summary>
-        /// Search for the next match in the <see cref="Scintilla"/> text using the properties of this query object.
+        /// Search for the next match in the <see cref="IEditor"/> text using the properties of this query object.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to search.</param>
+        /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <param name="wrap">Set to true to allow the search to wrap back to the beginning of the text.</param>
-        /// <returns><see cref="CharacterRange"/> where the result was found. 
-        /// <see cref="CharacterRange.cpMin"/> will be the same as <see cref="CharacterRange.cpMax"/> if no match was found.</returns>
-        public CharacterRange FindNext(Scintilla editor, bool wrap) {
-            CharacterRange findRange = new CharacterRange();
+        /// <returns><see cref="TextRange"/> where the result was found. 
+        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        public TextRange FindNext(IEditor editor, bool wrap) {
+            TextRange findRange;
 
             int caret = editor.CurrentPosition;
             // If the caret is outside the search range, simply return the first match in the range
-            if (!(caret >= SearchRange.cpMin && caret <= SearchRange.cpMax)) {
+            if (!(caret >= SearchRange.start && caret <= SearchRange.end)) {
                 findRange = Find(editor);
             }
             else {
                 // Otherwise, find the next match after the caret
-                CharacterRange originalSearchRange = SearchRange;
-                SearchRange = new CharacterRange(caret, originalSearchRange.cpMax);
+                TextRange originalSearchRange = SearchRange;
+                SearchRange = new TextRange(caret, originalSearchRange.end);
                 findRange = Find(editor);
 
                 // If there were no results, try wrapping back to the top if enabled
-                if ((findRange.cpMin == findRange.cpMax) && wrap) {
-                    SearchRange = new CharacterRange(originalSearchRange.cpMin, caret);
+                if ((findRange.start == findRange.end) && wrap) {
+                    SearchRange = new TextRange(originalSearchRange.start, caret);
                     findRange = Find(editor);
                 }
             }
@@ -146,36 +145,36 @@ namespace ScintillaNET_Components.SearchTypes
         }
 
         /// <summary>
-        /// Search for the previous match in the <see cref="Scintilla"/> text using the properties of this query object.
+        /// Search for the previous match in the <see cref="IEditor"/> text using the properties of this query object.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to search.</param>
+        /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <param name="wrap">Set to true to allow the search to wrap back to the end of the text.</param>
-        /// <returns><see cref="CharacterRange"/> where the result was found. 
-        /// <see cref="CharacterRange.cpMin"/> will be the same as <see cref="CharacterRange.cpMax"/> if no match was found.</returns>
-        public CharacterRange FindPrevious(Scintilla editor, bool wrap) {
+        /// <returns><see cref="TextRange"/> where the result was found. 
+        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        public TextRange FindPrevious(IEditor editor, bool wrap) {
             SearchUp = true;
-            CharacterRange findRange = new CharacterRange();
+            TextRange findRange;
 
             int caret = editor.CurrentPosition;
             // If the caret is outside the search range, simply return the last match in the range
-            if (!(caret >= SearchRange.cpMin && caret <= SearchRange.cpMax)) {
+            if (!(caret >= SearchRange.start && caret <= SearchRange.end)) {
                 findRange = Find(editor);
             }
             else {
                 int anchor = editor.AnchorPosition;
                 // If the anchor is otuside the search range, set the anchor to the caret
-                if (!(anchor >= SearchRange.cpMin && anchor <= SearchRange.cpMax)) {
+                if (!(anchor >= SearchRange.start && anchor <= SearchRange.end)) {
                     anchor = caret;
                 }
 
                 // Otherwise, find the previous match before the anchor
-                CharacterRange originalSearchRange = SearchRange;
-                SearchRange = new CharacterRange(originalSearchRange.cpMin, anchor);
+                TextRange originalSearchRange = SearchRange;
+                SearchRange = new TextRange(originalSearchRange.start, anchor);
                 findRange = Find(editor);
 
                 // If there were no results, try wrapping back to the end if enabled
-                if ((findRange.cpMin == findRange.cpMax) && wrap) {
-                    SearchRange = new CharacterRange(anchor, originalSearchRange.cpMax);
+                if ((findRange.start == findRange.end) && wrap) {
+                    SearchRange = new TextRange(anchor, originalSearchRange.end);
                     findRange = Find(editor);
                 }
             }
@@ -209,21 +208,19 @@ namespace ScintillaNET_Components.SearchTypes
         /// </summary>
         public StringSearch() : base() {
             SearchString = string.Empty;
-            Flags = SearchFlags.None;
         }
 
         /// <summary>
         /// Constructs a <see cref="StringSearch"/> instance with the given parameters.
         /// </summary>
-        /// <param name="searchRange">The <see cref="CharacterRange"/> to be searched.</param>
+        /// <param name="searchRange">The <see cref="TextRange"/> to be searched.</param>
         /// <param name="searchString">The string for which to search.</param>
         /// <param name="matchCase">If true, a match will only occur with text that matches the case of the search string.</param>
         /// <param name="wholeWord">If true, a match will only occur if the characters before and after are not word characters.</param>
-        public StringSearch(CharacterRange searchRange, string searchString, bool matchCase, bool wholeWord) {
+        public StringSearch(TextRange searchRange, string searchString, bool matchCase, bool wholeWord) {
             SearchRange = searchRange;
             SearchString = searchString;
 
-            Flags = SearchFlags.None;
             MatchCase = matchCase;
             WholeWord = wholeWord;
         }
@@ -235,107 +232,86 @@ namespace ScintillaNET_Components.SearchTypes
         /// </summary>
         public string SearchString { get; set; }
 
-        /// <summary>
-        /// Gets or sets the <see cref="SearchFlags"/> enumeration that determines how strings will be matched.
-        /// </summary>
-        public SearchFlags Flags { get; set; }
 
         /// <summary>
         /// Gets or sets the 'MatchCase' flag for case-sensitive searching
         /// </summary>
-        public bool MatchCase {
-            get {
-                return (Flags & SearchFlags.MatchCase) != 0;
-            }
-            set {
-                Flags = value ? Flags |= SearchFlags.MatchCase : Flags &= ~SearchFlags.MatchCase;
-            }
-        }
+        public bool MatchCase { get; set; }
 
         /// <summary>
         /// Gets or sets the 'WholeWord' flag for exact searching
         /// </summary>
-        public bool WholeWord {
-            get {
-                return (Flags & SearchFlags.WholeWord) != 0;
-            }
-            set {
-                Flags = value ? Flags |= SearchFlags.WholeWord : Flags &= ~SearchFlags.WholeWord;
-            }
-        }
+        public bool WholeWord { get; set; }
 
         #endregion Properties
 
         /// <summary>
-        /// Search for the first match in the <see cref="Scintilla"/> text using the search string of this query object.
+        /// Search for the first match in the <see cref="IEditor"/> text using the search string of this query object.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to search.</param>
-        /// <returns><see cref="CharacterRange"/> where the result was found. 
-        /// <see cref="CharacterRange.cpMin"/> will be the same as <see cref="CharacterRange.cpMax"/> if no match was found.</returns>
-        public override CharacterRange Find(Scintilla editor) {
-            CharacterRange findRange = base.Find(editor);
+        /// <param name="editor"><see cref="IEditor"/> control to search.</param>
+        /// <returns><see cref="TextRange"/> where the result was found. 
+        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        public override TextRange Find(IEditor editor) {
+            TextRange findRange = base.Find(editor);
             if (string.IsNullOrEmpty(SearchString)) {
                 return findRange;
             }
             else {
                 if (SearchUp) {
-                    editor.TargetStart = SearchRange.cpMax;
-                    editor.TargetEnd = SearchRange.cpMin;
+                    editor.SearchRange = new TextRange(SearchRange.end, SearchRange.start);
                 }
                 else {
-                    editor.TargetStart = SearchRange.cpMin;
-                    editor.TargetEnd = SearchRange.cpMax;
+                    editor.SearchRange = SearchRange;
                 }
-                editor.SearchFlags = Flags;
-                if (editor.SearchInTarget(SearchString) == -1) {
+                if (editor.Search(SearchString, MatchCase, WholeWord) == -1) {
                     return findRange;
                 }
                 else {
-                    findRange = new CharacterRange(editor.TargetStart, editor.TargetEnd);
+                    findRange = editor.SearchRange;
                 }
                 return findRange;
             }
         }
 
         /// <summary>
-        /// Replace the selection in the <see cref="Scintilla"/> text with the given string.
+        /// Replace the selection in the <see cref="IEditor"/> text with the given string.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to edit.</param>
+        /// <param name="editor"><see cref="IEditor"/> control to edit.</param>
         /// <param name="replaceString">String to replace the selection.</param>
-        protected override void ReplaceText(Scintilla editor, string replaceString) {
+        protected override void ReplaceText(IEditor editor, string replaceString) {
             editor.ReplaceSelection(replaceString);
         }
 
         /// <summary>
-        /// Replace all matches in the <see cref="Scintilla"/> text with the given string, using the properties of this query object to search.
+        /// Replace all matches in the <see cref="IEditor"/> text with the given string, using the properties of this query object to search.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to search.</param>
+        /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <param name="replaceString">String to replace any matches.</param>
         /// <returns><see cref="List{CharacterRange}"/> containing the locations of every match. Empty if none were found.</returns>
-        public override List<CharacterRange> ReplaceAll(Scintilla editor, string replaceString) {
-            List<CharacterRange> results = base.ReplaceAll(editor, replaceString);
+        public override List<TextRange> ReplaceAll(IEditor editor, string replaceString) {
+            List<TextRange> results = base.ReplaceAll(editor, replaceString);
             int findCount = 0;
 
             editor.BeginUndoAction();
             int diff = replaceString.Length - SearchString.Length;
             while (true) {
-                CharacterRange findRange = Find(editor);
-                if (findRange.cpMin == findRange.cpMax) {
+                TextRange findRange = Find(editor);
+                if (findRange.start == findRange.end) {
                     break;
                 }
                 else {
-                    editor.SelectionStart = findRange.cpMin;
-                    editor.SelectionEnd = findRange.cpMax;
+                    editor.SelectionStart = findRange.start;
+                    editor.SelectionEnd = findRange.end;
                     editor.ReplaceSelection(replaceString);
-                    findRange.cpMax = findRange.cpMin + replaceString.Length;
-                    SearchRange = new CharacterRange(findRange.cpMax, SearchRange.cpMax + diff);
+                    findRange.end = findRange.start + replaceString.Length;
+                    SearchRange = new TextRange(findRange.end, SearchRange.end + diff);
 
                     results.Add(findRange);
                     findCount++;
                 }
             }
-
             editor.EndUndoAction();
+
             return results;
         }
 
@@ -355,7 +331,7 @@ namespace ScintillaNET_Components.SearchTypes
         public override bool Equals(object obj) {
             if (base.Equals(obj)) {
                 StringSearch q = (StringSearch)obj;
-                return SearchString.Equals(q.SearchString) && Flags.Equals(q.Flags);
+                return SearchString.Equals(q.SearchString) && MatchCase.Equals(q.MatchCase) && WholeWord.Equals(q.WholeWord);
             }
             else {
                 return false;
@@ -376,14 +352,14 @@ namespace ScintillaNET_Components.SearchTypes
         /// <summary>
         /// Constructs a new <see cref="RegexSearch"/> instance with the given parameters.
         /// </summary>
-        /// <param name="searchRange">The <see cref="CharacterRange"/> to be searched.</param>
+        /// <param name="searchRange">The <see cref="TextRange"/> to be searched.</param>
         /// <param name="pattern">The pattern for which to search.</param>
         /// <param name="options"><see cref="RegexOptions"/> enumeration that specifies pattern matching options.</param>
-        public RegexSearch(CharacterRange searchRange, string pattern, RegexOptions options) {
+        public RegexSearch(TextRange searchRange, string pattern, RegexOptions options) {
             SearchRange = searchRange;
             SearchExpression = new Regex(pattern, options);
         }
-        
+
         #region Properties
 
         /// <summary>
@@ -394,14 +370,14 @@ namespace ScintillaNET_Components.SearchTypes
         #endregion Properties
 
         /// <summary>
-        /// Search for the first match in the <see cref="Scintilla"/> text using the Regex of this query object.
+        /// Search for the first match in the <see cref="IEditor"/> text using the Regex of this query object.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to search.</param>
-        /// <returns><see cref="CharacterRange"/> where the result was found. 
-        /// <see cref="CharacterRange.cpMin"/> will be the same as <see cref="CharacterRange.cpMax"/> if no match was found.</returns>
-        public override CharacterRange Find(Scintilla editor) {
-            CharacterRange findRange = base.Find(editor);
-            string text = editor.GetTextRange(SearchRange.cpMin, SearchRange.cpMax - SearchRange.cpMin + 1);
+        /// <param name="editor"><see cref="IEditor"/> control to search.</param>
+        /// <returns><see cref="TextRange"/> where the result was found. 
+        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        public override TextRange Find(IEditor editor) {
+            TextRange findRange = base.Find(editor);
+            string text = editor.GetTextRange(SearchRange.start, SearchRange.end - SearchRange.start + 1);
             Match m = SearchExpression.Match(text);
 
             if (!m.Success) {
@@ -420,41 +396,40 @@ namespace ScintillaNET_Components.SearchTypes
         }
 
         /// <summary>
-        /// Replace the selection in the <see cref="Scintilla"/> text with the given string.
+        /// Replace the selection in the <see cref="IEditor"/> text with the given string.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to edit.</param>
+        /// <param name="editor"><see cref="IEditor"/> control to edit.</param>
         /// <param name="replaceString">String to replace the selection. Can be a regular expression pattern.</param>
-        protected override void ReplaceText(Scintilla editor, string replaceString) {
-            string searchRangeText = editor.GetTextRange(SearchRange.cpMin, SearchRange.cpMax - SearchRange.cpMin);
+        protected override void ReplaceText(IEditor editor, string replaceString) {
+            string searchRangeText = editor.GetTextRange(SearchRange.start, SearchRange.end - SearchRange.start);
             editor.ReplaceSelection(SearchExpression.Replace(searchRangeText, replaceString));
         }
 
         /// <summary>
-        /// Replace all matches in the <see cref="Scintilla"/> text with the given string, using the properties of this query object to search.
+        /// Replace all matches in the <see cref="IEditor"/> text with the given string, using the properties of this query object to search.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control to search.</param>
+        /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <param name="replaceString">String to replace any matches. Can be a regular expression pattern.</param>
         /// <returns><see cref="List{CharacterRange}"/> containing the locations of every match. Empty if none were found.</returns>
-        public override List<CharacterRange> ReplaceAll(Scintilla editor, string replaceString) {
-            List<CharacterRange> results = base.ReplaceAll(editor, replaceString);
-            editor.BeginUndoAction();
-
+        public override List<TextRange> ReplaceAll(IEditor editor, string replaceString) {
+            List<TextRange> results = base.ReplaceAll(editor, replaceString);
             var replaceOffset = 0;
             var replaceCount = 0;
 
-            string text = editor.GetTextRange(SearchRange.cpMin, SearchRange.cpMax - SearchRange.cpMin + 1);
+            editor.BeginUndoAction();
+            string text = editor.GetTextRange(SearchRange.start, SearchRange.end - SearchRange.start + 1);
             SearchExpression.Replace(text,
                 new MatchEvaluator(
                     delegate (Match m) {
                         string replacement = m.Result(replaceString);
-                        int start = SearchRange.cpMin + m.Index + replaceOffset;
+                        int start = SearchRange.start + m.Index + replaceOffset;
                         int end = start + m.Length;
 
                         replaceCount++;
                         editor.SelectionStart = start;
                         editor.SelectionEnd = end;
                         editor.ReplaceSelection(replacement);
-                        results.Add(new CharacterRange(start, end));
+                        results.Add(new TextRange(start, end));
 
                         // The replacement has shifted the original match offsets
                         replaceOffset += replacement.Length - m.Value.Length;
@@ -463,8 +438,8 @@ namespace ScintillaNET_Components.SearchTypes
                     }
                     )
                     );
-
             editor.EndUndoAction();
+
             return results;
         }
 
@@ -491,10 +466,10 @@ namespace ScintillaNET_Components.SearchTypes
         }
 
         // Returns the CharacterRange that represents the current match found in the search range in the given text
-        private static CharacterRange GetMatchRange(CharacterRange searchRange, string text, Match m) {
-            int start = searchRange.cpMin + text.Substring(0, m.Index).Length;
+        private static TextRange GetMatchRange(TextRange searchRange, string text, Match m) {
+            int start = searchRange.start + text.Substring(0, m.Index).Length;
             int end = text.Substring(m.Index, m.Length).Length;
-            CharacterRange range = new CharacterRange(start, start + end);
+            TextRange range = new TextRange(start, start + end);
             return range;
         }
     }

@@ -1,8 +1,8 @@
-namespace ScintillaNET_Components
+namespace Generic_Components
 {
     #region Using Directives
 
-    using ScintillaNET_Components.SearchTypes;
+    using Generic_Components.SearchTypes;
     using System;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
@@ -17,7 +17,7 @@ namespace ScintillaNET_Components
     {
         #region Fields
 
-        private CharacterRange _searchRange;
+        private TextRange _searchRange;
         private Control _menuSource;
         private readonly FindReplace _manager;
 
@@ -81,7 +81,7 @@ namespace ScintillaNET_Components
             }
 
             // Clear old search range because it may be invalid
-            _searchRange = new CharacterRange();
+            _searchRange = new TextRange();
 
             lblStatus.Text = string.Empty;
             statusStrip.Refresh();
@@ -429,7 +429,7 @@ namespace ScintillaNET_Components
         // Returns a search object representing the search query
         private Search GetQuery() {
             if (chkSearchSelection.Checked) {
-                if (_searchRange.cpMin == _searchRange.cpMax) {
+                if (_searchRange.start == _searchRange.end) {
                     _searchRange = _manager.GetEditorSelectedRange();
                 }
             }
@@ -452,7 +452,7 @@ namespace ScintillaNET_Components
         }
 
         // Use the dialog configuration to search for a match.
-        private CharacterRange FindWrapper(bool searchUp) {
+        private TextRange FindWrapper(bool searchUp) {
             if (searchUp) {
                 return _manager.FindPrevious(GetQuery(), chkWrap.Checked);
             }
@@ -462,20 +462,20 @@ namespace ScintillaNET_Components
         }
 
         // Use the dialog configuration to search for all matches.
-        private List<CharacterRange> FindAllWrapper() {
+        private List<TextRange> FindAllWrapper() {
             var results = _manager.FindAll(GetQuery(), chkMarkLine.Checked, chkHighlightMatches.Checked);
             FindAllResults?.Invoke(this, new FindResultsEventArgs(_manager, results));
             return results;
         }
 
         // Use the dialog configuration to replace the first match.
-        private CharacterRange ReplaceWrapper(bool searchUp) {
+        private TextRange ReplaceWrapper(bool searchUp) {
             return _manager.Replace(GetQuery(), SanitizeText(txtReplace.Text), chkWrap.Checked);
         }
 
         // Use the dialog configuration to replace all matches.
-        private List<CharacterRange> ReplaceAllWrapper() {
-            var results = _manager.ReplaceAll(GetQuery(), SanitizeText(txtReplace.Text), false, false);
+        private List<TextRange> ReplaceAllWrapper() {
+            var results = _manager.ReplaceAll(GetQuery(), SanitizeText(txtReplace.Text));
             ReplaceAllResults?.Invoke(this, new ReplaceResultsEventArgs(_manager, results));
             return results;
         }
@@ -484,7 +484,7 @@ namespace ScintillaNET_Components
         // - Update history
         // - Run search and navigate to first result
         // - Update status text
-        private void ProcessFindReplace(Func<bool, CharacterRange> findReplace, Action addMru, bool searchUp) {
+        private void ProcessFindReplace(Func<bool, TextRange> findReplace, Action addMru, bool searchUp) {
             if (txtFind.Text == string.Empty) {
                 return;
             }
@@ -498,7 +498,7 @@ namespace ScintillaNET_Components
         // - Update history
         // - Run search
         // - Update status text
-        private void ProcessFindReplaceAll(Func<List<CharacterRange>> findReplaceAll, Action addMru, bool replace) {
+        private void ProcessFindReplaceAll(Func<List<TextRange>> findReplaceAll, Action addMru, bool replace) {
             if (txtFind.Text == string.Empty) {
                 return;
             }
@@ -528,7 +528,7 @@ namespace ScintillaNET_Components
         /// </summary>
         /// <param name="manager">Associated <see cref="FindReplace"/> control.</param>
         /// <param name="findAllResults"><see cref="List{CharacterRange}"/> containing the locations of the found results.</param>
-        public FindResultsEventArgs(FindReplace manager, List<CharacterRange> findAllResults) {
+        public FindResultsEventArgs(FindReplace manager, List<TextRange> findAllResults) {
             Manager = manager;
             FindAllResults = findAllResults;
         }
@@ -543,7 +543,7 @@ namespace ScintillaNET_Components
         /// <summary>
         /// Gets or sets the list of results.
         /// </summary>
-        public List<CharacterRange> FindAllResults { get; set; }
+        public List<TextRange> FindAllResults { get; set; }
 
         #endregion Properties
     }
@@ -558,7 +558,7 @@ namespace ScintillaNET_Components
         /// </summary>
         /// <param name="manager">Associated <see cref="FindReplace"/> instance.</param>
         /// <param name="replaceAllResults"><see cref="List{CharacterRange}"/> containing the locations of the replacements.</param>
-        public ReplaceResultsEventArgs(FindReplace manager, List<CharacterRange> replaceAllResults) {
+        public ReplaceResultsEventArgs(FindReplace manager, List<TextRange> replaceAllResults) {
             Manager = manager;
             ReplaceAllResults = replaceAllResults;
         }
@@ -573,7 +573,7 @@ namespace ScintillaNET_Components
         /// <summary>
         /// Gets or sets the list of results.
         /// </summary>
-        public List<CharacterRange> ReplaceAllResults { get; set; }
+        public List<TextRange> ReplaceAllResults { get; set; }
 
         #endregion Properties
     }

@@ -1,4 +1,4 @@
-namespace ScintillaNET_Components
+namespace Generic_Components
 {
     partial class IncrementalSearcher
     {
@@ -92,7 +92,7 @@ namespace ScintillaNET_Components
             this.chkRegex.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkRegex.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.chkRegex.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkRegex.Image = global::ScintillaNET_Components.Properties.Resources.regex;
+            this.chkRegex.Image = global::Generic_Components.Properties.Resources.regex;
             this.chkRegex.Location = new System.Drawing.Point(5, 3);
             this.chkRegex.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chkRegex.Name = "chkRegex";
@@ -100,6 +100,7 @@ namespace ScintillaNET_Components
             this.chkRegex.TabIndex = 8;
             this.toolTip.SetToolTip(this.chkRegex, "Regular Expression");
             this.chkRegex.UseVisualStyleBackColor = true;
+            this.chkRegex.Click += new System.EventHandler(this.Option_Click);
             // 
             // chkMatchCase
             // 
@@ -120,6 +121,7 @@ namespace ScintillaNET_Components
             this.chkMatchCase.TabIndex = 7;
             this.toolTip.SetToolTip(this.chkMatchCase, "Case Sensitive");
             this.chkMatchCase.UseVisualStyleBackColor = true;
+            this.chkMatchCase.Click += new System.EventHandler(this.Option_Click);
             // 
             // chkWholeWord
             // 
@@ -132,7 +134,7 @@ namespace ScintillaNET_Components
             this.chkWholeWord.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkWholeWord.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.chkWholeWord.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkWholeWord.Image = global::ScintillaNET_Components.Properties.Resources.whole_word;
+            this.chkWholeWord.Image = global::Generic_Components.Properties.Resources.whole_word;
             this.chkWholeWord.Location = new System.Drawing.Point(57, 3);
             this.chkWholeWord.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chkWholeWord.Name = "chkWholeWord";
@@ -140,6 +142,7 @@ namespace ScintillaNET_Components
             this.chkWholeWord.TabIndex = 9;
             this.toolTip.SetToolTip(this.chkWholeWord, "Whole Word");
             this.chkWholeWord.UseVisualStyleBackColor = true;
+            this.chkWholeWord.Click += new System.EventHandler(this.Option_Click);
             // 
             // chkWrap
             // 
@@ -154,7 +157,7 @@ namespace ScintillaNET_Components
             this.chkWrap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkWrap.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.chkWrap.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkWrap.Image = global::ScintillaNET_Components.Properties.Resources.wrap;
+            this.chkWrap.Image = global::Generic_Components.Properties.Resources.wrap;
             this.chkWrap.Location = new System.Drawing.Point(83, 3);
             this.chkWrap.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chkWrap.Name = "chkWrap";
@@ -176,7 +179,7 @@ namespace ScintillaNET_Components
             this.chkHighlightAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chkHighlightAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.chkHighlightAll.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkHighlightAll.Image = global::ScintillaNET_Components.Properties.Resources.marker;
+            this.chkHighlightAll.Image = global::Generic_Components.Properties.Resources.marker;
             this.chkHighlightAll.Location = new System.Drawing.Point(109, 3);
             this.chkHighlightAll.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chkHighlightAll.Name = "chkHighlightAll";
@@ -189,9 +192,10 @@ namespace ScintillaNET_Components
             // txtFind
             // 
             this.txtFind.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFind.ClearButtonVisible = true;
             this.txtFind.CueActiveColor = System.Drawing.Color.Gray;
             this.txtFind.CueColor = System.Drawing.Color.LightGray;
-            this.txtFind.CueFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFind.CueFont = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtFind.CueText = "Find...";
             this.txtFind.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtFind.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -213,7 +217,7 @@ namespace ScintillaNET_Components
             this.btnNext.FlatAppearance.BorderSize = 0;
             this.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnNext.Image = global::ScintillaNET_Components.Properties.Resources.next;
+            this.btnNext.Image = global::Generic_Components.Properties.Resources.next;
             this.btnNext.Location = new System.Drawing.Point(301, 3);
             this.btnNext.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.btnNext.Name = "btnNext";
@@ -232,7 +236,7 @@ namespace ScintillaNET_Components
             this.brnPrevious.FlatAppearance.BorderSize = 0;
             this.brnPrevious.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.brnPrevious.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.brnPrevious.Image = global::ScintillaNET_Components.Properties.Resources.previous;
+            this.brnPrevious.Image = global::Generic_Components.Properties.Resources.previous;
             this.brnPrevious.Location = new System.Drawing.Point(275, 3);
             this.brnPrevious.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.brnPrevious.Name = "brnPrevious";

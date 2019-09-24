@@ -1,4 +1,4 @@
-namespace ScintillaNET_Components
+namespace Generic_Components
 {
 	partial class FindReplaceDialog
 	{
@@ -459,21 +459,23 @@ namespace ScintillaNET_Components
             this.txtFind.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFind.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFind.ClearButtonVisible = true;
             this.txtFind.CueActiveColor = System.Drawing.Color.Gray;
             this.txtFind.CueColor = System.Drawing.Color.LightGray;
-            this.txtFind.CueFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFind.CueFont = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtFind.CueText = "Find...";
-            this.txtFind.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFind.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtFind.Location = new System.Drawing.Point(59, 4);
             this.txtFind.Name = "txtFind";
-            this.txtFind.Size = new System.Drawing.Size(370, 20);
+            this.txtFind.Size = new System.Drawing.Size(370, 21);
             this.txtFind.TabIndex = 0;
             // 
             // lblFind
             // 
             this.lblFind.AutoSize = true;
             this.lblFind.BackColor = System.Drawing.Color.White;
-            this.lblFind.Location = new System.Drawing.Point(26, 7);
+            this.lblFind.Location = new System.Drawing.Point(27, 3);
+            this.lblFind.Margin = new System.Windows.Forms.Padding(3);
             this.lblFind.Name = "lblFind";
             this.lblFind.Size = new System.Drawing.Size(27, 13);
             this.lblFind.TabIndex = 6;
@@ -482,7 +484,7 @@ namespace ScintillaNET_Components
             // cmdRecentFind
             // 
             this.cmdRecentFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmdRecentFind.BackgroundImage = global::ScintillaNET_Components.Properties.Resources.history;
+            this.cmdRecentFind.BackgroundImage = global::Generic_Components.Properties.Resources.history;
             this.cmdRecentFind.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.cmdRecentFind.Enabled = false;
             this.cmdRecentFind.Location = new System.Drawing.Point(430, 3);
@@ -522,12 +524,16 @@ namespace ScintillaNET_Components
             // 
             // btnSwap
             // 
-            this.btnSwap.BackgroundImage = global::ScintillaNET_Components.Properties.Resources.swap;
             this.btnSwap.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnSwap.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.btnSwap.FlatAppearance.BorderSize = 0;
+            this.btnSwap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSwap.ForeColor = System.Drawing.Color.Transparent;
-            this.btnSwap.Location = new System.Drawing.Point(26, 19);
+            this.btnSwap.Image = global::Generic_Components.Properties.Resources.swap;
+            this.btnSwap.Location = new System.Drawing.Point(29, 18);
             this.btnSwap.Name = "btnSwap";
-            this.btnSwap.Size = new System.Drawing.Size(24, 24);
+            this.btnSwap.Padding = new System.Windows.Forms.Padding(0, 0, 2, 1);
+            this.btnSwap.Size = new System.Drawing.Size(22, 22);
             this.btnSwap.TabIndex = 7;
             this.btnSwap.UseVisualStyleBackColor = false;
             this.btnSwap.Click += new System.EventHandler(this.BtnSwap_Click);
@@ -579,7 +585,8 @@ namespace ScintillaNET_Components
             // lblReplace
             // 
             this.lblReplace.AutoSize = true;
-            this.lblReplace.Location = new System.Drawing.Point(8, 12);
+            this.lblReplace.Location = new System.Drawing.Point(8, 8);
+            this.lblReplace.Margin = new System.Windows.Forms.Padding(3);
             this.lblReplace.Name = "lblReplace";
             this.lblReplace.Size = new System.Drawing.Size(45, 13);
             this.lblReplace.TabIndex = 5;
@@ -588,7 +595,7 @@ namespace ScintillaNET_Components
             // cmdRecentReplace
             // 
             this.cmdRecentReplace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmdRecentReplace.BackgroundImage = global::ScintillaNET_Components.Properties.Resources.history;
+            this.cmdRecentReplace.BackgroundImage = global::Generic_Components.Properties.Resources.history;
             this.cmdRecentReplace.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.cmdRecentReplace.Enabled = false;
             this.cmdRecentReplace.Location = new System.Drawing.Point(430, 3);
@@ -617,10 +624,12 @@ namespace ScintillaNET_Components
             this.txtReplace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtReplace.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtReplace.ClearButtonVisible = true;
             this.txtReplace.CueActiveColor = System.Drawing.Color.Gray;
             this.txtReplace.CueColor = System.Drawing.Color.LightGray;
-            this.txtReplace.CueFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtReplace.CueFont = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtReplace.CueText = "Replace...";
+            this.txtReplace.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtReplace.Location = new System.Drawing.Point(59, 4);
             this.txtReplace.Name = "txtReplace";
             this.txtReplace.Size = new System.Drawing.Size(370, 21);

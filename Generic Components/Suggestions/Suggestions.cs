@@ -1,6 +1,5 @@
 ﻿#region Using Directives
 
-using ScintillaNET;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +8,7 @@ using System.Windows.Forms;
 
 #endregion Using Directives
 
-namespace ScintillaNET_Components
+namespace Generic_Components
 {
     /// <summary>
     /// Component to 
@@ -31,8 +30,8 @@ namespace ScintillaNET_Components
         /// <summary>
         /// Constructs a new <see cref="Suggestions"/> instance with associated <see cref="SuggestionDropDown"/> instance.
         /// </summary>
-        /// <param name="editor">>The <see cref="Scintilla"/> editor to which the <see cref="Suggestions"/> is attached.</param>
-        public Suggestions(Scintilla editor) {
+        /// <param name="editor">>The <see cref="IEditor"/> editor to which the <see cref="Suggestions"/> is attached.</param>
+        public Suggestions(IEditor editor) {
             MaxVisibleItems = 5;
 
             if (editor != null) {
@@ -55,9 +54,9 @@ namespace ScintillaNET_Components
         #region Properties
 
         /// <summary>
-        /// Gets or sets the associated <see cref="Scintilla"/> control that <see cref="Suggestions"/> can act upon.
+        /// Gets or sets the associated <see cref="IEditor"/> control that <see cref="Suggestions"/> can act upon.
         /// </summary>
-        public override Scintilla Editor {
+        public override IEditor Editor {
             get {
                 return base.Editor;
             }
@@ -66,7 +65,7 @@ namespace ScintillaNET_Components
                 Editor.LostFocus += Editor_LostFocus;
                 Editor.MouseDown += Editor_MouseDown;
                 Editor.KeyDown += Editor_KeyDown;
-                Editor.UpdateUI += Editor_Scroll;
+                Editor.Scroll += Editor_Scroll;
             }
         }
 
@@ -116,10 +115,8 @@ namespace ScintillaNET_Components
         }
 
         // Called when the editor is scrolled.
-        private void Editor_Scroll(object sender, UpdateUIEventArgs e) {
-            if (e.Change == UpdateChange.VScroll || e.Change == UpdateChange.HScroll) {
-                HideSuggestions();
-            }
+        private void Editor_Scroll(object sender, ScrollEventArgs e) {
+            HideSuggestions();
         }
 
         private void Editor_KeyDown(object sender, KeyEventArgs e) {
@@ -132,7 +129,7 @@ namespace ScintillaNET_Components
 
         // Called when an item is double-clicked in the listbox.
         private void ListBox_Selected(object sender, EventArgs e) {
-            Editor.Focus();
+            Editor.Target.Focus();
         }
 
         #endregion Events & Handlers
@@ -143,8 +140,8 @@ namespace ScintillaNET_Components
         /// Displays the list of suggestions.
         /// </summary>
         public void ShowSuggestions(bool forceOpened) {
-            Point point = new Point(Editor.PointXFromPosition(Editor.CurrentPosition), Editor.PointYFromPosition(Editor.CurrentPosition));
-            point.Offset(0, Editor.Lines[Editor.CurrentLine].Height);
+            Point point = Editor.GetPointFromPosition(Editor.CurrentPosition);
+            point.Offset(0, Editor.LineHeight);
             _dropDown.ShowSuggestionBox(point);
         }
 

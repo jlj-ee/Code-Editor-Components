@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 #endregion Using Directives
 
-namespace ScintillaNET_Components
+namespace Generic_Components
 {
     /// <summary>
     /// Class to implement a list of <see cref="SuggestionItem"/> items.

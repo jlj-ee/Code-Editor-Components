@@ -2,6 +2,7 @@
 
 using ScintillaNET;
 using ScintillaNET_Components;
+using Generic_Components;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -15,6 +16,7 @@ namespace Demo
         private FindReplace MyFindReplace;
         private GoTo MyGoTo;
         private Suggestions MySuggestions;
+        private ScintillaNETWrapper MyScintillaWrapper;
 
         public TestForm() {
             InitializeComponent();
@@ -24,15 +26,17 @@ namespace Demo
             scintilla2.Styles[Style.Default].Size = 10;
             tabControl1.SelectedIndexChanged += Form_TabChanged;
 
-            MyFindReplace = new FindReplace(scintilla1);
+            MyScintillaWrapper = new ScintillaNETWrapper(scintilla1);
+
+            MyFindReplace = new FindReplace(MyScintillaWrapper);
             MyFindReplace.Window.AutoPosition = true;
             MyFindReplace.KeyPressed += MyFindReplace_KeyPressed;
 
-            MyGoTo = new GoTo(scintilla1);
+            MyGoTo = new GoTo(MyScintillaWrapper);
 
             incrementalSearcherToolStrip.Manager = MyFindReplace;
 
-            MySuggestions = new Suggestions(scintilla1);
+            MySuggestions = new Suggestions(MyScintillaWrapper);
             var items = new List<SuggestionItem> {
                 new SuggestionItem("Scintilla") {
                     ToolTipTitle = "Scintilla Text Editor",
@@ -112,9 +116,10 @@ Styling choices are more open than with many editors, allowing the use of propor
         /// <param name="sender">The Scintilla receiving focus</param>
         /// <param name="e"></param>
         private void GenericScintilla_Enter(object sender, EventArgs e) {
-            MyFindReplace.Editor = (Scintilla)sender;
-            MyGoTo.Editor = (Scintilla)sender;
-            MySuggestions.Editor = (Scintilla)sender;
+            MyScintillaWrapper = new ScintillaNETWrapper(sender as Scintilla);
+            MyFindReplace.Editor = MyScintillaWrapper;
+            MyGoTo.Editor = MyScintillaWrapper;
+            MySuggestions.Editor = MyScintillaWrapper;
         }
 
         private void GenericScintilla_Enter(object sender, MouseEventArgs e) {

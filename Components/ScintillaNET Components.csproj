@@ -47,88 +47,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\CharacterRange.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Common\ComponentManager.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FindReplace\SearchTypes.cs" />
-    <Compile Include="GoTo\ValidatingTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Common\Dialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FindReplace\FindReplace.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FindReplace\FindReplaceDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FindReplace\FindReplaceDialog.Designer.cs">
-      <DependentUpon>FindReplaceDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FindReplace\IncrementalSearcher.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FindReplace\IncrementalSearcher.Designer.cs">
-      <DependentUpon>IncrementalSearcher.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GoTo\GoTo.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="GoTo\GoToDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GoTo\GoToDialog.Designer.cs">
-      <DependentUpon>GoToDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Suggestions\SuggestionDropDown.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Suggestions\SuggestionItem.cs" />
-    <Compile Include="Suggestions\SuggestionListBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Suggestions\Suggestions.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="ScintillaNETWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FindReplace\FindReplaceDialog.resx">
-      <DependentUpon>FindReplaceDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FindReplace\IncrementalSearcher.resx">
-      <DependentUpon>IncrementalSearcher.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GoTo\GoToDialog.resx">
-      <DependentUpon>GoToDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Suggestions\SuggestionDropDown.resx">
-      <DependentUpon>SuggestionDropDown.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\wrap.png" />
-    <None Include="Resources\whole word.png" />
-    <None Include="Resources\selection.png" />
-    <None Include="Resources\match case.png" />
-    <None Include="Resources\regex.png" />
-    <None Include="Resources\swap.png" />
-    <None Include="Resources\history.png" />
-    <None Include="Resources\marker.png" />
-    <Content Include="Resources\next.png" />
-    <Content Include="Resources\previous.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="jacobslusser.ScintillaNET">

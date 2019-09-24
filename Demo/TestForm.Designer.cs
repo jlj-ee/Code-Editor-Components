@@ -36,7 +36,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.scintilla2 = new ScintillaNET.Scintilla();
-            this.incrementalSearcherToolStrip = new ScintillaNET_Components.IncrementalSearcher();
+            this.incrementalSearcherToolStrip = new Generic_Components.IncrementalSearcher();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -172,7 +172,7 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private ScintillaNET.Scintilla scintilla2;
-        private ScintillaNET_Components.IncrementalSearcher incrementalSearcherToolStrip;
+        private Generic_Components.IncrementalSearcher incrementalSearcherToolStrip;
     }
 }
 

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 #endregion Using Directives
 
@@ -26,7 +27,7 @@ namespace Generic_Components
 
         private ContextMenuStrip _contextMenuStrip;
         private Button _clearButton;
-        private bool _clearButtonVisible = true;
+        private bool _clearButtonVisible;
         private const int EM_SETMARGINS = 0xD3;
 
         #endregion Fields
@@ -49,8 +50,10 @@ namespace Generic_Components
 
             // Set up custom context menu
             InitializeContextMenu();
-            // Set up button
-            InitializeButton();
+            // Set up button if necessary
+            if (ClearButtonVisible) {
+                AddClearButton();
+            }
 
             // Draw the cue so that it is visible at design time
             ShowCue();
@@ -111,17 +114,16 @@ namespace Generic_Components
         /// <summary>
         /// Gets or sets whether the clear button is visible.
         /// </summary>
-        [Category("Button"), Description("Button visibility"), DefaultValue(true)]
+        [Category("Button"), Description("Button visibility")]
         public bool ClearButtonVisible {
             get { return _clearButtonVisible; }
             set {
                 _clearButtonVisible = value;
-                _clearButton.Visible = _clearButtonVisible;
                 if (_clearButtonVisible) {
-                    ShowClearButton();
+                    AddClearButton();
                 }
                 else {
-                    HideClearButton();
+                    RemoveClearButton();
                 }
                 Invalidate();
             }
@@ -178,9 +180,8 @@ namespace Generic_Components
             // Draw the text
             Color textColor = ContainsFocus ? CueActiveColor : CueColor;
             using (var brush = new SolidBrush(textColor)) {
-                e.Graphics.DrawString(CueText, CueFont, brush, new PointF(-2f, 2));
+                e.Graphics.DrawString(CueText, CueFont, brush, new PointF(-1f, 1f));
             }
-
         }
 
         // Handle the button being clicked.
@@ -194,6 +195,10 @@ namespace Generic_Components
         /// </summary>
         /// <param name="e">Event data.</param>
         protected override void OnGotFocus(EventArgs e) {
+            // Kick off SelectAll asyncronously so that it occurs after Click
+            BeginInvoke((Action)delegate {
+                SelectAll();
+            });
             Invalidate();
             base.OnGotFocus(e);
         }
@@ -248,6 +253,17 @@ namespace Generic_Components
 
         #region Methods
 
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
+                _cueContainer.Dispose();
+                _contextMenuStrip.Dispose();
+                if (_clearButton != null) {
+                    _clearButton.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
+
         // Initialize the custom context menu.
         private void InitializeContextMenu() {
             var menuItems = new List<ToolStripItem>();
@@ -273,8 +289,29 @@ namespace Generic_Components
             ContextMenuStrip.Opening += ContextMenuStrip_Opening;
         }
 
-        // Initialize the button.
-        private void InitializeButton() {
+        // Hides the cue text from the TextBox
+        private void HideCue() {
+            Controls.Remove(_cueContainer);
+        }
+
+        // Shows the cue text if there is nothing in the TextBox.
+        private void ShowCue() {
+            Controls.Add(_cueContainer);
+        }
+
+        // Hides the button from the TextBox
+        private void RemoveClearButton() {
+            if (_clearButton != null) {
+                Controls.Remove(_clearButton);
+                _clearButton.Click -= ClearButton_Click;
+                _clearButton.Dispose();
+                // Send EM_SETMARGINS to allow text to display to the end
+                SendMessage(Handle, EM_SETMARGINS, (IntPtr)2, (IntPtr)2);
+            }
+        }
+
+        // Show the button in the TextBox
+        private void AddClearButton() {
             _clearButton = new Button() {
                 Cursor = Cursors.Default,
                 Image = Properties.Resources.clear,
@@ -288,40 +325,17 @@ namespace Generic_Components
                     //MouseDownBackColor = Color.Transparent,
                 },
                 UseVisualStyleBackColor = false,
-                Visible = ClearButtonVisible,
+                Visible = true,
                 Anchor = AnchorStyles.Right,
             };
             _clearButton.Click += ClearButton_Click;
-            if (ClearButtonVisible) {
-                ShowClearButton();
-            }
-        }
-
-        // Hides the cue text from the TextBox
-        private void HideCue() {
-            Controls.Remove(_cueContainer);
-        }
-
-        // Shows the cue text if there is nothing in the TextBox.
-        private void ShowCue() {
-            Controls.Add(_cueContainer);
-        }
-
-        // Hides the button from the TextBox
-        private void HideClearButton() {
-            Controls.Remove(_clearButton);
-            // Send EM_SETMARGINS to allow text to display to the end
-            SendMessage(Handle, EM_SETMARGINS, (IntPtr)2, (IntPtr)2);
-        }
-
-        // Show the button in the TextBox
-        private void ShowClearButton() {
             Controls.Add(_clearButton);
             // Send EM_SETMARGINS to prevent text from disappearing underneath the button
             SendMessage(Handle, EM_SETMARGINS, (IntPtr)2, (IntPtr)(_clearButton.Width << 16));
         }
 
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        // pinvoke for sending a message to the TextBox
+        [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 
         #endregion Methods

@@ -1,4 +1,4 @@
-﻿namespace ScintillaNET_Components
+﻿namespace Generic_Components
 {
     partial class GoToDialog
     {
@@ -32,7 +32,7 @@
             this.txtCurrentLine = new System.Windows.Forms.TextBox();
             this.txtMaxLine = new System.Windows.Forms.TextBox();
             this.lblMaxLine = new System.Windows.Forms.Label();
-            this.txtGotoLine = new ScintillaNET_Components.ValidatingTextBox();
+            this.txtGotoLine = new Generic_Components.ValidatingTextBox();
             this.lblGotoLine = new System.Windows.Forms.Label();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -78,7 +78,7 @@
             this.txtGotoLine.Name = "txtGotoLine";
             this.txtGotoLine.Size = new System.Drawing.Size(63, 21);
             this.txtGotoLine.TabIndex = 5;
-            this.txtGotoLine.TextValidating += new System.EventHandler<ScintillaNET_Components.TextValidatingEventArgs>(this.TxtGotoLine_TextValidating);
+            this.txtGotoLine.TextValidating += new System.EventHandler<Generic_Components.TextValidatingEventArgs>(this.TxtGotoLine_TextValidating);
             // 
             // lblGotoLine
             // 
@@ -145,7 +145,7 @@
         private System.Windows.Forms.TextBox txtCurrentLine;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
-        private ScintillaNET_Components.ValidatingTextBox txtGotoLine;
+        private Generic_Components.ValidatingTextBox txtGotoLine;
         private System.Windows.Forms.Label lblGotoLine;
         private System.Windows.Forms.TextBox txtMaxLine;
         private System.Windows.Forms.Label lblMaxLine;

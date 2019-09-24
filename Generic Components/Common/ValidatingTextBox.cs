@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using System.ComponentModel;
 
-namespace ScintillaNET_Components
+namespace Generic_Components
 {
 
     /// <summary>

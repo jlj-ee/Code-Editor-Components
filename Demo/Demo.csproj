@@ -110,6 +110,10 @@
       <Project>{548fd833-9a3b-41bb-9850-570afe9a91b7}</Project>
       <Name>ScintillaNET Components</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Generic Components\Generic Components.csproj">
+      <Project>{fd4f17b6-6b8c-4946-a46d-c7e24c38c4e4}</Project>
+      <Name>Generic Components</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="jacobslusser.ScintillaNET">

@@ -1,24 +1,23 @@
 ﻿#region Using Directives
 
-using ScintillaNET;
 using System.ComponentModel;
 
 #endregion Using Directives
 
-namespace ScintillaNET_Components
+namespace Generic_Components
 {
     /// <summary>
-    /// Class for managing line navigation of a <see cref="Scintilla"/> control, programmatically or through a <see cref="GoToDialog"/>.
+    /// Class for managing line navigation of a <see cref="IEditor"/> control, programmatically or through a <see cref="GoToDialog"/>.
     /// </summary>
 	public class GoTo : ComponentManager
     {
         #region Constructors
 
         /// <summary>
-        /// Constructs a new <see cref="GoTo"/> object that will be associated with the given <see cref="Scintilla"/> control.
+        /// Constructs a new <see cref="GoTo"/> object that will be associated with the given <see cref="IEditor"/> control.
         /// </summary>
-        /// <param name="editor"><see cref="Scintilla"/> control that <see cref="GoTo"/> can act upon.</param>
-        public GoTo(Scintilla editor) : base() {
+        /// <param name="editor"><see cref="IEditor"/> control that <see cref="GoTo"/> can act upon.</param>
+        public GoTo(IEditor editor) : base() {
             Window = CreateWindowInstance();
 
             if (editor != null) {
@@ -31,9 +30,9 @@ namespace ScintillaNET_Components
         #region Properties
 
         /// <summary>
-        /// Gets or sets the <see cref="Scintilla"/> control associated with the <see cref="GoTo"/>.
+        /// Gets or sets the <see cref="IEditor"/> associated with the <see cref="GoTo"/>.
         /// </summary>
-        public override Scintilla Editor {
+        public override IEditor Editor {
             get {
                 return base.Editor;
             }
@@ -53,28 +52,28 @@ namespace ScintillaNET_Components
         #region Methods
         
         /// <summary>
-        /// Navigates the caret in the associated <see cref="ScintillaNET.Scintilla"/> control to the start of the given line.
+        /// Navigates the caret in the associated <see cref="IEditor"/> control to the start of the given line.
         /// </summary>
         /// <param name="lineNum">Target line number.</param>
         public void GoToLine(int lineNum) {
-            Editor.Lines[lineNum].Goto();
+            Editor.GoToLine(lineNum);
         }
 
         /// <summary>
-        /// Navigates the caret in the associated <see cref="ScintillaNET.Scintilla"/> control to the given character position.
+        /// Navigates the caret in the associated <see cref="IEditor"/> control to the given character position.
         /// </summary>
         /// <param name="pos">Target character</param>
 		public void GoToPosition(int pos) {
-            Editor.GotoPosition(pos);
+            Editor.GoToPosition(pos);
         }
 
         /// <summary>
-        /// Updates the <see cref="GoToDialog"/> with current information from the <see cref="ScintillaNET.Scintilla"/> control.
+        /// Updates the <see cref="GoToDialog"/> with current information from the <see cref="IEditor"/> control.
         /// </summary>
         public void UpdateDialog() {
             Window.CurrentLineNumber = Editor.CurrentLine;
             Window.GoToLineNumber = Editor.CurrentLine;
-            Window.MaximumLineNumber = Editor.Lines.Count;
+            Window.MaximumLineNumber = Editor.LineCount;
         }
 
         /// <summary>
@@ -83,7 +82,7 @@ namespace ScintillaNET_Components
 		public void ShowDialog() {
             UpdateDialog();
             if (!Window.Visible) {
-                Window.Show(Editor.FindForm());
+                Window.Show(Editor.Target.FindForm());
             }
         }
 

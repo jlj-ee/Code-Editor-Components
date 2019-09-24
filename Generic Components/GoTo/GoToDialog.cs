@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 #endregion Using Directives
 
-namespace ScintillaNET_Components
+namespace Generic_Components
 {
     /// <summary>
     /// Class to define the logic for a GoTo <see cref="Dialog"/>.

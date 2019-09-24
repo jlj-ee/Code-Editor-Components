@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 #endregion Using Directives
 
-namespace ScintillaNET_Components
+namespace Generic_Components
 {
     /// <summary>
     /// Class to encapsulate common capabilities of a utility dialog for a text control.
@@ -72,7 +72,7 @@ namespace ScintillaNET_Components
         /// <param name="e">Information about the loading event.</param>
         protected override void OnLoad(EventArgs e) {
             if (Manager != null) {
-                CenterDialog(Manager.Editor);
+                CenterDialog(Manager.Editor.Target);
             }
 
             base.OnLoad(e);
