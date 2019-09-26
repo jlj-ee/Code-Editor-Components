@@ -141,6 +141,11 @@ namespace CodeEditor_Components
             }
         }
 
+        // Handle other options buttons clicked.
+        private void Option_Click(object sender, EventArgs e) {
+            ProcessFindReplace(SearchWrapper, AddFindHistory, false);
+        }
+
         #endregion Buttons
 
         #region Text
@@ -282,9 +287,5 @@ namespace CodeEditor_Components
         }
 
         #endregion Methods
-
-        private void Option_Click(object sender, EventArgs e) {
-            ProcessFindReplace(SearchWrapper, AddFindHistory, false);
-        }
     }
 }

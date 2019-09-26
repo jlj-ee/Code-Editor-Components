@@ -188,12 +188,12 @@ namespace CodeEditor_Components.SearchTypes
         /// <returns>True if the objects are equal.</returns>
         public new virtual bool Equals(object obj) {
             //Check for null and compare run-time types.
-            if ((obj == null) || !GetType().Equals(obj.GetType())) {
-                return false;
-            }
-            else {
+            if ((obj != null) && GetType().Equals(obj.GetType())) {
                 //return SearchRange.Equals(((Search)obj).SearchRange);
                 return true;
+            }
+            else {
+                return false;
             }
         }
     }
@@ -292,7 +292,9 @@ namespace CodeEditor_Components.SearchTypes
             List<TextRange> results = base.ReplaceAll(editor, replaceString);
             int findCount = 0;
 
-            editor.BeginUndoAction();
+            try { editor.BeginUndoAction(); }
+            catch (NotImplementedException) { }
+
             int diff = replaceString.Length - SearchString.Length;
             while (true) {
                 TextRange findRange = Find(editor);
@@ -310,7 +312,9 @@ namespace CodeEditor_Components.SearchTypes
                     findCount++;
                 }
             }
-            editor.EndUndoAction();
+            try { editor.EndUndoAction(); }
+            catch (NotImplementedException) { }
+
 
             return results;
         }
@@ -416,7 +420,9 @@ namespace CodeEditor_Components.SearchTypes
             var replaceOffset = 0;
             var replaceCount = 0;
 
-            editor.BeginUndoAction();
+            try { editor.BeginUndoAction(); }
+            catch (NotImplementedException) { }
+
             string text = editor.GetTextRange(SearchRange.start, SearchRange.end - SearchRange.start + 1);
             SearchExpression.Replace(text,
                 new MatchEvaluator(
@@ -438,7 +444,8 @@ namespace CodeEditor_Components.SearchTypes
                     }
                     )
                     );
-            editor.EndUndoAction();
+            try { editor.EndUndoAction(); }
+            catch (NotImplementedException) { }
 
             return results;
         }

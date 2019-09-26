@@ -189,7 +189,7 @@ namespace CodeEditor_Components
         #region Events & Handlers
 
         /// <summary>
-        /// Handle when focus is lost from the targetd control.
+        /// Handle when focus is lost from the targeted control.
         /// </summary>
         event EventHandler LostFocus;
 

@@ -14,12 +14,12 @@ namespace CodeEditor_Components
     /// Class to display a list of suggested code completion items.
     /// Implements <see cref="IMessageFilter"/> to catch clicks outside the dropdown using low-level calls.
     /// </summary>
-    internal class SuggestionDropDown : ToolStripDropDown, IMessageFilter
+    public class SuggestionDropDown : ToolStripDropDown, IMessageFilter
     {
 
         #region Fields
-        private ToolStripControlHost _host;
-        private Suggestions _manager;
+        private readonly ToolStripControlHost _host;
+        private readonly Suggestions _manager;
         private string _longestString = "";
 
         #endregion Fields
@@ -33,9 +33,10 @@ namespace CodeEditor_Components
             _manager = manager;
 
             // Construct listbox
-            List = new SuggestionListBox {
+            List = new SuggestionList {
                 Font = _manager.GetEditorFont()
             };
+            List.LostFocus += List_LostFocus;
             _host = new ToolStripControlHost(List);
 
             // Set ToolStripDropDown properties
@@ -54,6 +55,10 @@ namespace CodeEditor_Components
             Application.AddMessageFilter(this);
         }
 
+        private void List_LostFocus(object sender, EventArgs e) {
+            Close();
+        }
+
 
         #endregion Constructors
 
@@ -62,7 +67,7 @@ namespace CodeEditor_Components
         /// <summary>
         /// Gets or sets the color theme.
         /// </summary>
-        public Theme Theme {
+        public ListTheme Theme {
             get {
                 return List.Theme;
             }
@@ -71,7 +76,7 @@ namespace CodeEditor_Components
             }
         }
 
-        public SuggestionListBox List { get; }
+        internal SuggestionList List { get; }
 
         #endregion Properties
 
@@ -87,13 +92,6 @@ namespace CodeEditor_Components
             List.Close();
         }
 
-        protected override void OnMouseClick(MouseEventArgs e) {
-            base.OnMouseClick(e);
-            if (!ClientRectangle.Contains(e.Location)) {
-                Close();
-            }
-        }
-
         #endregion Events & Handlers
 
         #region Methods
@@ -102,15 +100,15 @@ namespace CodeEditor_Components
         /// Display the <see cref="SuggestionDropDown"/>.
         /// </summary>
         public void ShowSuggestionBox(Point point) {
-            if (List.Items.Count > 0) {
+            if (List.VisibleItems.Count > 0) {
                 List.Font = _manager.GetEditorFont();
                 // Adjust size according to contents and limits
                 int textWidth = TextRenderer.MeasureText(_longestString, List.Font).Width;
                 int listWidth = Math.Min(textWidth + SystemInformation.VerticalScrollBarWidth + 5, MaximumSize.Width);
-                int numVisibleItems = Math.Min(_manager.MaxVisibleItems, List.Items.Count);
+                int numVisibleItems = Math.Min(_manager.MaxVisibleItems, List.VisibleItems.Count);
                 int listHeight = (numVisibleItems * List.ItemHeight) + List.Margin.Size.Height + Padding.Size.Height;
                 Size = new Size(listWidth, listHeight);
-                List.SelectedIndex = -1;
+                List.SelectedItemIndex = -1;
                 Show(_manager.Editor.Target, point, ToolStripDropDownDirection.BelowRight);
                 //Capture = true;
             }
@@ -122,9 +120,10 @@ namespace CodeEditor_Components
         /// <param name="items"><see cref="List{Suggestion}"/> containing items to display.</param>
         public void AddItems(List<SuggestionItem> items) {
             int maxTextLength = 0;
+            List.VisibleItems = items;
             //List.BeginUpdate();
             foreach (var item in items) {
-                List.Items.Add(item);
+                //    //List.Items.Add(item)
                 int textLength = item.GetDisplayText().Length;
                 if (textLength > maxTextLength) {
                     maxTextLength = textLength;

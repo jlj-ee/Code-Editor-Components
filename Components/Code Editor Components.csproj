@@ -7,8 +7,8 @@
     <ProjectGuid>{FD4F17B6-6B8C-4946-A46D-C7E24C38C4E4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Generic_Components</RootNamespace>
-    <AssemblyName>Generic Components</AssemblyName>
+    <RootNamespace>CodeEditor_Components</RootNamespace>
+    <AssemblyName>Code Editor Components</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -40,6 +40,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\ComponentManager.cs">
@@ -91,12 +92,13 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Suggestions\SuggestionItem.cs" />
-    <Compile Include="Suggestions\SuggestionListBox.cs">
-      <SubType>Component</SubType>
+    <Compile Include="Suggestions\SuggestionList.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Suggestions\Suggestions.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TextBoxWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FindReplace\FindReplaceDialog.resx">

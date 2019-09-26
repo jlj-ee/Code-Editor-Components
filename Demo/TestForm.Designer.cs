@@ -16,6 +16,9 @@
             if (disposing && (components != null))
             {
                 components.Dispose();
+                MyFindReplace.Dispose();
+                MyGoTo.Dispose();
+                MySuggestions.Dispose();
             }
             base.Dispose(disposing);
         }

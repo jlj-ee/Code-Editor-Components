@@ -19,6 +19,7 @@ namespace CodeEditor_Components
         #region Fields
 
         private readonly int _historyMaxCount = 10;
+        private bool _updateHighlights;
 
         #endregion Fields
 
@@ -86,24 +87,24 @@ namespace CodeEditor_Components
                 base.Editor = value;
                 Editor.Target.Controls.Add(SearchBar);
                 Editor.Target.Resize += ResizeEditor;
-                UpdateHighlights = true;
+                _updateHighlights = true;
             }
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="IncrementalSearcher"/>.
+        /// Gets the <see cref="IncrementalSearcher"/>.
         /// </summary>
-        public IncrementalSearcher SearchBar { get; set; }
+        public IncrementalSearcher SearchBar { get; private set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="FindReplaceDialog"/> instance.
+        /// Gets the <see cref="FindReplaceDialog"/> instance.
         /// </summary>
-        public FindReplaceDialog Window { get; set; }
+        public FindReplaceDialog Window { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="Search"/> object that encapsualtes the last completed find/replace action.
         /// </summary>
-        public Search CurrentQuery { get; internal set; }
+        public Search CurrentQuery { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="List{CharacterRange}"/> that contains the last find/replace results.
@@ -119,8 +120,6 @@ namespace CodeEditor_Components
         /// Gets the list of terms used to replace search results.
         /// </summary>
         public List<string> ReplaceHistory { get; }
-
-        internal bool UpdateHighlights { get; set; }
 
         #endregion Properties
 
@@ -313,7 +312,8 @@ namespace CodeEditor_Components
         /// </summary>
         public List<TextRange> ClearAllHighlights() {
             if (Editor != null) {
-                Editor.ClearAllHighlights();
+                try { Editor.ClearAllHighlights(); }
+                catch (NotImplementedException) { }
             }
             return CurrentResults;
         }
@@ -323,7 +323,8 @@ namespace CodeEditor_Components
         /// </summary>
         public List<TextRange> ClearAllMarks() {
             if (Editor != null) {
-                Editor.ClearAllMarks();
+                try { Editor.ClearAllMarks(); }
+                catch (NotImplementedException) { }
             }
             return CurrentResults;
         }
@@ -337,7 +338,7 @@ namespace CodeEditor_Components
                 ClearAllHighlights();
                 CurrentQuery = null;
                 CurrentResults = new List<TextRange>();
-                UpdateHighlights = true;
+                _updateHighlights = true;
             }
             return CurrentResults;
         }
@@ -349,7 +350,8 @@ namespace CodeEditor_Components
         public void Highlight(List<TextRange> ranges) {
             if (Editor != null) {
                 ClearAllHighlights();
-                Editor.Highlight(ranges);
+                try { Editor.Highlight(ranges); }
+                catch (NotImplementedException) { }
             }
         }
 
@@ -360,14 +362,15 @@ namespace CodeEditor_Components
         public void Mark(List<TextRange> ranges) {
             if (Editor != null) {
                 ClearAllMarks();
-                Editor.Mark(ranges);
+                try { Editor.Mark(ranges); }
+                catch (NotImplementedException) { }
             }
         }
 
         // Update query/results and mark/highlight results as necessary.
         private List<TextRange> UpdateResults(Search query, bool mark = false, bool highlight = true) {
             if (query != null) {
-                if (!query.Equals(CurrentQuery) || UpdateHighlights) {
+                if (!query.Equals(CurrentQuery) || _updateHighlights) {
                     CurrentQuery = query;
                     CurrentResults = query.FindAll(Editor);
                     if (highlight) {
@@ -421,7 +424,7 @@ namespace CodeEditor_Components
                 }
                 SetEditorSelection(result);
             }
-            UpdateHighlights = false;
+            _updateHighlights = false;
             return statusText;
         }
 
@@ -448,7 +451,7 @@ namespace CodeEditor_Components
             else {
                 statusText = "Total " + (replace ? "replaced" : "found") + ": " + results.Count.ToString();
             }
-            UpdateHighlights = false;
+            _updateHighlights = false;
             return statusText;
         }
 
@@ -488,8 +491,7 @@ namespace CodeEditor_Components
         /// Creates and returns a new <see cref="IncrementalSearcher" /> object.
         /// </summary>
         /// <returns>A new <see cref="IncrementalSearcher" /> object.</returns>
-        [EditorBrowsable(EditorBrowsableState.Advanced)]
-        protected virtual IncrementalSearcher CreateIncrementalSearcherInstance() {
+        private IncrementalSearcher CreateIncrementalSearcherInstance() {
             return new IncrementalSearcher(this);
         }
 
@@ -497,9 +499,20 @@ namespace CodeEditor_Components
         /// Creates and returns a new <see cref="FindReplaceDialog" /> object.
         /// </summary>
         /// <returns>A new <see cref="FindReplaceDialog" /> object.</returns>
-        [EditorBrowsable(EditorBrowsableState.Advanced)]
-        protected virtual FindReplaceDialog CreateWindowInstance() {
+        private FindReplaceDialog CreateWindowInstance() {
             return new FindReplaceDialog(this);
+        }
+
+        /// <summary>
+        /// Release the resources of the components that are part of this <see cref="FindReplace"/>.
+        /// </summary>
+        /// <param name="disposing">Set to true to release resources.</param>
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
+                Window?.Dispose();
+                SearchBar?.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿#region Using Directives
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -28,6 +29,7 @@ namespace CodeEditor_Components
         /// <summary>
         /// Gets or sets the <see cref="ComponentManager"/> that handles the back-end for the dialog.
         /// </summary>
+        [Browsable(false)]
         public ComponentManager Manager { get; set; }
 
         /// <summary>

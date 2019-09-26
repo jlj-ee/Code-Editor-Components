@@ -18,12 +18,10 @@ namespace CodeEditor_Components
 
         #region Fields
 
-        private SuggestionDropDown _dropDown;
         private List<SuggestionItem> _items;
         private List<SuggestionItem> _visibleItems;
 
         #endregion Fields
-
 
         #region Constructors
 
@@ -39,8 +37,8 @@ namespace CodeEditor_Components
 
             }
 
-            _dropDown = new SuggestionDropDown(this);
-            _dropDown.List.SuggestionChosen += ListBox_Selected;
+            DropDown = CreateDropDownInstance();
+            DropDown.List.SuggestionChosen += ListBox_Selected;
             MaximumWidth = 500;
         }
 
@@ -79,24 +77,29 @@ namespace CodeEditor_Components
         /// </summary>
         public int MaximumWidth {
             get {
-                return _dropDown.MaximumSize.Width;
+                return DropDown.MaximumSize.Width;
             }
             set {
-                _dropDown.MaximumSize = new Size(value, _dropDown.MaximumSize.Height);
+                DropDown.MaximumSize = new Size(value, DropDown.MaximumSize.Height);
             }
         }
 
         /// <summary>
         /// Gets or sets the color theme for the suggestion menu.
         /// </summary>
-        public Theme Theme {
+        public ListTheme Theme {
             get {
-                return _dropDown.Theme;
+                return DropDown.Theme;
             }
             set {
-                _dropDown.Theme = value;
+                DropDown.Theme = value;
             }
         }
+
+        /// <summary>
+        /// Gets the <see cref="SuggestionDropDown"/>.
+        /// </summary>
+        public SuggestionDropDown DropDown { get; private set; }
 
         #endregion Properties
 
@@ -104,10 +107,10 @@ namespace CodeEditor_Components
 
         // Called when the editor loses focus. 
         private void Editor_LostFocus(object sender, EventArgs e) {
-            if (!_dropDown.Focused) {
+            if (!DropDown.Focused /*_dropDown.List.SelectedIndex != -1*/) {
                 HideSuggestions();
-            }
         }
+    }
 
         // Called when the mouse is clicked in the editor.
         private void Editor_MouseDown(object sender, MouseEventArgs e) {
@@ -142,11 +145,11 @@ namespace CodeEditor_Components
         public void ShowSuggestions(bool forceOpened) {
             Point point = Editor.GetPointFromPosition(Editor.CurrentPosition);
             point.Offset(0, Editor.LineHeight);
-            _dropDown.ShowSuggestionBox(point);
+            DropDown.ShowSuggestionBox(point);
         }
 
         public void HideSuggestions() {
-            _dropDown.Close();
+            DropDown.Close();
         }
 
         /// <summary>
@@ -155,7 +158,22 @@ namespace CodeEditor_Components
         /// <param name="suggestions"><see cref="List{Suggestion}"/> to be stored.</param>
         public void SetSuggestions(List<SuggestionItem> suggestions) {
             _items = suggestions;
-            _dropDown.AddItems(suggestions);
+            DropDown.AddItems(suggestions);
+        }
+
+        /// <summary>
+        /// Creates and returns a new <see cref="SuggestionDropDown"/> object.
+        /// </summary>
+        /// <returns>A new <see cref="SuggestionDropDown"/> object.</returns>
+        private SuggestionDropDown CreateDropDownInstance() {
+            return new SuggestionDropDown(this);
+        }
+
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
+                DropDown?.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         #endregion Methods

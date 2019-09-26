@@ -193,9 +193,24 @@ namespace CodeEditor_Components
             txtReplace.Text = findString;
         }
 
-        // Handle mark/highlight checkbox click.
-        private void ChkMarkHighlight_CheckedChanged(object sender, EventArgs e) {
-            _manager.UpdateHighlights = true;
+        // Handle highlight checkbox click.
+        private void ChkHighlight_CheckedChanged(object sender, EventArgs e) {
+            if (chkHighlightMatches.Checked) {
+                _manager.Highlight(_manager.CurrentResults);
+            }
+            else {
+                _manager.ClearAllHighlights();
+            }
+        }
+
+        // Handle mark checkbox click.
+        private void ChkMark_CheckedChanged(object sender, EventArgs e) {
+            if (chkMarkLine.Checked) {
+                _manager.Mark(_manager.CurrentResults);
+            }
+            else {
+                _manager.ClearAllMarks();
+            }
         }
 
         #endregion Button

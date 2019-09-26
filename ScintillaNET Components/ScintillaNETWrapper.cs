@@ -109,12 +109,7 @@ namespace ScintillaNET_Components
         /// </summary>
         public string SelectedText {
             get { return _scintilla.SelectedText; }
-            set {
-                int start = _scintilla.SelectionStart;
-                _scintilla.ReplaceSelection(value);
-                _scintilla.SelectionStart = (start + value.Length);
-                _scintilla.SelectionEnd = (start + value.Length);
-            }
+            set { ReplaceSelection(value); }
         }
 
         /// <summary>
@@ -130,7 +125,7 @@ namespace ScintillaNET_Components
         public int LineHeight {
             get {
                 //int SCI_TEXTHEIGHT = 2279;
-                //return Editor.DirectMessage(SCI_TEXTHEIGHT, IntPtr.Zero, IntPtr.Zero).ToInt32();
+                //int height = _scintilla.DirectMessage(SCI_TEXTHEIGHT, IntPtr.Zero, IntPtr.Zero).ToInt32();
                 return _scintilla.Lines[CurrentLine].Height;
             }
         }
@@ -259,10 +254,7 @@ namespace ScintillaNET_Components
         /// </summary>
         /// <param name="regionToAvoid"><see cref="Rectangle"/> in pixel coordinates that the caret should be kept out of when scrolling.</param>
         public void ScrollToCaret(Rectangle regionToAvoid) {
-            if ((regionToAvoid == null) || regionToAvoid.IsEmpty) {
-                _scintilla.ScrollCaret();
-            }
-            else {
+            if ((regionToAvoid != null) && !regionToAvoid.IsEmpty) {
                 int lineHeight = LineHeight;
                 // Calculate how many lines the rectangle could block, rounding up to the nearest whole line
                 int linesToAdd = regionToAvoid.Height / lineHeight + ((regionToAvoid.Height % lineHeight > 0) ? 1 : 0);
@@ -274,6 +266,9 @@ namespace ScintillaNET_Components
                 if (GetPointFromPosition(CurrentPosition).Y + lineHeight > regionToAvoid.Y) {
                     _scintilla.ScrollCaret();
                 }
+            }
+            else {
+                _scintilla.ScrollCaret();
             }
         }
 
@@ -355,7 +350,7 @@ namespace ScintillaNET_Components
         #endregion Methods
 
         #region Events & Handlers
-        
+
         // Check the cause of the UpdateUI event and raise a scroll event if necessary
         private void Editor_RaiseScroll(object sender, UpdateUIEventArgs e) {
             if (e.Change == UpdateChange.VScroll) {
@@ -367,9 +362,9 @@ namespace ScintillaNET_Components
         }
 
         /// <summary>
-        /// Handle when focus is lost from the targetd control.
+        /// Handle when focus is lost from the targeted control.
         /// </summary>
-        public virtual event EventHandler LostFocus {
+        public event EventHandler LostFocus {
             add { _scintilla.LostFocus += value; }
             remove { _scintilla.LostFocus -= value; }
         }
@@ -377,7 +372,7 @@ namespace ScintillaNET_Components
         /// <summary>
         ///  Handle when the targeted control is scrolled.
         /// </summary>
-        public virtual event ScrollEventHandler Scroll {
+        public event ScrollEventHandler Scroll {
             add { _scroll += value; }
             remove { _scroll -= value; }
         }
@@ -385,7 +380,7 @@ namespace ScintillaNET_Components
         /// <summary>
         /// Handle when the keyboard is pressed when the targeted control has focus.
         /// </summary>
-        public virtual event KeyEventHandler KeyDown {
+        public event KeyEventHandler KeyDown {
             add { _scintilla.KeyDown += value; }
             remove { _scintilla.KeyDown -= value; }
         }
@@ -393,7 +388,7 @@ namespace ScintillaNET_Components
         /// <summary>
         /// Handle when the targeted control is clicked with the mouse.
         /// </summary>
-        public virtual event MouseEventHandler MouseDown {
+        public event MouseEventHandler MouseDown {
             add { _scintilla.MouseDown += value; }
             remove { _scintilla.MouseDown -= value; }
         }

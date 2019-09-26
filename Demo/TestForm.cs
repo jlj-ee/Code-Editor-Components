@@ -13,9 +13,9 @@ namespace Demo
 {
     public partial class TestForm : Form
     {
-        private FindReplace MyFindReplace;
-        private GoTo MyGoTo;
-        private Suggestions MySuggestions;
+        private readonly FindReplace MyFindReplace;
+        private readonly GoTo MyGoTo;
+        private readonly Suggestions MySuggestions;
         private ScintillaNETWrapper MyScintillaWrapper;
 
         public TestForm() {
@@ -40,20 +40,19 @@ namespace Demo
             var items = new List<SuggestionItem> {
                 new SuggestionItem("Scintilla") {
                     ToolTipTitle = "Scintilla Text Editor",
-                    ToolTipText = @"
-Scintilla is a free source code editing component. It comes with complete source code and a license that permits use in any free project or commercial product.
-
-As well as features found in standard text editing components, Scintilla includes features especially useful when editing and debugging source code.
-These include support for syntax styling, error indicators, code completion and call tips.
-The selection margin can contain markers like those used in debuggers to indicate breakpoints and the current line.
-Styling choices are more open than with many editors, allowing the use of proportional fonts, bold and italics, multiple foreground and background colours and multiple fonts.",
+                    ToolTipText = "Scintilla is a free source code editing component.",
                 },
                 new SuggestionItem("Item 1"),
                 new SuggestionItem("Item 2"),
                 new SuggestionItem("Item 3"),
                 new SuggestionItem("Item 4"),
                 new SuggestionItem("Item 5"),
-                new SuggestionItem("Item 6")
+                new SuggestionItem("Item 6"),
+                new SuggestionItem("Item 7"),
+                new SuggestionItem("Item 8"),
+                new SuggestionItem("Item 9"),
+                new SuggestionItem("Item 10"),
+                new SuggestionItem("Item 11")
             };
             MySuggestions.SetSuggestions(items);
         }
@@ -108,6 +107,7 @@ Styling choices are more open than with many editors, allowing the use of propor
                 MySuggestions.HideSuggestions();
             }
         }
+
 
         /// <summary>
         /// Enter event tied to each Scintilla that will share a FindReplace dialog.

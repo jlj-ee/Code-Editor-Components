@@ -90,9 +90,19 @@ namespace CodeEditor_Components
         /// Creates and returns a new <see cref="GoToDialog" /> object.
         /// </summary>
         /// <returns>A new <see cref="GoToDialog" /> object.</returns>
-        [EditorBrowsable(EditorBrowsableState.Advanced)]
-        protected virtual GoToDialog CreateWindowInstance() {
+        private GoToDialog CreateWindowInstance() {
             return new GoToDialog(this);
+        }
+
+        /// <summary>
+        /// Release the resources of the components that are part of this <see cref="GoTo"/>.
+        /// </summary>
+        /// <param name="disposing">Set to true to release resources.</param>
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
+                Window?.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         #endregion Methods

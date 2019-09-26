@@ -215,7 +215,7 @@ namespace CodeEditor_Components
             this.chkHighlightMatches.TabIndex = 1;
             this.chkHighlightMatches.Text = "&Highlight Matches";
             this.chkHighlightMatches.UseVisualStyleBackColor = true;
-            this.chkHighlightMatches.CheckedChanged += new System.EventHandler(this.ChkMarkHighlight_CheckedChanged);
+            this.chkHighlightMatches.CheckedChanged += new System.EventHandler(this.ChkHighlight_CheckedChanged);
             // 
             // chkMarkLine
             // 
@@ -226,7 +226,7 @@ namespace CodeEditor_Components
             this.chkMarkLine.TabIndex = 0;
             this.chkMarkLine.Text = "&Mark Line";
             this.chkMarkLine.UseVisualStyleBackColor = true;
-            this.chkMarkLine.CheckedChanged += new System.EventHandler(this.ChkMarkHighlight_CheckedChanged);
+            this.chkMarkLine.CheckedChanged += new System.EventHandler(this.ChkMark_CheckedChanged);
             // 
             // pnlSearchType
             // 
