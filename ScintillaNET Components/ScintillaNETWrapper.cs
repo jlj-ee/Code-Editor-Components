@@ -187,8 +187,8 @@ namespace ScintillaNET_Components
         public TextRange SearchRange {
             get { return new TextRange(_scintilla.TargetStart, _scintilla.TargetEnd); }
             set {
-                _scintilla.TargetStart = value.start;
-                _scintilla.TargetEnd = value.end;
+                _scintilla.TargetStart = value.Start;
+                _scintilla.TargetEnd = value.End;
             }
         }
 
@@ -203,14 +203,17 @@ namespace ScintillaNET_Components
         /// <param name="matchCase">If true, a match will only occur with text that matches the case of the search string.</param>
         /// <param name="wholeWord">If true, a match will only occur if the characters before and after are not word characters.</param>
         /// <returns>Character index where the match was found. If not found, returns -1.</returns>
-        public int Search(string text, bool matchCase, bool wholeWord) {
+        public TextRange Search(string text, bool matchCase, bool wholeWord) {
             if (matchCase) { _scintilla.SearchFlags |= SearchFlags.MatchCase; }
             else { _scintilla.SearchFlags &= ~SearchFlags.MatchCase; }
 
             if (wholeWord) { _scintilla.SearchFlags |= SearchFlags.WholeWord; }
             else { _scintilla.SearchFlags &= ~SearchFlags.WholeWord; }
 
-            return _scintilla.SearchInTarget(text);
+            if (_scintilla.SearchInTarget(text) == -1) {
+                return new TextRange();
+            }
+            return new TextRange(_scintilla.TargetStart, _scintilla.TargetEnd);
         }
 
         /// <summary>
@@ -280,7 +283,7 @@ namespace ScintillaNET_Components
             _scintilla.IndicatorCurrent = FoundIndicator.Index;
 
             foreach (var r in ranges) {
-                _scintilla.IndicatorFillRange(r.start, r.end - r.start);
+                _scintilla.IndicatorFillRange(r.Start, r.End - r.Start);
             }
         }
 
@@ -301,7 +304,7 @@ namespace ScintillaNET_Components
         public void Mark(List<TextRange> ranges) {
             var lastLine = -1;
             foreach (var r in ranges) {
-                Line line = new Line(_scintilla, GetLineFromPosition(r.start));
+                Line line = new Line(_scintilla, GetLineFromPosition(r.Start));
                 if (line.Position > lastLine) {
                     line.MarkerAdd(FoundMarker.Index);
                 }

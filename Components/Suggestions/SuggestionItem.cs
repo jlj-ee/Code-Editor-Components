@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace CodeEditor_Components
 {
@@ -34,7 +35,7 @@ namespace CodeEditor_Components
         public virtual string ToolTipText { get; set; }
 
         /// <summary>
-        /// Gets or sets the index for the suggestion icon.
+        /// Gets or sets the index for the suggestion image.
         /// </summary>
         public int IconIndex { get; set; }
 
@@ -76,6 +77,14 @@ namespace CodeEditor_Components
         }
 
         /// <summary>
+        /// Gets the string representation of the suggestion.
+        /// </summary>
+        /// <returns><see cref="DisplayText"/> if it is not null, otherwise <see cref="InsertText"/>.</returns>
+        public override string ToString() {
+            return GetDisplayText();
+        }
+
+        /// <summary>
         /// Compares the given text fragment with this suggestion.
         /// </summary>
         /// <param name="fragmentText">Text fragment to compare with the suggestion.</param>
@@ -88,14 +97,46 @@ namespace CodeEditor_Components
         //        return DisplayState.Disabled;
         //    }
         //}
-
         //public virtual void OnSelected(SelectedEventArgs e) { }
 
-        //public virtual void OnPaint(PaintItemEventArgs e) {
-        //    using (var brush = new SolidBrush(e.IsSelected ? e.ThemeColors.SelectedForeColor : e.ThemeColors.ForeColor)) {
-        //        e.Graphics.DrawString(GetDisplayText(), e.Font, brush, e.TextRect, e.Format);
-        //    }
-        //}
+        /// <summary>
+        /// Overrides the paint method to draw the suggestion item.
+        /// </summary>
+        /// <param name="e">Paint suggestion event data.</param>
+        public virtual void OnPaint(PaintSuggestionEventArgs e) {
+            // Center text vertically
+            Point centeredPoint = new Point(e.TextRect.Left, e.TextRect.Y + e.TextRect.Height / 2 - e.Font.Height / 2);
+            TextRenderer.DrawText(e.Graphics, GetDisplayText(), e.Font, centeredPoint, e.Theme.ForeColor);
+        }
+    }
+
+    /// <summary>
+    /// Class to encapsulate the data needed to paint a <see cref="SuggestionItem"/>.
+    /// </summary>
+    public class PaintSuggestionEventArgs : PaintEventArgs
+    {
+        /// <summary>
+        /// Gets the rectangle in which item text will be drawn.
+        /// </summary>
+        public Rectangle TextRect { get; internal set; }
+        
+        /// <summary>
+        /// Gets the font that will be used to draw item text.
+        /// </summary>
+        public Font Font { get; internal set; }
+
+        /// <summary>
+        /// Gets the color theme used to color the item.
+        /// </summary>
+        public ListTheme Theme { get; internal set; }
+
+        /// <summary>
+        /// Constructs a new event args object based on the standard <see cref="PaintEventArgs"/>.
+        /// </summary>
+        /// <param name="Graphics"></param>
+        /// <param name="ClipRectangle"></param>
+        public PaintSuggestionEventArgs(Graphics Graphics, Rectangle ClipRectangle) : base(Graphics, ClipRectangle) {
+        }
     }
 
     /// <summary>

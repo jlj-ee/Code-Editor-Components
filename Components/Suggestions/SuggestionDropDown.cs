@@ -18,65 +18,56 @@ namespace CodeEditor_Components
     {
 
         #region Fields
+
         private readonly ToolStripControlHost _host;
         private readonly Suggestions _manager;
-        private string _longestString = "";
 
         #endregion Fields
 
         #region Constructors
 
         /// <summary>
-        /// Constructs a new <see cref="SuggestionDropDown"/>.
+        /// Constructs a new <see cref="SuggestionDropDown"/> given a <see cref="Suggestions"/> intance to manages it.
         /// </summary>
         public SuggestionDropDown(Suggestions manager) : base() {
             _manager = manager;
 
             // Construct listbox
-            List = new SuggestionList {
-                Font = _manager.GetEditorFont()
-            };
+            List = new SuggestionList();
             List.LostFocus += List_LostFocus;
             _host = new ToolStripControlHost(List);
 
             // Set ToolStripDropDown properties
             AutoClose = false;
             AutoSize = false;
-            DoubleBuffered = true;
             DropShadowEnabled = false;
-            Padding = Margin = _host.Padding = _host.Margin = Padding.Empty;
+            _host.Margin = new Padding(2);
+            _host.Padding = Padding.Empty;
 
             // Size container to ListBox
-            List.MinimumSize = List.Size;
             List.MaximumSize = List.Size;
-            Size = List.Size;
 
             Items.Add(_host);
             Application.AddMessageFilter(this);
         }
-
-        private void List_LostFocus(object sender, EventArgs e) {
-            Close();
-        }
-
 
         #endregion Constructors
 
         #region Properties
 
         /// <summary>
-        /// Gets or sets the color theme.
+        /// Gets the <see cref="SuggestionList"/> used by this dropdown.
         /// </summary>
-        public ListTheme Theme {
+        public SuggestionList List { get; }
+
+        /// <summary>
+        /// Gets the <see cref="Suggestions"/> instance that manages this dropdown.
+        /// </summary>
+        public Suggestions Manager {
             get {
-                return List.Theme;
-            }
-            set {
-                List.Theme = value;
+                return _manager;
             }
         }
-
-        internal SuggestionList List { get; }
 
         #endregion Properties
 
@@ -85,52 +76,11 @@ namespace CodeEditor_Components
         /// <summary>
         /// Handles when the dropdown is closed and raises the <see cref="ToolStripDropDown.Closed"/> event.
         /// </summary>
-        /// <param name="e">The info about the toolstrip close event.</param>
+        /// <param name="e">Toolstrip dropdown close event data.</param>
         protected override void OnClosed(ToolStripDropDownClosedEventArgs e) {
             base.OnClosed(e);
             //Capture = false;
             List.Close();
-        }
-
-        #endregion Events & Handlers
-
-        #region Methods
-
-        /// <summary>
-        /// Display the <see cref="SuggestionDropDown"/>.
-        /// </summary>
-        public void ShowSuggestionBox(Point point) {
-            if (List.VisibleItems.Count > 0) {
-                List.Font = _manager.GetEditorFont();
-                // Adjust size according to contents and limits
-                int textWidth = TextRenderer.MeasureText(_longestString, List.Font).Width;
-                int listWidth = Math.Min(textWidth + SystemInformation.VerticalScrollBarWidth + 5, MaximumSize.Width);
-                int numVisibleItems = Math.Min(_manager.MaxVisibleItems, List.VisibleItems.Count);
-                int listHeight = (numVisibleItems * List.ItemHeight) + List.Margin.Size.Height + Padding.Size.Height;
-                Size = new Size(listWidth, listHeight);
-                List.SelectedItemIndex = -1;
-                Show(_manager.Editor.Target, point, ToolStripDropDownDirection.BelowRight);
-                //Capture = true;
-            }
-        }
-
-        /// <summary>
-        /// Adds the given items to the <see cref="SuggestionDropDown"/>.
-        /// </summary>
-        /// <param name="items"><see cref="List{Suggestion}"/> containing items to display.</param>
-        public void AddItems(List<SuggestionItem> items) {
-            int maxTextLength = 0;
-            List.VisibleItems = items;
-            //List.BeginUpdate();
-            foreach (var item in items) {
-                //    //List.Items.Add(item)
-                int textLength = item.GetDisplayText().Length;
-                if (textLength > maxTextLength) {
-                    maxTextLength = textLength;
-                    _longestString = item.GetDisplayText();
-                }
-            }
-            //List.EndUpdate();
         }
 
         /// <summary>
@@ -140,14 +90,25 @@ namespace CodeEditor_Components
         protected override void OnSizeChanged(EventArgs e) {
             if (List != null) {
                 // Size and position content inside ToolStripDropdown
-                Size newSize = new Size(Size.Width - (Padding.Size.Width + 2), Size.Height - (Padding.Size.Height + 2));
-                List.MinimumSize = newSize;
-                List.MaximumSize = newSize;
-                List.Size = newSize;
-                List.Location = new Point(1, 1);
+                _host.Size = new Size(Size.Width - _host.Margin.Size.Width, Size.Height - _host.Margin.Size.Height);
+                List.MinimumSize = _host.Size;
+                List.MaximumSize = _host.Size;
+                List.Size = _host.Size;
+                List.Location = new Point(2, 2);
             }
             base.OnSizeChanged(e);
         }
+
+        // Close the dropdown if the List loses focus.
+        private void List_LostFocus(object sender, EventArgs e) {
+            if (!Focused) {
+                Close();
+            }
+        }
+
+        #endregion Events & Handlers
+
+        #region Methods
 
         #endregion Methods
 
@@ -161,8 +122,17 @@ namespace CodeEditor_Components
         private const int WM_NCRBUTTONDOWN = 0x00A4;
         private const int WM_NCMBUTTONDOWN = 0x00A7;
 
-        // Import API to map coordinates from one window to another
-        [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        /// <summary>
+        /// Converts (maps) a set of points from a coordinate space relative to one window to a coordinate space relative to another window.
+        /// </summary>
+        /// <param name="hWndFrom">Handle to the window from which points are converted. 
+        /// If this parameter is NULL or HWND_DESKTOP, the points are presumed to be in screen coordinates.</param>
+        /// <param name="hWndTo">Handle to the window to which points are converted. 
+        /// If this parameter is NULL or HWND_DESKTOP, the points are converted to screen coordinates.</param>
+        /// <param name="pt">Pointer to an array of POINT structures that contain the set of points to be converted.</param>
+        /// <param name="cPoints">Number of POINT structures in the array pointed to by the pt parameter.</param>
+        /// <returns></returns>
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int MapWindowPoints(IntPtr hWndFrom, IntPtr hWndTo, [In, Out] ref Point pt, [MarshalAs(UnmanagedType.U4)] int cPoints);
 
         /// <summary>

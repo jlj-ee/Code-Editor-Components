@@ -12,20 +12,22 @@ namespace CodeEditor_Components
     /// Implementing as a completely custom UserControl gives full control over painting,
     /// and results in the flicker-free UI needed.
     /// </summary>
-    internal class SuggestionList : UserControl
+    public class SuggestionList : UserControl
     {
         #region Fields
 
-        private const int FONT_HEIGHT_PADDING = 2;
+        private const int FONT_HEIGHT_PADDING = 4;
+        private const int TOOLTIP_PADDING = 3;
         private ListTheme _theme;
-        private readonly ToolTip _toolTip = new ToolTip() {
+        private readonly SuggestionToolTip _toolTip = new SuggestionToolTip() {
             ShowAlways = true,
             UseFading = true,
         };
         private readonly Timer _toolTipLaunchTimer = new Timer() {
-            Interval = 1000,
+            Interval = 500,
         };
-        private List<SuggestionItem> _visibleItems;
+        private IList<SuggestionItem> _visibleItems;
+        private ImageList _imageList;
         private int _selectedItemIndex;
         private int _itemHeight;
         private int _oldItemCount;
@@ -37,11 +39,11 @@ namespace CodeEditor_Components
         /// <summary>
         /// Constructs a new <see cref="SuggestionList"/>
         /// </summary>
-        public SuggestionList() : base() {
+        public SuggestionList() {
             TabStop = false;
-            Dock = DockStyle.Fill;
+            Dock = DockStyle.None;
             BorderStyle = BorderStyle.None;
-            Margin = new Padding(1);
+            Margin = Padding = new Padding(1);
             Location = Point.Empty;
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
 
@@ -79,8 +81,9 @@ namespace CodeEditor_Components
         public int SelectedItemIndex {
             get { return _selectedItemIndex; }
             set {
-                _selectedItemIndex = Clamp(value, -1, VisibleItems.Count - 1);
+                _selectedItemIndex = Math.Max(-1, Math.Min(value, VisibleItems.Count - 1));
                 if ((_selectedItemIndex >= 0) && (_selectedItemIndex < VisibleItems.Count)) {
+                    //if (!Focused) Focus();
                     EnsureVisible();
                     StartToolTipCountdown();
                 }
@@ -101,19 +104,53 @@ namespace CodeEditor_Components
         }
 
         /// <summary>
+        /// Gets the width of the longest list item.
+        /// </summary>
+        public int ItemWidth { get; private set; }
+
+        /// <summary>
         /// Gets or sets the list of visible items.
         /// </summary>
-        public List<SuggestionItem> VisibleItems {
+        public IList<SuggestionItem> VisibleItems {
             get { return _visibleItems; }
             set {
                 _visibleItems = value;
+                MeasureItems();
                 SelectedItemIndex = -1;
                 ConfigureScroll();
                 Invalidate();
             }
         }
 
-        public int IconWidth { get; set; }
+        /// <summary>
+        /// Gets or sets the collection of images that can be drawn with suggestion items.
+        /// </summary>
+        public ImageList ImageList {
+            get {
+                return _imageList;
+            }
+            set {
+                _imageList = value;
+                ImageWidth = (_imageList != null) ? _imageList.ImageSize.Width + 2 : 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the width of the displayed images.
+        /// </summary>
+        public int ImageWidth { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the font used to draw the item text.
+        /// </summary>
+        public override Font Font {
+            get { return base.Font; }
+            set {
+                base.Font = value;
+                // Add some vertical padding
+                ItemHeight = Font.Height + FONT_HEIGHT_PADDING;
+            }
+        }
 
         #endregion Properties
 
@@ -122,64 +159,86 @@ namespace CodeEditor_Components
         public event EventHandler SuggestionChosen;
 
         /// <summary>
+        /// Handles repainting the list background.
+        /// </summary>
+        /// <param name="e">Paint event data.</param>
+        protected override void OnPaintBackground(PaintEventArgs e) {
+            base.OnPaintBackground(e);
+            e.Graphics.Clear(Theme.ImageBackColor);
+        }
+
+        /// <summary>
         /// Handles repainting the list with reduced flicker and raises the <see cref="Control.Paint"/> event.
         /// </summary>
-        /// <param name="e">The paint info about the item that needs to be painted.</param>
+        /// <param name="e">Paint event data.</param>
         protected override void OnPaint(PaintEventArgs e) {
             ConfigureScroll();
-            int firstVisibleIndex = Math.Max(VerticalScroll.Value / ItemHeight - 1, 0);
-            int lastVisibleIndex = Math.Min((VerticalScroll.Value + ClientSize.Height) / ItemHeight + 1, VisibleItems.Count);
+            int firstVisibleIndex = Math.Max(VerticalScroll.Value / ItemHeight, 0);
+            int lastVisibleIndex = Math.Min((VerticalScroll.Value + ClientSize.Height) / ItemHeight, VisibleItems.Count);
             int y;
 
             for (int i = firstVisibleIndex; i < lastVisibleIndex; i++) {
-                y = i * ItemHeight - VerticalScroll.Value;
-                var textRect = new Rectangle(IconWidth, y, ClientSize.Width - 1 - IconWidth, ItemHeight);
-                var penRect = new Rectangle(textRect.X, textRect.Y, textRect.Width - 1, textRect.Height - 1);
+                y = i * ItemHeight - VerticalScroll.Value + 1;
+                var itemBody = new Rectangle(ImageWidth + 1, y, ClientSize.Width - 1 - ImageWidth, ItemHeight);
+                var itemBorder = new Rectangle(itemBody.X, itemBody.Y - 1, itemBody.Width - 1, itemBody.Height);
+                // Set row background of odd rows to alternate color
+                if (i % 2 != 0) {
+                    using (var brush = new SolidBrush(_theme.BackColorOdd)) {
+                        e.Graphics.FillRectangle(brush, itemBody);
+                    }
+                }
+                else {
+                    using (var brush = new SolidBrush(_theme.BackColorEven)) {
+                        e.Graphics.FillRectangle(brush, itemBody);
+                    }
+                }
                 // Draw background and border of selected row 
                 if (i == SelectedItemIndex) {
                     using (var brush = new SolidBrush(_theme.SelectedBackColor)) {
-                        e.Graphics.FillRectangle(brush, textRect);
+                        e.Graphics.FillRectangle(brush, itemBody);
                     }
-                    using (var pen = new Pen(_theme.SelectedBorderColor)) {
-                        e.Graphics.DrawRectangle(pen, penRect);
-                    }
-                }
-                // Set row background of odd rows to alternate color
-                else if (i % 2 != 0) {
-                    using (var brush = new SolidBrush(_theme.BackColorOdd)) {
-                        e.Graphics.FillRectangle(brush, textRect);
+                    using (var pen = new Pen(_theme.HighlightedBorderColor)) {
+                        e.Graphics.DrawRectangle(pen, itemBorder);
                     }
                 }
                 // Draw background and border of highlighted (mouseover) row  
                 if (i == HighlightedItemIndex) {
                     using (var brush = new SolidBrush(_theme.HighlightedBackColor)) {
-                        e.Graphics.FillRectangle(brush, textRect);
+                        e.Graphics.FillRectangle(brush, itemBody);
                     }
                     using (var pen = new Pen(_theme.HighlightedBorderColor)) {
-                        e.Graphics.DrawRectangle(pen, penRect);
+                        e.Graphics.DrawRectangle(pen, itemBorder);
                     }
                 }
-                // Center text vertically
-                Point centeredPoint = new Point(textRect.Left, textRect.Height / 2 - Font.Height / 2 + textRect.Y);
-                TextRenderer.DrawText(e.Graphics, VisibleItems[i].GetDisplayText(), Font, centeredPoint, _theme.ForeColor);
+                // Draw image if available
+                if ((ImageList != null) && (VisibleItems[i].IconIndex >= 0)) {
+                    Point centeredPoint = new Point(1, itemBody.Y + itemBody.Height / 2 - ImageList.ImageSize.Height / 2);
+                    e.Graphics.DrawImage(ImageList.Images[VisibleItems[i].IconIndex], centeredPoint);
+                }
+                // Draw the text last so it is on top of everything
+                VisibleItems[i].OnPaint(new PaintSuggestionEventArgs(e.Graphics, e.ClipRectangle) {
+                    Font = Font,
+                    TextRect = itemBody,
+                    Theme = _theme,
+                }
+                );
             }
             base.OnPaint(e);
         }
 
         /// <summary>
-        /// Handles the font property changing and raises the <see cref="Control.FontChanged"/> event.
+        /// Handle the font changing and raise the <see cref="Control.FontChanged"/> event.
         /// </summary>
         /// <param name="e">Event data.</param>
         protected override void OnFontChanged(EventArgs e) {
             base.OnFontChanged(e);
-            // Add some vertical padding
-            ItemHeight = Font.Height + FONT_HEIGHT_PADDING;
+            MeasureItems();
         }
 
         /// <summary>
         /// Handles the mouse leaving the list and raises the <see cref="Control.MouseLeave"/> event.
         /// </summary>
-        /// <param name="e">The mouse info about the mouse leave event.</param>
+        /// <param name="e">Event data.</param>
         protected override void OnMouseLeave(EventArgs e) {
             base.OnMouseLeave(e);
             // Clear the highlighted item index
@@ -192,21 +251,18 @@ namespace CodeEditor_Components
         /// <summary>
         /// Handles the mouse moving inside the list and raises the <see cref="Control.MouseMove"/> event.
         /// </summary>
-        /// <param name="e">The mouse info about the mouse move event.</param>
+        /// <param name="e">Mouse event data.</param>
         protected override void OnMouseMove(MouseEventArgs e) {
             base.OnMouseMove(e);
             // Update the highlighted item index
-            int index = GetIndexFromPoint(e.Location);
-            if (index != HighlightedItemIndex) {
-                HighlightedItemIndex = index;
-                Invalidate();
-            }
+            HighlightedItemIndex = GetIndexFromPoint(e.Location);
+            Invalidate();
         }
 
         /// <summary>
         /// Handles mouse clicks on the list and raises the <see cref="Control.MouseClick"/> event.
         /// </summary>
-        /// <param name="e">The mouse info about the mouse click.</param>
+        /// <param name="e">Mouse event data.</param>
         protected override void OnMouseClick(MouseEventArgs e) {
             base.OnMouseClick(e);
             if (e.Button == MouseButtons.Left) {
@@ -218,7 +274,7 @@ namespace CodeEditor_Components
         /// <summary>
         /// Handles double mouse clicks on the list and raises the <see cref="Control.MouseDoubleClick"/> event.
         /// </summary>
-        /// <param name="e">The mouse info about the mouse double click.</param>
+        /// <param name="e">Mouse event data.</param>
         protected override void OnMouseDoubleClick(MouseEventArgs e) {
             base.OnMouseDoubleClick(e);
             if (e.Button == MouseButtons.Left) {
@@ -228,58 +284,106 @@ namespace CodeEditor_Components
             }
         }
 
+        /// <summary>
+        /// Handles the mousewheel event. Note: Suppresses the <see cref="Control.MouseWheel"/> event to avoid system handling.
+        /// </summary>
+        /// <param name="e">Mouse event data.</param>
+        protected override void OnMouseWheel(MouseEventArgs e) {
+            // If the mouse wheel delta is positive, move up one item.
+            if (e.Delta > 0) {
+                VerticalScroll.Value = Math.Max(VerticalScroll.Value - ItemHeight, 0);
+            }
+            // If the mouse wheel delta is negative, move down one item.
+            if (e.Delta < 0) {
+                VerticalScroll.Value = Math.Min(VerticalScroll.Value + ItemHeight, VerticalScroll.Maximum);
+            }
+            PerformLayout();
+            OnMouseMove(e);
+            // Don't raise base event:
+            /* base.OnMouseWheel(e); */
+        }
+
+        /// <summary>
+        /// Handles key presses. Using this event over standard KeyDown/KeyPress because UserControl has trouble keeping focus.
+        /// </summary>
+        /// <param name="msg"><see cref="Message"/> by reference to process.</param>
+        /// <param name="keyData"><see cref="Keys"/> value to process.</param>
+        /// <returns></returns>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+            if (Parent is SuggestionDropDown host) {
+                if (host.Manager.ProcessKey(keyData)) {
+                    return true;
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         // Display the tooltip when the timer hits the specified interval.
         private void ToolTipLaunchTimer_Tick(object sender, EventArgs e) {
             _toolTipLaunchTimer.Stop();
             ShowToolTip(VisibleItems[SelectedItemIndex]);
         }
 
-
         #endregion Events & Handlers
 
         #region Methods
 
         /// <summary>
-        /// Clamps the given value to the given range.
+        /// Shows a tooltip for the given item.
         /// </summary>
-        /// <param name="value">Value to clamp.</param>
-        /// <param name="min">Minimum acceptable value.</param>
-        /// <param name="max">Maximum acceptable value.</param>
-        /// <returns>The given value if it is between max and min, inclusive. Otherwise returns the limit that value exceeds.</returns>
-        private int Clamp(int value, int min, int max) {
-            return (value < min) ? min : (value > max) ? max : value;
+        /// <param name="item"><see cref="SuggestionItem"/> for which the tooltip will be displayed.</param>
+        public void ShowToolTip(SuggestionItem item) {
+            string title = item.ToolTipTitle;
+            string text = item.ToolTipText;
+
+            if (string.IsNullOrEmpty(title) && string.IsNullOrEmpty(text)) {
+                _toolTip.Hide(this);
+                _toolTip.RemoveAll();
+                return;
+            }
+            else {
+                bool hasText = !string.IsNullOrEmpty(text);
+                _toolTip.ToolTipTitle = hasText ? title : null;
+                _toolTip.ToolTipText = hasText ? text : title;
+                Point location = new Point(Width + TOOLTIP_PADDING, GetPointFromIndex(SelectedItemIndex).Y);
+                // Switch sides if the tooltip will cross the screen boundary
+                if (Parent.PointToScreen(location).X + _toolTip.Size.Width > Screen.FromControl(this).Bounds.Right) {
+                    location.Offset(-(Width + _toolTip.Size.Width + 2 * TOOLTIP_PADDING), 0);
+                }
+                _toolTip.Show(hasText ? text : title, this, location);
+            }
         }
 
         /// <summary>
-        /// Gets the list index of the specified point.
+        /// Release the resources of the components that are part of this <see cref="SuggestionList"/> instance.
         /// </summary>
-        /// <param name="point"><see cref="Point"/> for which to find the list index.</param>
-        /// <returns>Integer representing the list index that corresponds to the given point.</returns>
-        private int GetIndexFromPoint(Point point) {
-            return (point.Y + VerticalScroll.Value) / ItemHeight;
+        /// <param name="disposing">Set to true to release resources.</param>
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
+                _toolTip.Dispose();
+                _toolTipLaunchTimer.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         /// <summary>
-        /// Starts the timer so that the tooltip will be displayed if double-click does not occur within the timer interval.
+        /// Hide list UI elements.
         /// </summary>
-        private void StartToolTipCountdown(int interval = 1000) {
-            _toolTipLaunchTimer.Stop();
-            _toolTipLaunchTimer.Interval = interval;
-            _toolTipLaunchTimer.Start();
+        internal void Close() {
+            _toolTip.Hide(this);
         }
 
         /// <summary>
         /// Configures the vertical scroll bar based on the item height and visible items.
         /// </summary>
         private void ConfigureScroll() {
-            if ((VisibleItems != null) && (_oldItemCount != VisibleItems.Count)) {
-                VerticalScroll.SmallChange = ItemHeight;
-                VerticalScroll.LargeChange = ItemHeight * 3;
-                int totalHeight = ItemHeight * VisibleItems.Count;
-                Height = Math.Min(totalHeight, MaximumSize.Height);
-                AutoScrollMinSize = new Size(0, totalHeight);
-                _oldItemCount = VisibleItems.Count;
+            if ((VisibleItems == null) || (_oldItemCount == VisibleItems.Count)) {
+                return;
             }
+            VerticalScroll.SmallChange = ItemHeight;
+            VerticalScroll.LargeChange = ItemHeight * 3;
+            AutoScrollMinSize = new Size(0, ItemHeight * VisibleItems.Count + Margin.Size.Height + Location.Y);
+            _oldItemCount = VisibleItems.Count;
         }
 
         /// <summary>
@@ -291,55 +395,55 @@ namespace CodeEditor_Components
                 VerticalScroll.Value = SelectedItemIndex * ItemHeight;
             }
             else if (y > (ClientSize.Height - ItemHeight)) {
-                // Selected item is at the bottom
-                //VerticalScroll.Value = Math.Min(VerticalScroll.Maximum, (SelectedItemIndex * ItemHeight) - ClientSize.Height + ItemHeight);
-                // Selected item is at the top
-                VerticalScroll.Value = Math.Min(VerticalScroll.Maximum, SelectedItemIndex * ItemHeight);
+                VerticalScroll.Value = Math.Min(VerticalScroll.Maximum, (SelectedItemIndex * ItemHeight) - ClientSize.Height + ItemHeight + 1);
             }
+            PerformLayout();
         }
 
-        // Hide list UI elements as necessary
-        internal void Close() {
+        /// <summary>
+        /// Gets the list index of the specified point.
+        /// </summary>
+        /// <param name="point"><see cref="Point"/> for which to find the list index.</param>
+        /// <returns>Integer representing the list index that corresponds to the given point.</returns>
+        public int GetIndexFromPoint(Point point) {
+            return (point.Y + VerticalScroll.Value) / ItemHeight;
+        }
+
+        /// <summary>
+        /// Returns the location of the the list item at the given index relative to the list origin.
+        /// </summary>
+        /// <param name="index">Item index for which the location will be returned.</param>
+        /// <returns><see cref="Point"/> representing the location of the item at the given index.</returns>
+        public Point GetPointFromIndex(int index) {
+            return new Point(0, index * ItemHeight - VerticalScroll.Value);
+        }
+
+        /// <summary>
+        /// Starts the timer so that the tooltip will be displayed if double-click does not occur within the timer interval.
+        /// </summary>
+        private void StartToolTipCountdown(int interval = 1000) {
             _toolTip.Hide(this);
+            _toolTipLaunchTimer.Stop();
+            _toolTipLaunchTimer.Interval = interval;
+            _toolTipLaunchTimer.Start();
         }
 
-        /// <summary>
-        /// Cleanup.
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected override void Dispose(bool disposing) {
-            if (disposing) {
-                _toolTip.Dispose();
-                _toolTipLaunchTimer.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        /// <summary>
-        /// Shows a tooltip for the given item.
-        /// </summary>
-        /// <param name="item"><see cref="SuggestionItem"/> for which the tooltip will be displayed.</param>
-        public void ShowToolTip(SuggestionItem item) {
-            string title = item.ToolTipTitle;
-            string text = item.ToolTipText;
-
-            if (string.IsNullOrEmpty(title)) {
-                _toolTip.Hide(this);
-                _toolTip.RemoveAll();
-                return;
-            }
-            else {
-                bool hasText = !string.IsNullOrEmpty(text);
-                _toolTip.ToolTipTitle = hasText ? title : null;
-                // Position will be wrong if tooltip will run off edge of screen, consider custom drawing
-                _toolTip.Show(hasText ? text : title, this, Width + 3, 0);
-                //_toolTip.Active = true;
+        // Sets the width of the list by measuring each item and determining the maximum width.
+        private void MeasureItems() {
+            int textLength, maxTextLength = 0;
+            if (_visibleItems != null) {
+                foreach (var item in _visibleItems) {
+                    textLength = item.GetDisplayText().Length;
+                    if (textLength > maxTextLength) {
+                        maxTextLength = textLength;
+                        ItemWidth = TextRenderer.MeasureText(item.GetDisplayText(), Font).Width;
+                    }
+                }
             }
         }
 
         #endregion Methods
     }
-
 
     /// <summary>
     /// Class to represent the color theme of a <see cref="SuggestionList"/>.
@@ -353,10 +457,10 @@ namespace CodeEditor_Components
         /// </summary>
         public ListTheme() {
             ForeColor = Color.Black;
+            ImageBackColor = Color.White;
             BackColorEven = Color.White;
             BackColorOdd = Color.LightGray;
             SelectedBackColor = Color.LightSkyBlue;
-            SelectedBorderColor = Color.DodgerBlue;
             HighlightedBackColor = Color.Transparent;
             HighlightedBorderColor = Color.DodgerBlue;
         }
@@ -369,6 +473,11 @@ namespace CodeEditor_Components
         /// Foreground color.
         /// </summary>
         public Color ForeColor { get; set; }
+
+        /// <summary>
+        /// Image background color.
+        /// </summary>
+        public Color ImageBackColor { get; set; }
 
         /// <summary>
         /// Background color for even-numbered rows.
@@ -385,10 +494,6 @@ namespace CodeEditor_Components
         /// </summary>
         public Color SelectedBackColor { get; set; }
 
-        /// <summary>
-        /// Selected item border color.
-        /// </summary>
-        public Color SelectedBorderColor { get; set; }
 
         /// <summary>
         /// Highlighted item color.

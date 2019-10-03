@@ -22,7 +22,7 @@ namespace CodeEditor_Components
 
         #endregion Fields
 
-        #region Events
+        #region Events & Handlers
 
         /// <summary>
         /// Text validation event that must be handled to process new text.
@@ -33,12 +33,12 @@ namespace CodeEditor_Components
         /// Raise event to parent so registered delegates receive it.
         /// </summary>
         /// <param name="sender">The TextBox that needs to validate text.</param>
-        /// <param name="e">The new text to be validated.</param>
+        /// <param name="e">Text validating event data.</param>
         protected virtual void OnTextValidating(object sender, TextValidatingEventArgs e) {
             TextValidating?.Invoke(sender, e);
         }
 
-        #endregion Events
+        #endregion Events & Handlers
 
         #region Methods
 

@@ -59,19 +59,17 @@ namespace CodeEditor_Components
             if (!Visible || !AutoPosition) {
                 return;
             }
-            else {
-                Location = Manager.AvoidSelection(Bounds);
-            }
+            Location = Manager.AvoidSelection(Bounds);
         }
 
         #endregion Methods
 
-        #region Event Handlers
+        #region Events & Handlers
 
         /// <summary>
         /// Handle the form loading event by centering the <see cref="Dialog"/> in the editor.
         /// </summary>
-        /// <param name="e">Information about the loading event.</param>
+        /// <param name="e">Event data.</param>
         protected override void OnLoad(EventArgs e) {
             if (Manager != null) {
                 CenterDialog(Manager.Editor.Target);
@@ -83,7 +81,7 @@ namespace CodeEditor_Components
         /// <summary>
         /// Handle the form closing event by hiding the <see cref="Dialog"/> instead of closing it.
         /// </summary>
-        /// <param name="e">Information about the closing event.</param>
+        /// <param name="e">Event data.</param>
         protected override void OnFormClosing(FormClosingEventArgs e) {
             if (e.CloseReason == CloseReason.UserClosing) {
                 e.Cancel = true;
@@ -93,7 +91,7 @@ namespace CodeEditor_Components
             base.OnFormClosing(e);
         }
 
-        #endregion Event Handlers
+        #endregion Events & Handlers
 
     }
 }

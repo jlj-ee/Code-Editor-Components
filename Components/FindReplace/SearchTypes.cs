@@ -40,7 +40,7 @@ namespace CodeEditor_Components.SearchTypes
         /// </summary>
         /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <returns><see cref="TextRange"/> where the result was found. 
-        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        /// <see cref="TextRange.Start"/> will be the same as <see cref="TextRange.End"/> if no match was found.</returns>
         public virtual TextRange Find(IEditor editor) {
             // Search capability can be implemented by children
             return new TextRange();
@@ -54,16 +54,16 @@ namespace CodeEditor_Components.SearchTypes
         /// <param name="replaceString">String to replace any matches.</param>
         /// <param name="wrap">Set to true to allow the search to wrap back to the beginning of the text.</param>
         /// <returns><see cref="TextRange"/> where the result was found. 
-        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        /// <see cref="TextRange.Start"/> will be the same as <see cref="TextRange.End"/> if no match was found.</returns>
         public virtual TextRange Replace(IEditor editor, string replaceString, bool wrap) {
             TextRange searchRange = SearchRange;
             TextRange selRange = new TextRange(editor.SelectionStart, editor.SelectionEnd);
             SearchRange = selRange;
-            if ((selRange.end - selRange.start) > 0) {
+            if ((selRange.End - selRange.Start) > 0) {
                 if (selRange.Equals(Find(editor))) {
                     ReplaceText(editor, replaceString);
                     if (SearchUp) {
-                        editor.GoToPosition(selRange.start);
+                        editor.GoToPosition(selRange.Start);
                     }
                 }
             }
@@ -101,13 +101,13 @@ namespace CodeEditor_Components.SearchTypes
             while (true) {
                 // Keep searching until no more matches are found
                 TextRange findRange = Find(editor);
-                if (findRange.start == findRange.end) {
+                if (findRange.Start == findRange.End) {
                     break;
                 }
                 else {
                     results.Add(findRange);
                     findCount++;
-                    SearchRange = new TextRange(findRange.end, SearchRange.end);
+                    SearchRange = new TextRange(findRange.End, SearchRange.End);
                 }
             }
             SearchRange = searchRange;
@@ -120,24 +120,24 @@ namespace CodeEditor_Components.SearchTypes
         /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <param name="wrap">Set to true to allow the search to wrap back to the beginning of the text.</param>
         /// <returns><see cref="TextRange"/> where the result was found. 
-        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        /// <see cref="TextRange.Start"/> will be the same as <see cref="TextRange.End"/> if no match was found.</returns>
         public TextRange FindNext(IEditor editor, bool wrap) {
             TextRange findRange;
 
             int caret = editor.CurrentPosition;
             // If the caret is outside the search range, simply return the first match in the range
-            if (!(caret >= SearchRange.start && caret <= SearchRange.end)) {
+            if (!(caret >= SearchRange.Start && caret <= SearchRange.End)) {
                 findRange = Find(editor);
             }
             else {
                 // Otherwise, find the next match after the caret
                 TextRange originalSearchRange = SearchRange;
-                SearchRange = new TextRange(caret, originalSearchRange.end);
+                SearchRange = new TextRange(caret, originalSearchRange.End);
                 findRange = Find(editor);
 
                 // If there were no results, try wrapping back to the top if enabled
-                if ((findRange.start == findRange.end) && wrap) {
-                    SearchRange = new TextRange(originalSearchRange.start, caret);
+                if ((findRange.Start == findRange.End) && wrap) {
+                    SearchRange = new TextRange(originalSearchRange.Start, caret);
                     findRange = Find(editor);
                 }
             }
@@ -150,31 +150,31 @@ namespace CodeEditor_Components.SearchTypes
         /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <param name="wrap">Set to true to allow the search to wrap back to the end of the text.</param>
         /// <returns><see cref="TextRange"/> where the result was found. 
-        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        /// <see cref="TextRange.Start"/> will be the same as <see cref="TextRange.End"/> if no match was found.</returns>
         public TextRange FindPrevious(IEditor editor, bool wrap) {
             SearchUp = true;
             TextRange findRange;
 
             int caret = editor.CurrentPosition;
             // If the caret is outside the search range, simply return the last match in the range
-            if (!(caret >= SearchRange.start && caret <= SearchRange.end)) {
+            if (!(caret >= SearchRange.Start && caret <= SearchRange.End)) {
                 findRange = Find(editor);
             }
             else {
                 int anchor = editor.AnchorPosition;
                 // If the anchor is otuside the search range, set the anchor to the caret
-                if (!(anchor >= SearchRange.start && anchor <= SearchRange.end)) {
+                if (!(anchor >= SearchRange.Start && anchor <= SearchRange.End)) {
                     anchor = caret;
                 }
 
                 // Otherwise, find the previous match before the anchor
                 TextRange originalSearchRange = SearchRange;
-                SearchRange = new TextRange(originalSearchRange.start, anchor);
+                SearchRange = new TextRange(originalSearchRange.Start, anchor);
                 findRange = Find(editor);
 
                 // If there were no results, try wrapping back to the end if enabled
-                if ((findRange.start == findRange.end) && wrap) {
-                    SearchRange = new TextRange(anchor, originalSearchRange.end);
+                if ((findRange.Start == findRange.End) && wrap) {
+                    SearchRange = new TextRange(anchor, originalSearchRange.End);
                     findRange = Find(editor);
                 }
             }
@@ -188,13 +188,11 @@ namespace CodeEditor_Components.SearchTypes
         /// <returns>True if the objects are equal.</returns>
         public new virtual bool Equals(object obj) {
             //Check for null and compare run-time types.
-            if ((obj != null) && GetType().Equals(obj.GetType())) {
-                //return SearchRange.Equals(((Search)obj).SearchRange);
-                return true;
-            }
-            else {
+            if ((obj == null) || !GetType().Equals(obj.GetType())) {
                 return false;
             }
+            //return SearchRange.Equals(((Search)obj).SearchRange);
+            return true;
         }
     }
 
@@ -250,27 +248,18 @@ namespace CodeEditor_Components.SearchTypes
         /// </summary>
         /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <returns><see cref="TextRange"/> where the result was found. 
-        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        /// <see cref="TextRange.Start"/> will be the same as <see cref="TextRange.End"/> if no match was found.</returns>
         public override TextRange Find(IEditor editor) {
-            TextRange findRange = base.Find(editor);
             if (string.IsNullOrEmpty(SearchString)) {
-                return findRange;
+                return new TextRange();
+            }
+            if (SearchUp) {
+                editor.SearchRange = new TextRange(SearchRange.End, SearchRange.Start);
             }
             else {
-                if (SearchUp) {
-                    editor.SearchRange = new TextRange(SearchRange.end, SearchRange.start);
-                }
-                else {
-                    editor.SearchRange = SearchRange;
-                }
-                if (editor.Search(SearchString, MatchCase, WholeWord) == -1) {
-                    return findRange;
-                }
-                else {
-                    findRange = editor.SearchRange;
-                }
-                return findRange;
+                editor.SearchRange = SearchRange;
             }
+            return editor.Search(SearchString, MatchCase, WholeWord);
         }
 
         /// <summary>
@@ -298,15 +287,15 @@ namespace CodeEditor_Components.SearchTypes
             int diff = replaceString.Length - SearchString.Length;
             while (true) {
                 TextRange findRange = Find(editor);
-                if (findRange.start == findRange.end) {
+                if (findRange.Start == findRange.End) {
                     break;
                 }
                 else {
-                    editor.SelectionStart = findRange.start;
-                    editor.SelectionEnd = findRange.end;
+                    editor.SelectionStart = findRange.Start;
+                    editor.SelectionEnd = findRange.End;
                     editor.ReplaceSelection(replaceString);
-                    findRange.end = findRange.start + replaceString.Length;
-                    SearchRange = new TextRange(findRange.end, SearchRange.end + diff);
+                    findRange.End = findRange.Start + replaceString.Length;
+                    SearchRange = new TextRange(findRange.End, SearchRange.End + diff);
 
                     results.Add(findRange);
                     findCount++;
@@ -333,13 +322,11 @@ namespace CodeEditor_Components.SearchTypes
         /// <param name="obj">Object to compare.</param>
         /// <returns>True if the objects are equal.</returns>
         public override bool Equals(object obj) {
-            if (base.Equals(obj)) {
-                StringSearch q = (StringSearch)obj;
-                return SearchString.Equals(q.SearchString) && MatchCase.Equals(q.MatchCase) && WholeWord.Equals(q.WholeWord);
-            }
-            else {
+            if (!base.Equals(obj)) {
                 return false;
             }
+            StringSearch q = (StringSearch)obj;
+            return SearchString.Equals(q.SearchString) && MatchCase.Equals(q.MatchCase) && WholeWord.Equals(q.WholeWord);
         }
     }
 
@@ -378,10 +365,10 @@ namespace CodeEditor_Components.SearchTypes
         /// </summary>
         /// <param name="editor"><see cref="IEditor"/> control to search.</param>
         /// <returns><see cref="TextRange"/> where the result was found. 
-        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        /// <see cref="TextRange.Start"/> will be the same as <see cref="TextRange.End"/> if no match was found.</returns>
         public override TextRange Find(IEditor editor) {
             TextRange findRange = base.Find(editor);
-            string text = editor.GetTextRange(SearchRange.start, SearchRange.end - SearchRange.start + 1);
+            string text = editor.GetTextRange(SearchRange.Start, SearchRange.End - SearchRange.Start + 1);
             Match m = SearchExpression.Match(text);
 
             if (!m.Success) {
@@ -405,7 +392,7 @@ namespace CodeEditor_Components.SearchTypes
         /// <param name="editor"><see cref="IEditor"/> control to edit.</param>
         /// <param name="replaceString">String to replace the selection. Can be a regular expression pattern.</param>
         protected override void ReplaceText(IEditor editor, string replaceString) {
-            string searchRangeText = editor.GetTextRange(SearchRange.start, SearchRange.end - SearchRange.start);
+            string searchRangeText = editor.GetTextRange(SearchRange.Start, SearchRange.End - SearchRange.Start);
             editor.ReplaceSelection(SearchExpression.Replace(searchRangeText, replaceString));
         }
 
@@ -423,12 +410,12 @@ namespace CodeEditor_Components.SearchTypes
             try { editor.BeginUndoAction(); }
             catch (NotImplementedException) { }
 
-            string text = editor.GetTextRange(SearchRange.start, SearchRange.end - SearchRange.start + 1);
+            string text = editor.GetTextRange(SearchRange.Start, SearchRange.End - SearchRange.Start + 1);
             SearchExpression.Replace(text,
                 new MatchEvaluator(
                     delegate (Match m) {
                         string replacement = m.Result(replaceString);
-                        int start = SearchRange.start + m.Index + replaceOffset;
+                        int start = SearchRange.Start + m.Index + replaceOffset;
                         int end = start + m.Length;
 
                         replaceCount++;
@@ -464,17 +451,15 @@ namespace CodeEditor_Components.SearchTypes
         /// <param name="obj">Object to compare.</param>
         /// <returns>True if the objects are equal.</returns>
         public override bool Equals(object obj) {
-            if (base.Equals(obj)) {
-                return SearchExpression.ToString().Equals(((RegexSearch)obj).SearchExpression.ToString());
-            }
-            else {
+            if (!base.Equals(obj)) {
                 return false;
             }
+            return SearchExpression.ToString().Equals(((RegexSearch)obj).SearchExpression.ToString());
         }
 
         // Returns the CharacterRange that represents the current match found in the search range in the given text
         private static TextRange GetMatchRange(TextRange searchRange, string text, Match m) {
-            int start = searchRange.start + text.Substring(0, m.Index).Length;
+            int start = searchRange.Start + text.Substring(0, m.Index).Length;
             int end = text.Substring(m.Index, m.Length).Length;
             TextRange range = new TextRange(start, start + end);
             return range;

@@ -31,6 +31,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestForm));
             this.scintilla1 = new ScintillaNET.Scintilla();
             this.GotoButton = new System.Windows.Forms.Button();
@@ -39,6 +40,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.scintilla2 = new ScintillaNET.Scintilla();
+            this.suggestionImages = new System.Windows.Forms.ImageList(this.components);
             this.incrementalSearcherToolStrip = new CodeEditor_Components.IncrementalSearcher();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -133,6 +135,24 @@
             this.scintilla2.Enter += new System.EventHandler(this.GenericScintilla_Enter);
             this.scintilla2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GenericScintilla_KeyDown);
             // 
+            // suggestionImages
+            // 
+            this.suggestionImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("suggestionImages.ImageStream")));
+            this.suggestionImages.TransparentColor = System.Drawing.Color.Transparent;
+            this.suggestionImages.Images.SetKeyName(0, "100.png");
+            this.suggestionImages.Images.SetKeyName(1, "101.png");
+            this.suggestionImages.Images.SetKeyName(2, "102.png");
+            this.suggestionImages.Images.SetKeyName(3, "103.png");
+            this.suggestionImages.Images.SetKeyName(4, "104.png");
+            this.suggestionImages.Images.SetKeyName(5, "105.png");
+            this.suggestionImages.Images.SetKeyName(6, "106.png");
+            this.suggestionImages.Images.SetKeyName(7, "107.png");
+            this.suggestionImages.Images.SetKeyName(8, "108.png");
+            this.suggestionImages.Images.SetKeyName(9, "109.png");
+            this.suggestionImages.Images.SetKeyName(10, "110.png");
+            this.suggestionImages.Images.SetKeyName(11, "111.png");
+            this.suggestionImages.Images.SetKeyName(12, "112.png");
+            // 
             // incrementalSearcherToolStrip
             // 
             this.incrementalSearcherToolStrip.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -176,6 +196,7 @@
         private System.Windows.Forms.TabPage tabPage2;
         private ScintillaNET.Scintilla scintilla2;
         private CodeEditor_Components.IncrementalSearcher incrementalSearcherToolStrip;
+        private System.Windows.Forms.ImageList suggestionImages;
     }
 }
 

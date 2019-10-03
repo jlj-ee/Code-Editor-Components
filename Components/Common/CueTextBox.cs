@@ -28,7 +28,6 @@ namespace CodeEditor_Components
         private ContextMenuStrip _contextMenuStrip;
         private Button _clearButton;
         private bool _clearButtonVisible;
-        private const int EM_SETMARGINS = 0xD3;
 
         #endregion Fields
 
@@ -232,9 +231,12 @@ namespace CodeEditor_Components
         /// <param name="e">Event data.</param>
         protected override void OnPaint(PaintEventArgs e) {
             if (ClearButtonVisible) {
-                _clearButton.Size = new Size(20, ClientSize.Height - 2);
+                _clearButton.Size = new Size(17, ClientSize.Height - 2);
                 _clearButton.Location = new Point(ClientSize.Width - _clearButton.Width - 1, 1);
+
             }
+            const int EM_SETMARGINS = 0xD3;
+            SendMessage(Handle, EM_SETMARGINS, (IntPtr)2, (IntPtr)((ClearButtonVisible ? _clearButton.Width : 0) << 16));
             base.OnPaint(e);
         }
 
@@ -253,6 +255,10 @@ namespace CodeEditor_Components
 
         #region Methods
 
+        /// <summary>
+        /// Release the resources of the components that are part of this <see cref="CueTextBox"/> instance.
+        /// </summary>
+        /// <param name="disposing">Set to true to release resources.</param>
         protected override void Dispose(bool disposing) {
             if (disposing) {
                 _cueContainer.Dispose();
@@ -305,14 +311,13 @@ namespace CodeEditor_Components
                 Controls.Remove(_clearButton);
                 _clearButton.Click -= ClearButton_Click;
                 _clearButton.Dispose();
-                // Send EM_SETMARGINS to allow text to display to the end
-                SendMessage(Handle, EM_SETMARGINS, (IntPtr)2, (IntPtr)2);
             }
         }
 
         // Show the button in the TextBox
         private void AddClearButton() {
             _clearButton = new Button() {
+                Padding = new Padding(0, 0, 1, 0),
                 Cursor = Cursors.Default,
                 Image = Properties.Resources.clear,
                 BackColor = Color.Transparent,
@@ -330,12 +335,10 @@ namespace CodeEditor_Components
             };
             _clearButton.Click += ClearButton_Click;
             Controls.Add(_clearButton);
-            // Send EM_SETMARGINS to prevent text from disappearing underneath the button
-            SendMessage(Handle, EM_SETMARGINS, (IntPtr)2, (IntPtr)(_clearButton.Width << 16));
         }
 
         // pinvoke for sending a message to the TextBox
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 
         #endregion Methods

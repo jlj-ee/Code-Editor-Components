@@ -6,6 +6,7 @@ using CodeEditor_Components;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Drawing;
 
 #endregion Using Directives
 
@@ -36,25 +37,27 @@ namespace Demo
 
             incrementalSearcherToolStrip.Manager = MyFindReplace;
 
-            MySuggestions = new Suggestions(MyScintillaWrapper);
+            MySuggestions = new Suggestions(MyScintillaWrapper) {
+                UseEditorFont = true,
+            };
             var items = new List<SuggestionItem> {
                 new SuggestionItem("Scintilla") {
+                    IconIndex = 0,
                     ToolTipTitle = "Scintilla Text Editor",
                     ToolTipText = "Scintilla is a free source code editing component.",
                 },
-                new SuggestionItem("Item 1"),
-                new SuggestionItem("Item 2"),
-                new SuggestionItem("Item 3"),
-                new SuggestionItem("Item 4"),
-                new SuggestionItem("Item 5"),
-                new SuggestionItem("Item 6"),
-                new SuggestionItem("Item 7"),
-                new SuggestionItem("Item 8"),
-                new SuggestionItem("Item 9"),
-                new SuggestionItem("Item 10"),
-                new SuggestionItem("Item 11")
+                new SuggestionItem("Item 1") { IconIndex = 1, ToolTipTitle = "Item 1" },
+                new SuggestionItem("Item 2") { IconIndex = 2, ToolTipTitle = "Item 2" },
+                new SuggestionItem("Item 3") { IconIndex = 3, ToolTipTitle = "Item 3" },
+                new SuggestionItem("Item 4") { IconIndex = 4, ToolTipTitle = "Item 4" },
+                new SuggestionItem("Item 5") { IconIndex = 5, ToolTipText = "Item 5" },
+                new SuggestionItem("Item 6") { IconIndex = 6, ToolTipText = "Item 6" },
+                new SuggestionItem("Item 7") { IconIndex = 7, ToolTipText = "Item 7" },
+                new SuggestionItem("Item 8") { IconIndex = 8, ToolTipText = "Item 8" },
+                new SuggestionItem("Item 9") { IconIndex = 9, ToolTipText = "Item 9" },
             };
             MySuggestions.SetSuggestions(items);
+            MySuggestions.SuggestionImages = suggestionImages;
         }
 
         private void Form_TabChanged(object sender, EventArgs e) {

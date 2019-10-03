@@ -95,7 +95,7 @@ namespace CodeEditor_Components
         }
 
         /// <summary>
-        /// Release the resources of the components that are part of this <see cref="GoTo"/>.
+        /// Release the resources of the components that are part of this <see cref="GoTo"/> instance.
         /// </summary>
         /// <param name="disposing">Set to true to release resources.</param>
         protected override void Dispose(bool disposing) {

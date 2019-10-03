@@ -120,7 +120,7 @@ namespace CodeEditor_Components
         /// <summary>
         /// Handle key presses on the <see cref="FindReplaceDialog"/> and raise the <see cref="Control.KeyDown"/> event.
         /// </summary>
-        /// <param name="e">The key info about the key(s) pressed.</param>
+        /// <param name="e">Key event data.</param>
         protected override void OnKeyDown(KeyEventArgs e) {
             // Raise KeyPressed event so it can be handled externally
             KeyPressed?.Invoke(this, e);
@@ -146,7 +146,7 @@ namespace CodeEditor_Components
         /// Represents the method that will handle key presses on the <see cref="FindReplaceDialog"/>.
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e">The key info about the key(s) pressed.</param>
+        /// <param name="e">Key event data.</param>
         public delegate void KeyPressedHandler(object sender, KeyEventArgs e);
 
         #endregion Dialog
@@ -444,7 +444,7 @@ namespace CodeEditor_Components
         // Returns a search object representing the search query
         private Search GetQuery() {
             if (chkSearchSelection.Checked) {
-                if (_searchRange.start == _searchRange.end) {
+                if (_searchRange.Start == _searchRange.End) {
                     _searchRange = _manager.GetEditorSelectedRange();
                 }
             }

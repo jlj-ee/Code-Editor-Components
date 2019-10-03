@@ -52,7 +52,7 @@ namespace CodeEditor_Components
         /// <summary>
         /// Gets or sets whether this <see cref="IncrementalSearcher"/> instance is a tool item, i.e. embedded on an external panel.
         /// </summary>
-        [Category("Tool Item"), DefaultValue(true)]
+        [Category("Tool Item"), DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public bool ToolItem {
             get { return _toolItem; }
             set {
@@ -65,13 +65,13 @@ namespace CodeEditor_Components
                     panel.BackColor = Color.LightGray;
                     panel.BorderStyle = BorderStyle.FixedSingle;
                 }
-
+                Invalidate();
             }
         }
 
         #endregion Properties
 
-        #region Event Handlers
+        #region Events & Handlers
 
         #region Dialog
 
@@ -192,7 +192,7 @@ namespace CodeEditor_Components
 
         #endregion Text
 
-        #endregion Event Handlers
+        #endregion Events & Handlers
 
         #region Methods
 
@@ -229,17 +229,17 @@ namespace CodeEditor_Components
 
         private TextRange SearchWrapper(bool searchUp) {
             Search query = GetQuery();
-            int pos = Manager.GetEditorSelectedRange().start;
-            int length = Manager.GetEditorWholeRange().end;
+            int pos = Manager.GetEditorSelectedRange().Start;
+            int length = Manager.GetEditorWholeRange().End;
             query.SearchRange = new TextRange(pos, length);
 
             TextRange findRange = Manager.Find(query, false);
-            if (findRange.start == findRange.end) {
+            if (findRange.Start == findRange.End) {
                 query.SearchRange = new TextRange(0, pos);
                 findRange = Manager.Find(query, false);
             }
 
-            if (findRange.start != findRange.end) {
+            if (findRange.Start != findRange.End) {
                 query.SearchRange = new TextRange(0, length);
             }
             Manager.FindAll(query, false, chkHighlightAll.Checked);

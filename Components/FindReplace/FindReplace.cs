@@ -58,7 +58,7 @@ namespace CodeEditor_Components
 
         #endregion Constructors
 
-        #region Events
+        #region Events & Handlers
 
         /// <summary>
         /// Triggered when a key is pressed on the <see cref="FindReplaceDialog"/>.
@@ -69,10 +69,10 @@ namespace CodeEditor_Components
         /// Handler for the key press on the <see cref="FindReplaceDialog"/>.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="e">The key info of the key(s) pressed.</param>
+        /// <param name="e">Key event data.</param>
         public delegate void KeyPressedHandler(object sender, KeyEventArgs e);
 
-        #endregion Events
+        #endregion Events & Handlers
 
         #region Properties
 
@@ -84,6 +84,10 @@ namespace CodeEditor_Components
                 return base.Editor;
             }
             set {
+                if (base.Editor != null) {
+                    Editor.Target.Controls.Remove(SearchBar);
+                    Editor.Target.Resize -= ResizeEditor;
+                }
                 base.Editor = value;
                 Editor.Target.Controls.Add(SearchBar);
                 Editor.Target.Resize += ResizeEditor;
@@ -133,7 +137,7 @@ namespace CodeEditor_Components
         /// <param name="query"><see cref="Search"/> object to use to perform the search.</param>
         /// <param name="searchUp">Search direction. Set to true to search from the bottom up.</param>
         /// <returns><see cref="TextRange"/> where the result was found. 
-        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        /// <see cref="TextRange.Start"/> will be the same as <see cref="TextRange.End"/> if no match was found.</returns>
         public TextRange Find(Search query, bool searchUp) {
             query.SearchUp = searchUp;
             return query.Find(Editor);
@@ -156,7 +160,7 @@ namespace CodeEditor_Components
         /// <param name="query"><see cref="Search"/> object to use to perform the search.</param>
         /// <param name="wrap">Set to true to allow the search to wrap back to the beginning of the text.</param>
         /// <returns><see cref="TextRange"/> where the result was found. 
-        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        /// <see cref="TextRange.Start"/> will be the same as <see cref="TextRange.End"/> if no match was found.</returns>
         public TextRange FindNext(Search query, bool wrap) {
             UpdateResults(query);
             return query.FindNext(Editor, wrap);
@@ -168,7 +172,7 @@ namespace CodeEditor_Components
         /// <param name="query"><see cref="Search"/> object to use to perform the search.</param>
         /// <param name="wrap">Set to true to allow the search to wrap back to the beginning of the text.</param>
         /// <returns><see cref="TextRange"/> where the result was found. 
-        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        /// <see cref="TextRange.Start"/> will be the same as <see cref="TextRange.End"/> if no match was found.</returns>
         public TextRange FindPrevious(Search query, bool wrap) {
             UpdateResults(query);
             return query.FindPrevious(Editor, wrap);
@@ -181,7 +185,7 @@ namespace CodeEditor_Components
         /// /// <param name="replaceString">String to replace any matches. Can be a regular expression pattern.</param>
         /// <param name="wrap">Set to true to allow the search to wrap back to the beginning of the text.</param>
         /// <returns><see cref="TextRange"/> where the result was found. 
-        /// <see cref="TextRange.start"/> will be the same as <see cref="TextRange.end"/> if no match was found.</returns>
+        /// <see cref="TextRange.Start"/> will be the same as <see cref="TextRange.End"/> if no match was found.</returns>
         public TextRange Replace(Search query, string replaceString, bool wrap) {
             UpdateResults(query);
             return query.Replace(Editor, replaceString, wrap);
@@ -192,8 +196,6 @@ namespace CodeEditor_Components
         /// </summary>
         /// <param name="query"><see cref="Search"/> object to use to perform the search.</param>
         /// <param name="replaceString">String to replace any matches. Can be a regular expression pattern if <c>query</c> is a <see cref="RegexSearch"/> object.</param>
-        /// <param name="mark">Set to true to use the configured margin marker to indicate the lines where matches were found.</param>
-        /// <param name="highlight">Set to true to use the configured text indicator to highlight each match.</param>
         /// <returns></returns>
         public List<TextRange> ReplaceAll(Search query, string replaceString) {
             return query.ReplaceAll(Editor, replaceString);
@@ -298,13 +300,11 @@ namespace CodeEditor_Components
         /// <param name="r"><see cref="TextRange"/> of interest.</param>
         /// <returns>String in the format "i out of N matches".</returns>
         public string GetIndexString(TextRange r) {
-            if ((CurrentResults != null) && (r.end != r.start)) {
-                var index = CurrentResults.BinarySearch(r) + 1;
-                return index + " out of " + CurrentResults.Count + " matches";
-            }
-            else {
+            if ((CurrentResults == null) || (r.End != r.Start)) {
                 return string.Empty;
             }
+            var index = CurrentResults.BinarySearch(r) + 1;
+            return index + " out of " + CurrentResults.Count + " matches";
         }
 
         /// <summary>
@@ -344,7 +344,7 @@ namespace CodeEditor_Components
         }
 
         /// <summary>
-        /// Highlight ranges in the <see cref="IEditor"/> text using the configured <see cref="Indicator"/>.
+        /// Highlight ranges in the <see cref="IEditor"/> text.
         /// </summary>
         /// <param name="ranges">List of ranges to which highlighting should be applied.</param>
         public void Highlight(List<TextRange> ranges) {
@@ -356,7 +356,7 @@ namespace CodeEditor_Components
         }
 
         /// <summary>
-        /// Mark lines in the <see cref="IEditor"/> text using the configured <see cref="Marker"/>.
+        /// Mark lines in the <see cref="IEditor"/> text.
         /// </summary>
         /// <param name="ranges">List of ranges to which marks should be applied.</param>
         public void Mark(List<TextRange> ranges) {
@@ -369,28 +369,26 @@ namespace CodeEditor_Components
 
         // Update query/results and mark/highlight results as necessary.
         private List<TextRange> UpdateResults(Search query, bool mark = false, bool highlight = true) {
-            if (query != null) {
-                if (!query.Equals(CurrentQuery) || _updateHighlights) {
-                    CurrentQuery = query;
-                    CurrentResults = query.FindAll(Editor);
-                    if (highlight) {
-                        Highlight(CurrentResults);
-                    }
-                    else {
-                        ClearAllHighlights();
-                    }
-                    if (mark) {
-                        Mark(CurrentResults);
-                    }
-                    else {
-                        ClearAllMarks();
-                    }
-                }
-                return CurrentResults;
-            }
-            else {
+            if (query == null) {
                 return Clear();
             }
+            if (!query.Equals(CurrentQuery) || _updateHighlights) {
+                CurrentQuery = query;
+                CurrentResults = query.FindAll(Editor);
+                if (highlight) {
+                    Highlight(CurrentResults);
+                }
+                else {
+                    ClearAllHighlights();
+                }
+                if (mark) {
+                    Mark(CurrentResults);
+                }
+                else {
+                    ClearAllMarks();
+                }
+            }
+            return CurrentResults;
         }
 
         #endregion Search UI
@@ -412,7 +410,7 @@ namespace CodeEditor_Components
                 // Expected: Search object could be null if constructor fails due to improper regex
                 return null;
             }
-            if (result.start == result.end) {
+            if (result.Start == result.End) {
                 statusText = "Match not found";
             }
             else {
@@ -504,7 +502,7 @@ namespace CodeEditor_Components
         }
 
         /// <summary>
-        /// Release the resources of the components that are part of this <see cref="FindReplace"/>.
+        /// Release the resources of the components that are part of this <see cref="FindReplace"/> instance.
         /// </summary>
         /// <param name="disposing">Set to true to release resources.</param>
         protected override void Dispose(bool disposing) {
@@ -522,7 +520,7 @@ namespace CodeEditor_Components
         /// <param name="up">Direction to check.</param>
         /// <returns>True if the given range is below the current selection when the direction is up, or above the current selection when the direction is down.</returns>
         public bool HasWrapped(TextRange range, bool up) {
-            return up ? (range.start > Editor.CurrentPosition) : (range.start < Editor.AnchorPosition);
+            return up ? (range.Start > Editor.CurrentPosition) : (range.Start < Editor.AnchorPosition);
         }
 
         /// <summary>
@@ -538,8 +536,8 @@ namespace CodeEditor_Components
         /// </summary>
         /// <param name="range">Target <see cref="TextRange"/> that will be the new editor selection.</param>
         public void SetEditorSelection(TextRange range) {
-            Editor.SelectionStart = range.start;
-            Editor.SelectionEnd = range.end;
+            Editor.SelectionStart = range.Start;
+            Editor.SelectionEnd = range.End;
             Editor.ScrollToCaret();
         }
 

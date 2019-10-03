@@ -103,8 +103,8 @@ namespace CodeEditor_Components
         /// <param name="text">The string for which to search.</param>
         /// <param name="matchCase">If true, a match will only occur with text that matches the case of the search string.</param>
         /// <param name="wholeWord">If true, a match will only occur if the characters before and after are not word characters.</param>
-        /// <returns>Character index where the match was found. If not found, returns -1.</returns>
-        int Search(string text, bool matchCase, bool wholeWord);
+        /// <returns><see cref="TextRange"/> where the match was found. If not found, returns an empty TextRange.</returns>
+        TextRange Search(string text, bool matchCase, bool wholeWord);
 
         /// <summary>
         /// Replaces the current text selection with the given text.

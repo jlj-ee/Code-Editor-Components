@@ -39,7 +39,7 @@ namespace CodeEditor_Components
         #region Methods
 
         /// <summary>
-        /// Gets the font from the default <see cref="Style"/> of the <see cref="IEditor"/> control.
+        /// Gets the font from the <see cref="IEditor"/> control.
         /// </summary>
         /// <returns><see cref="Font"/> that the control is using, scaled by the zoom factor.</returns>
         public Font GetEditorFont() {

@@ -17,12 +17,12 @@ namespace CodeEditor_Components
         /// <summary>
         /// Character position index immediately preceding the first character in the range.
         /// </summary>
-        public int start;
+        public int Start;
 
         /// <summary>
         /// Character position immediately following the last character in the range.
         /// </summary>
-        public int end;
+        public int End;
 
         /// <summary>
         /// Specifies a range of characters. If the cpMin and cpMax members are equal, the range is empty.
@@ -31,8 +31,8 @@ namespace CodeEditor_Components
         /// <param name="startIndex">The minimum, or start position.</param>
         /// <param name="endIndex">The maximum, or end position.</param>
         public TextRange(int startIndex, int endIndex) {
-            start = startIndex;
-            end = endIndex;
+            Start = startIndex;
+            End = endIndex;
         }
 
         /// <summary>
@@ -47,15 +47,13 @@ namespace CodeEditor_Components
                 return 1;
             }
             TextRange r = (TextRange)obj;
-            if (start.CompareTo(r.start) != 0) {
-                return start.CompareTo(r.start);
+            if (Start.CompareTo(r.Start) != 0) {
+                return Start.CompareTo(r.Start);
             }
-            else if (end.CompareTo(r.end) != 0) {
-                return end.CompareTo(r.end);
+            if (End.CompareTo(r.End) != 0) {
+                return End.CompareTo(r.End);
             }
-            else {
-                return 0;
-            }
+            return 0;
         }
     }
 }

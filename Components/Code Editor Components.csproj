@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Code Editor Components.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -96,6 +97,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Suggestions\Suggestions.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Suggestions\SuggestionToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="TextBoxWrapper.cs" />

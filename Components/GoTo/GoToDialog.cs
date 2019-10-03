@@ -77,7 +77,7 @@ namespace CodeEditor_Components
 
         #endregion Properties
 
-        #region Event Handlers
+        #region Events & Handlers
 
         /// <summary>
         /// Handle activation of the <see cref="GoToDialog"/> and raise the <see cref="Form.Activated"/> event.
@@ -123,6 +123,6 @@ namespace CodeEditor_Components
             Hide();
         }
 
-        #endregion Event Handlers
+        #endregion Events & Handlers
     }
 }

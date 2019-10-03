@@ -18,7 +18,7 @@ namespace CodeEditor_Components
         #region Fields
 
         private readonly TextBox _textBox;
-        private ScrollEventHandler _scroll;
+        private TextRange _searchRange;
 
         #endregion Fields
 
@@ -145,11 +145,13 @@ namespace CodeEditor_Components
             set { SelectionStart = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the current character index range in which to search.
+        /// </summary>
         public TextRange SearchRange {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get { return _searchRange; }
+            set { _searchRange = value; }
         }
-
 
         #endregion Properties
 
@@ -162,12 +164,15 @@ namespace CodeEditor_Components
         /// <param name="matchCase">If true, a match will only occur with text that matches the case of the search string.</param>
         /// <param name="wholeWord">If true, a match will only occur if the characters before and after are not word characters.</param>
         /// <returns>Character index where the match was found. If not found, returns -1.</returns>
-        public int Search(string text, bool matchCase, bool wholeWord) {
+        public TextRange Search(string text, bool matchCase, bool wholeWord) {
             string testValue = wholeWord ? "\\b" + text + "\\b" : text;
             var regex = new Regex(Regex.Escape(testValue), matchCase ? RegexOptions.None : RegexOptions.IgnoreCase);
-            var match = regex.Match(_textBox.Text);
+            var match = regex.Match(_textBox.Text, SearchRange.Start, SearchRange.End - SearchRange.Start);
 
-            return match.Captures.Count == 0 ? -1 : match.Groups[0].Index;
+            if (match.Captures.Count == 0) {
+                return new TextRange();
+            }
+            return new TextRange(match.Groups[0].Index, match.Groups[0].Index + match.Groups[0].Length - 1);
         }
 
         /// <summary>
@@ -214,18 +219,32 @@ namespace CodeEditor_Components
             _textBox.ScrollToCaret();
         }
 
+        /// <summary>
+        /// Highlights text in the given ranges.
+        /// </summary>
+        /// <param name="ranges"><see cref="List{TextRange}"/> of selections to highlight.</param>
         public void Highlight(List<TextRange> ranges) {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Removes all highlights from the text.
+        /// </summary>
         public void ClearAllHighlights() {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Marks lines on which the given ranges are located
+        /// </summary>
+        /// <param name="ranges"><see cref="List{TextRange}"/> of selections to mark.</param>
         public void Mark(List<TextRange> ranges) {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Removes all marks from the text.
+        /// </summary>
         public void ClearAllMarks() {
             throw new NotImplementedException();
         }
@@ -277,10 +296,7 @@ namespace CodeEditor_Components
         /// <summary>
         ///  Handle when the targeted control is scrolled.
         /// </summary>
-        public event ScrollEventHandler Scroll {
-            add { _scroll += value; }
-            remove { _scroll -= value; }
-        }
+        public event ScrollEventHandler Scroll = delegate { };
 
         /// <summary>
         /// Handle when the keyboard is pressed when the targeted control has focus.
