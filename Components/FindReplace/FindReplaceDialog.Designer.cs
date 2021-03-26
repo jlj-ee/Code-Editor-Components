@@ -48,7 +48,7 @@ namespace CodeEditor_Components
             this.pnlStandardOptions = new System.Windows.Forms.Panel();
             this.chkWholeWord = new System.Windows.Forms.CheckBox();
             this.chkMatchCase = new System.Windows.Forms.CheckBox();
-            this.pnlRegexpOptions = new System.Windows.Forms.Panel();
+            this.pnlRegExOptions = new System.Windows.Forms.Panel();
             this.chkSingleline = new System.Windows.Forms.CheckBox();
             this.chkMultiline = new System.Windows.Forms.CheckBox();
             this.chkIgnorePatternWhitespace = new System.Windows.Forms.CheckBox();
@@ -62,6 +62,25 @@ namespace CodeEditor_Components
             this.cmdRecentFind = new System.Windows.Forms.Button();
             this.cmdExtCharAndRegExFind = new System.Windows.Forms.Button();
             this.tpgReplace = new System.Windows.Forms.TabPage();
+            this.grpOptions_Replace = new System.Windows.Forms.GroupBox();
+            this.pnlStandardOptions_Replace = new System.Windows.Forms.Panel();
+            this.chkWholeWord_Replace = new System.Windows.Forms.CheckBox();
+            this.chkMatchCase_Replace = new System.Windows.Forms.CheckBox();
+            this.pnlRegExOptions_Replace = new System.Windows.Forms.Panel();
+            this.chkSingleline_Replace = new System.Windows.Forms.CheckBox();
+            this.chkMultiline_Replace = new System.Windows.Forms.CheckBox();
+            this.chkIgnorePatternWhitespace_Replace = new System.Windows.Forms.CheckBox();
+            this.chkIgnoreCase_Replace = new System.Windows.Forms.CheckBox();
+            this.pnlSearchType_Replace = new System.Windows.Forms.Panel();
+            this.chkWrap_Replace = new System.Windows.Forms.CheckBox();
+            this.rdoStandard_Replace = new System.Windows.Forms.RadioButton();
+            this.rdoRegex_Replace = new System.Windows.Forms.RadioButton();
+            this.lblSearchType_Replace = new System.Windows.Forms.Label();
+            this.rdoExtended_Replace = new System.Windows.Forms.RadioButton();
+            this.chkSearchSelection_Replace = new System.Windows.Forms.CheckBox();
+            this.pnlFindNav_Replace = new System.Windows.Forms.Panel();
+            this.btnFindPrevious_Replace = new System.Windows.Forms.Button();
+            this.btnFindNext_Replace = new System.Windows.Forms.Button();
             this.btnSwap = new System.Windows.Forms.Button();
             this.btnReplaceAll = new System.Windows.Forms.Button();
             this.pnlReplaceNav = new System.Windows.Forms.Panel();
@@ -71,6 +90,11 @@ namespace CodeEditor_Components
             this.cmdRecentReplace = new System.Windows.Forms.Button();
             this.cmdExtCharAndRegExReplace = new System.Windows.Forms.Button();
             this.txtReplace = new CodeEditor_Components.CueTextBox();
+            this.pnlFind_Replace = new System.Windows.Forms.Panel();
+            this.txtFind_Replace = new CodeEditor_Components.CueTextBox();
+            this.lblFind_Replace = new System.Windows.Forms.Label();
+            this.cmdRecentFind_Replace = new System.Windows.Forms.Button();
+            this.cmdExtCharAndRegExFind_Replace = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.mnuExtendedChar = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -123,12 +147,18 @@ namespace CodeEditor_Components
             this.pnlSearchType.SuspendLayout();
             this.grpOptions.SuspendLayout();
             this.pnlStandardOptions.SuspendLayout();
-            this.pnlRegexpOptions.SuspendLayout();
+            this.pnlRegExOptions.SuspendLayout();
             this.pnlFindNav.SuspendLayout();
             this.pnlFind.SuspendLayout();
             this.tpgReplace.SuspendLayout();
+            this.grpOptions_Replace.SuspendLayout();
+            this.pnlStandardOptions_Replace.SuspendLayout();
+            this.pnlRegExOptions_Replace.SuspendLayout();
+            this.pnlSearchType_Replace.SuspendLayout();
+            this.pnlFindNav_Replace.SuspendLayout();
             this.pnlReplaceNav.SuspendLayout();
             this.pnlReplace.SuspendLayout();
+            this.pnlFind_Replace.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.mnuExtendedChar.SuspendLayout();
             this.mnuRegExCharFind.SuspendLayout();
@@ -256,6 +286,7 @@ namespace CodeEditor_Components
             this.chkWrap.TabIndex = 3;
             this.chkWrap.Text = "&Wrap";
             this.chkWrap.UseVisualStyleBackColor = true;
+            this.chkWrap.CheckedChanged += new System.EventHandler(this.ChkWrap_CheckedChanged);
             // 
             // rdoStandard
             // 
@@ -311,6 +342,7 @@ namespace CodeEditor_Components
             this.chkSearchSelection.TabIndex = 4;
             this.chkSearchSelection.Text = "Search Selection";
             this.chkSearchSelection.UseVisualStyleBackColor = true;
+            this.chkSearchSelection.CheckedChanged += new System.EventHandler(this.ChkSearchSelection_CheckedChanged);
             // 
             // grpOptions
             // 
@@ -318,7 +350,7 @@ namespace CodeEditor_Components
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grpOptions.BackColor = System.Drawing.Color.White;
             this.grpOptions.Controls.Add(this.pnlStandardOptions);
-            this.grpOptions.Controls.Add(this.pnlRegexpOptions);
+            this.grpOptions.Controls.Add(this.pnlRegExOptions);
             this.grpOptions.ForeColor = System.Drawing.SystemColors.ControlText;
             this.grpOptions.Location = new System.Drawing.Point(0, 103);
             this.grpOptions.Name = "grpOptions";
@@ -346,6 +378,7 @@ namespace CodeEditor_Components
             this.chkWholeWord.TabIndex = 1;
             this.chkWholeWord.Text = "Whole Wor&d";
             this.chkWholeWord.UseVisualStyleBackColor = true;
+            this.chkWholeWord.CheckedChanged += new System.EventHandler(this.ChkWholeWord_CheckedChanged);
             // 
             // chkMatchCase
             // 
@@ -356,18 +389,19 @@ namespace CodeEditor_Components
             this.chkMatchCase.TabIndex = 0;
             this.chkMatchCase.Text = "Match &Case";
             this.chkMatchCase.UseVisualStyleBackColor = true;
+            this.chkMatchCase.CheckedChanged += new System.EventHandler(this.ChkMatchCase_CheckedChanged);
             // 
-            // pnlRegexpOptions
+            // pnlRegExOptions
             // 
-            this.pnlRegexpOptions.Controls.Add(this.chkSingleline);
-            this.pnlRegexpOptions.Controls.Add(this.chkMultiline);
-            this.pnlRegexpOptions.Controls.Add(this.chkIgnorePatternWhitespace);
-            this.pnlRegexpOptions.Controls.Add(this.chkIgnoreCase);
-            this.pnlRegexpOptions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlRegexpOptions.Location = new System.Drawing.Point(3, 17);
-            this.pnlRegexpOptions.Name = "pnlRegexpOptions";
-            this.pnlRegexpOptions.Size = new System.Drawing.Size(475, 57);
-            this.pnlRegexpOptions.TabIndex = 1;
+            this.pnlRegExOptions.Controls.Add(this.chkSingleline);
+            this.pnlRegExOptions.Controls.Add(this.chkMultiline);
+            this.pnlRegExOptions.Controls.Add(this.chkIgnorePatternWhitespace);
+            this.pnlRegExOptions.Controls.Add(this.chkIgnoreCase);
+            this.pnlRegExOptions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlRegExOptions.Location = new System.Drawing.Point(3, 17);
+            this.pnlRegExOptions.Name = "pnlRegExOptions";
+            this.pnlRegExOptions.Size = new System.Drawing.Size(475, 57);
+            this.pnlRegExOptions.TabIndex = 1;
             // 
             // chkSingleline
             // 
@@ -378,6 +412,7 @@ namespace CodeEditor_Components
             this.chkSingleline.TabIndex = 10;
             this.chkSingleline.Text = "Singleline";
             this.chkSingleline.UseVisualStyleBackColor = true;
+            this.chkSingleline.CheckedChanged += new System.EventHandler(this.ChkSingleline_CheckedChanged);
             // 
             // chkMultiline
             // 
@@ -388,6 +423,7 @@ namespace CodeEditor_Components
             this.chkMultiline.TabIndex = 11;
             this.chkMultiline.Text = "Multiline";
             this.chkMultiline.UseVisualStyleBackColor = true;
+            this.chkMultiline.CheckedChanged += new System.EventHandler(this.ChkMultiline_CheckedChanged);
             // 
             // chkIgnorePatternWhitespace
             // 
@@ -398,6 +434,7 @@ namespace CodeEditor_Components
             this.chkIgnorePatternWhitespace.TabIndex = 9;
             this.chkIgnorePatternWhitespace.Text = "I&gnore Pattern Whitespace";
             this.chkIgnorePatternWhitespace.UseVisualStyleBackColor = true;
+            this.chkIgnorePatternWhitespace.CheckedChanged += new System.EventHandler(this.ChkIgnorePatternWhitespace_CheckedChanged);
             // 
             // chkIgnoreCase
             // 
@@ -408,6 +445,7 @@ namespace CodeEditor_Components
             this.chkIgnoreCase.TabIndex = 8;
             this.chkIgnoreCase.Text = "&Ignore Case";
             this.chkIgnoreCase.UseVisualStyleBackColor = true;
+            this.chkIgnoreCase.CheckedChanged += new System.EventHandler(this.ChkIgnoreCase_CheckedChanged);
             // 
             // pnlFindNav
             // 
@@ -469,12 +507,13 @@ namespace CodeEditor_Components
             this.txtFind.Name = "txtFind";
             this.txtFind.Size = new System.Drawing.Size(370, 21);
             this.txtFind.TabIndex = 0;
+            this.txtFind.TextChanged += new System.EventHandler(this.TxtFind_TextChanged);
             // 
             // lblFind
             // 
             this.lblFind.AutoSize = true;
             this.lblFind.BackColor = System.Drawing.Color.White;
-            this.lblFind.Location = new System.Drawing.Point(27, 3);
+            this.lblFind.Location = new System.Drawing.Point(27, 6);
             this.lblFind.Margin = new System.Windows.Forms.Padding(3);
             this.lblFind.Name = "lblFind";
             this.lblFind.Size = new System.Drawing.Size(27, 13);
@@ -510,10 +549,14 @@ namespace CodeEditor_Components
             // 
             // tpgReplace
             // 
+            this.tpgReplace.Controls.Add(this.grpOptions_Replace);
+            this.tpgReplace.Controls.Add(this.pnlSearchType_Replace);
+            this.tpgReplace.Controls.Add(this.pnlFindNav_Replace);
             this.tpgReplace.Controls.Add(this.btnSwap);
             this.tpgReplace.Controls.Add(this.btnReplaceAll);
             this.tpgReplace.Controls.Add(this.pnlReplaceNav);
             this.tpgReplace.Controls.Add(this.pnlReplace);
+            this.tpgReplace.Controls.Add(this.pnlFind_Replace);
             this.tpgReplace.Location = new System.Drawing.Point(4, 22);
             this.tpgReplace.Name = "tpgReplace";
             this.tpgReplace.Padding = new System.Windows.Forms.Padding(3);
@@ -521,6 +564,227 @@ namespace CodeEditor_Components
             this.tpgReplace.TabIndex = 1;
             this.tpgReplace.Text = "Replace";
             this.tpgReplace.UseVisualStyleBackColor = true;
+            // 
+            // grpOptions_Replace
+            // 
+            this.grpOptions_Replace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpOptions_Replace.BackColor = System.Drawing.Color.White;
+            this.grpOptions_Replace.Controls.Add(this.pnlStandardOptions_Replace);
+            this.grpOptions_Replace.Controls.Add(this.pnlRegExOptions_Replace);
+            this.grpOptions_Replace.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.grpOptions_Replace.Location = new System.Drawing.Point(0, 103);
+            this.grpOptions_Replace.Name = "grpOptions_Replace";
+            this.grpOptions_Replace.Size = new System.Drawing.Size(481, 77);
+            this.grpOptions_Replace.TabIndex = 11;
+            this.grpOptions_Replace.TabStop = false;
+            this.grpOptions_Replace.Text = "Options";
+            // 
+            // pnlStandardOptions_Replace
+            // 
+            this.pnlStandardOptions_Replace.Controls.Add(this.chkWholeWord_Replace);
+            this.pnlStandardOptions_Replace.Controls.Add(this.chkMatchCase_Replace);
+            this.pnlStandardOptions_Replace.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlStandardOptions_Replace.Location = new System.Drawing.Point(3, 17);
+            this.pnlStandardOptions_Replace.Name = "pnlStandardOptions_Replace";
+            this.pnlStandardOptions_Replace.Size = new System.Drawing.Size(475, 57);
+            this.pnlStandardOptions_Replace.TabIndex = 0;
+            // 
+            // chkWholeWord_Replace
+            // 
+            this.chkWholeWord_Replace.AutoSize = true;
+            this.chkWholeWord_Replace.Location = new System.Drawing.Point(10, 26);
+            this.chkWholeWord_Replace.Name = "chkWholeWord_Replace";
+            this.chkWholeWord_Replace.Size = new System.Drawing.Size(85, 17);
+            this.chkWholeWord_Replace.TabIndex = 1;
+            this.chkWholeWord_Replace.Text = "Whole Wor&d";
+            this.chkWholeWord_Replace.UseVisualStyleBackColor = true;
+            this.chkWholeWord_Replace.CheckedChanged += new System.EventHandler(this.ChkWholeWord_CheckedChanged);
+            // 
+            // chkMatchCase_Replace
+            // 
+            this.chkMatchCase_Replace.AutoSize = true;
+            this.chkMatchCase_Replace.Location = new System.Drawing.Point(10, 3);
+            this.chkMatchCase_Replace.Name = "chkMatchCase_Replace";
+            this.chkMatchCase_Replace.Size = new System.Drawing.Size(82, 17);
+            this.chkMatchCase_Replace.TabIndex = 0;
+            this.chkMatchCase_Replace.Text = "Match &Case";
+            this.chkMatchCase_Replace.UseVisualStyleBackColor = true;
+            this.chkMatchCase_Replace.CheckedChanged += new System.EventHandler(this.ChkMatchCase_CheckedChanged);
+            // 
+            // pnlRegExOptions_Replace
+            // 
+            this.pnlRegExOptions_Replace.Controls.Add(this.chkSingleline_Replace);
+            this.pnlRegExOptions_Replace.Controls.Add(this.chkMultiline_Replace);
+            this.pnlRegExOptions_Replace.Controls.Add(this.chkIgnorePatternWhitespace_Replace);
+            this.pnlRegExOptions_Replace.Controls.Add(this.chkIgnoreCase_Replace);
+            this.pnlRegExOptions_Replace.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlRegExOptions_Replace.Location = new System.Drawing.Point(3, 17);
+            this.pnlRegExOptions_Replace.Name = "pnlRegExOptions_Replace";
+            this.pnlRegExOptions_Replace.Size = new System.Drawing.Size(475, 57);
+            this.pnlRegExOptions_Replace.TabIndex = 1;
+            // 
+            // chkSingleline_Replace
+            // 
+            this.chkSingleline_Replace.AutoSize = true;
+            this.chkSingleline_Replace.Location = new System.Drawing.Point(10, 26);
+            this.chkSingleline_Replace.Name = "chkSingleline_Replace";
+            this.chkSingleline_Replace.Size = new System.Drawing.Size(70, 17);
+            this.chkSingleline_Replace.TabIndex = 10;
+            this.chkSingleline_Replace.Text = "Singleline";
+            this.chkSingleline_Replace.UseVisualStyleBackColor = true;
+            this.chkSingleline_Replace.CheckedChanged += new System.EventHandler(this.ChkSingleline_CheckedChanged);
+            // 
+            // chkMultiline_Replace
+            // 
+            this.chkMultiline_Replace.AutoSize = true;
+            this.chkMultiline_Replace.Location = new System.Drawing.Point(101, 26);
+            this.chkMultiline_Replace.Name = "chkMultiline_Replace";
+            this.chkMultiline_Replace.Size = new System.Drawing.Size(64, 17);
+            this.chkMultiline_Replace.TabIndex = 11;
+            this.chkMultiline_Replace.Text = "Multiline";
+            this.chkMultiline_Replace.UseVisualStyleBackColor = true;
+            this.chkMultiline_Replace.CheckedChanged += new System.EventHandler(this.ChkMultiline_CheckedChanged);
+            // 
+            // chkIgnorePatternWhitespace_Replace
+            // 
+            this.chkIgnorePatternWhitespace_Replace.AutoSize = true;
+            this.chkIgnorePatternWhitespace_Replace.Location = new System.Drawing.Point(101, 3);
+            this.chkIgnorePatternWhitespace_Replace.Name = "chkIgnorePatternWhitespace_Replace";
+            this.chkIgnorePatternWhitespace_Replace.Size = new System.Drawing.Size(156, 17);
+            this.chkIgnorePatternWhitespace_Replace.TabIndex = 9;
+            this.chkIgnorePatternWhitespace_Replace.Text = "I&gnore Pattern Whitespace";
+            this.chkIgnorePatternWhitespace_Replace.UseVisualStyleBackColor = true;
+            this.chkIgnorePatternWhitespace_Replace.CheckedChanged += new System.EventHandler(this.ChkIgnorePatternWhitespace_CheckedChanged);
+            // 
+            // chkIgnoreCase_Replace
+            // 
+            this.chkIgnoreCase_Replace.AutoSize = true;
+            this.chkIgnoreCase_Replace.Location = new System.Drawing.Point(10, 3);
+            this.chkIgnoreCase_Replace.Name = "chkIgnoreCase_Replace";
+            this.chkIgnoreCase_Replace.Size = new System.Drawing.Size(85, 17);
+            this.chkIgnoreCase_Replace.TabIndex = 8;
+            this.chkIgnoreCase_Replace.Text = "&Ignore Case";
+            this.chkIgnoreCase_Replace.UseVisualStyleBackColor = true;
+            this.chkIgnoreCase_Replace.CheckedChanged += new System.EventHandler(this.ChkIgnoreCase_CheckedChanged);
+            // 
+            // pnlSearchType_Replace
+            // 
+            this.pnlSearchType_Replace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlSearchType_Replace.BackColor = System.Drawing.Color.White;
+            this.pnlSearchType_Replace.Controls.Add(this.chkWrap_Replace);
+            this.pnlSearchType_Replace.Controls.Add(this.rdoStandard_Replace);
+            this.pnlSearchType_Replace.Controls.Add(this.rdoRegex_Replace);
+            this.pnlSearchType_Replace.Controls.Add(this.lblSearchType_Replace);
+            this.pnlSearchType_Replace.Controls.Add(this.rdoExtended_Replace);
+            this.pnlSearchType_Replace.Controls.Add(this.chkSearchSelection_Replace);
+            this.pnlSearchType_Replace.Location = new System.Drawing.Point(0, 59);
+            this.pnlSearchType_Replace.Name = "pnlSearchType_Replace";
+            this.pnlSearchType_Replace.Size = new System.Drawing.Size(480, 42);
+            this.pnlSearchType_Replace.TabIndex = 10;
+            // 
+            // chkWrap_Replace
+            // 
+            this.chkWrap_Replace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkWrap_Replace.AutoSize = true;
+            this.chkWrap_Replace.Checked = true;
+            this.chkWrap_Replace.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkWrap_Replace.Location = new System.Drawing.Point(367, 2);
+            this.chkWrap_Replace.Name = "chkWrap_Replace";
+            this.chkWrap_Replace.Size = new System.Drawing.Size(52, 17);
+            this.chkWrap_Replace.TabIndex = 3;
+            this.chkWrap_Replace.Text = "&Wrap";
+            this.chkWrap_Replace.UseVisualStyleBackColor = true;
+            this.chkWrap_Replace.CheckedChanged += new System.EventHandler(this.ChkWrap_CheckedChanged);
+            // 
+            // rdoStandard_Replace
+            // 
+            this.rdoStandard_Replace.AutoSize = true;
+            this.rdoStandard_Replace.Checked = true;
+            this.rdoStandard_Replace.Location = new System.Drawing.Point(19, 21);
+            this.rdoStandard_Replace.Name = "rdoStandard_Replace";
+            this.rdoStandard_Replace.Size = new System.Drawing.Size(69, 17);
+            this.rdoStandard_Replace.TabIndex = 0;
+            this.rdoStandard_Replace.TabStop = true;
+            this.rdoStandard_Replace.Text = "&Standard";
+            this.rdoStandard_Replace.UseVisualStyleBackColor = true;
+            this.rdoStandard_Replace.CheckedChanged += new System.EventHandler(this.RdoSearchTypeReplace_CheckedChanged);
+            // 
+            // rdoRegex_Replace
+            // 
+            this.rdoRegex_Replace.AutoSize = true;
+            this.rdoRegex_Replace.Location = new System.Drawing.Point(239, 21);
+            this.rdoRegex_Replace.Name = "rdoRegex_Replace";
+            this.rdoRegex_Replace.Size = new System.Drawing.Size(117, 17);
+            this.rdoRegex_Replace.TabIndex = 2;
+            this.rdoRegex_Replace.Text = "Regular &Expression";
+            this.rdoRegex_Replace.UseVisualStyleBackColor = true;
+            this.rdoRegex_Replace.CheckedChanged += new System.EventHandler(this.RdoSearchTypeReplace_CheckedChanged);
+            // 
+            // lblSearchType_Replace
+            // 
+            this.lblSearchType_Replace.AutoSize = true;
+            this.lblSearchType_Replace.Location = new System.Drawing.Point(3, 2);
+            this.lblSearchType_Replace.Name = "lblSearchType_Replace";
+            this.lblSearchType_Replace.Size = new System.Drawing.Size(67, 13);
+            this.lblSearchType_Replace.TabIndex = 0;
+            this.lblSearchType_Replace.Text = "Search Type";
+            // 
+            // rdoExtended_Replace
+            // 
+            this.rdoExtended_Replace.AutoSize = true;
+            this.rdoExtended_Replace.Location = new System.Drawing.Point(94, 21);
+            this.rdoExtended_Replace.Name = "rdoExtended_Replace";
+            this.rdoExtended_Replace.Size = new System.Drawing.Size(139, 17);
+            this.rdoExtended_Replace.TabIndex = 1;
+            this.rdoExtended_Replace.Text = "E&xtended (\\n, \\r, \\t, \\0)";
+            this.rdoExtended_Replace.UseVisualStyleBackColor = true;
+            this.rdoExtended_Replace.CheckedChanged += new System.EventHandler(this.RdoSearchTypeReplace_CheckedChanged);
+            // 
+            // chkSearchSelection_Replace
+            // 
+            this.chkSearchSelection_Replace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkSearchSelection_Replace.AutoSize = true;
+            this.chkSearchSelection_Replace.Location = new System.Drawing.Point(367, 21);
+            this.chkSearchSelection_Replace.Name = "chkSearchSelection_Replace";
+            this.chkSearchSelection_Replace.Size = new System.Drawing.Size(105, 17);
+            this.chkSearchSelection_Replace.TabIndex = 4;
+            this.chkSearchSelection_Replace.Text = "Search Selection";
+            this.chkSearchSelection_Replace.UseVisualStyleBackColor = true;
+            this.chkSearchSelection_Replace.CheckedChanged += new System.EventHandler(this.ChkSearchSelection_CheckedChanged);
+            // 
+            // pnlFindNav_Replace
+            // 
+            this.pnlFindNav_Replace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlFindNav_Replace.Controls.Add(this.btnFindPrevious_Replace);
+            this.pnlFindNav_Replace.Controls.Add(this.btnFindNext_Replace);
+            this.pnlFindNav_Replace.Location = new System.Drawing.Point(367, 194);
+            this.pnlFindNav_Replace.Name = "pnlFindNav_Replace";
+            this.pnlFindNav_Replace.Size = new System.Drawing.Size(110, 56);
+            this.pnlFindNav_Replace.TabIndex = 9;
+            // 
+            // btnFindPrevious_Replace
+            // 
+            this.btnFindPrevious_Replace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFindPrevious_Replace.Location = new System.Drawing.Point(2, 3);
+            this.btnFindPrevious_Replace.Name = "btnFindPrevious_Replace";
+            this.btnFindPrevious_Replace.Size = new System.Drawing.Size(107, 23);
+            this.btnFindPrevious_Replace.TabIndex = 2;
+            this.btnFindPrevious_Replace.Text = "Find &Previous";
+            this.btnFindPrevious_Replace.UseVisualStyleBackColor = true;
+            this.btnFindPrevious_Replace.Click += new System.EventHandler(this.BtnFindPrevious_Click);
+            // 
+            // btnFindNext_Replace
+            // 
+            this.btnFindNext_Replace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFindNext_Replace.Location = new System.Drawing.Point(2, 31);
+            this.btnFindNext_Replace.Name = "btnFindNext_Replace";
+            this.btnFindNext_Replace.Size = new System.Drawing.Size(107, 23);
+            this.btnFindNext_Replace.TabIndex = 0;
+            this.btnFindNext_Replace.Text = "Find &Next";
+            this.btnFindNext_Replace.UseVisualStyleBackColor = true;
+            this.btnFindNext_Replace.Click += new System.EventHandler(this.BtnFindNext_Click);
             // 
             // btnSwap
             // 
@@ -635,6 +899,74 @@ namespace CodeEditor_Components
             this.txtReplace.Size = new System.Drawing.Size(370, 21);
             this.txtReplace.TabIndex = 0;
             // 
+            // pnlFind_Replace
+            // 
+            this.pnlFind_Replace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlFind_Replace.Controls.Add(this.txtFind_Replace);
+            this.pnlFind_Replace.Controls.Add(this.lblFind_Replace);
+            this.pnlFind_Replace.Controls.Add(this.cmdRecentFind_Replace);
+            this.pnlFind_Replace.Controls.Add(this.cmdExtCharAndRegExFind_Replace);
+            this.pnlFind_Replace.Location = new System.Drawing.Point(1, 0);
+            this.pnlFind_Replace.Name = "pnlFind_Replace";
+            this.pnlFind_Replace.Size = new System.Drawing.Size(479, 29);
+            this.pnlFind_Replace.TabIndex = 8;
+            // 
+            // txtFind_Replace
+            // 
+            this.txtFind_Replace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFind_Replace.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFind_Replace.ClearButtonVisible = true;
+            this.txtFind_Replace.CueActiveColor = System.Drawing.Color.Gray;
+            this.txtFind_Replace.CueColor = System.Drawing.Color.LightGray;
+            this.txtFind_Replace.CueFont = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFind_Replace.CueText = "Find...";
+            this.txtFind_Replace.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFind_Replace.Location = new System.Drawing.Point(59, 4);
+            this.txtFind_Replace.Name = "txtFind_Replace";
+            this.txtFind_Replace.Size = new System.Drawing.Size(370, 21);
+            this.txtFind_Replace.TabIndex = 0;
+            this.txtFind_Replace.TextChanged += new System.EventHandler(this.TxtFind_TextChanged);
+            // 
+            // lblFind_Replace
+            // 
+            this.lblFind_Replace.AutoSize = true;
+            this.lblFind_Replace.BackColor = System.Drawing.Color.White;
+            this.lblFind_Replace.Location = new System.Drawing.Point(27, 3);
+            this.lblFind_Replace.Margin = new System.Windows.Forms.Padding(3);
+            this.lblFind_Replace.Name = "lblFind_Replace";
+            this.lblFind_Replace.Size = new System.Drawing.Size(27, 13);
+            this.lblFind_Replace.TabIndex = 6;
+            this.lblFind_Replace.Text = "&Find";
+            // 
+            // cmdRecentFind_Replace
+            // 
+            this.cmdRecentFind_Replace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmdRecentFind_Replace.BackgroundImage = global::CodeEditor_Components.Properties.Resources.history;
+            this.cmdRecentFind_Replace.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.cmdRecentFind_Replace.Enabled = false;
+            this.cmdRecentFind_Replace.Location = new System.Drawing.Point(430, 3);
+            this.cmdRecentFind_Replace.Name = "cmdRecentFind_Replace";
+            this.cmdRecentFind_Replace.Size = new System.Drawing.Size(23, 23);
+            this.cmdRecentFind_Replace.TabIndex = 4;
+            this.toolTip.SetToolTip(this.cmdRecentFind_Replace, "Show a list of recent search strings");
+            this.cmdRecentFind_Replace.UseVisualStyleBackColor = true;
+            this.cmdRecentFind_Replace.Click += new System.EventHandler(this.CmdRecentFind_Click);
+            // 
+            // cmdExtCharAndRegExFind_Replace
+            // 
+            this.cmdExtCharAndRegExFind_Replace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmdExtCharAndRegExFind_Replace.Enabled = false;
+            this.cmdExtCharAndRegExFind_Replace.Location = new System.Drawing.Point(453, 3);
+            this.cmdExtCharAndRegExFind_Replace.Name = "cmdExtCharAndRegExFind_Replace";
+            this.cmdExtCharAndRegExFind_Replace.Size = new System.Drawing.Size(23, 23);
+            this.cmdExtCharAndRegExFind_Replace.TabIndex = 5;
+            this.cmdExtCharAndRegExFind_Replace.Text = ">";
+            this.toolTip.SetToolTip(this.cmdExtCharAndRegExFind_Replace, "Show a list of extended characters");
+            this.cmdExtCharAndRegExFind_Replace.UseVisualStyleBackColor = true;
+            this.cmdExtCharAndRegExFind_Replace.Click += new System.EventHandler(this.CmdExtendedCharFind_Click);
+            // 
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -642,6 +974,7 @@ namespace CodeEditor_Components
             this.statusStrip.Location = new System.Drawing.Point(0, 284);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(489, 22);
+            this.statusStrip.SizingGrip = false;
             this.statusStrip.TabIndex = 1;
             // 
             // lblStatus
@@ -983,7 +1316,7 @@ namespace CodeEditor_Components
             this.Controls.Add(this.tabAll);
             this.Controls.Add(this.statusStrip);
             this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(700, 345);
@@ -1003,15 +1336,25 @@ namespace CodeEditor_Components
             this.grpOptions.ResumeLayout(false);
             this.pnlStandardOptions.ResumeLayout(false);
             this.pnlStandardOptions.PerformLayout();
-            this.pnlRegexpOptions.ResumeLayout(false);
-            this.pnlRegexpOptions.PerformLayout();
+            this.pnlRegExOptions.ResumeLayout(false);
+            this.pnlRegExOptions.PerformLayout();
             this.pnlFindNav.ResumeLayout(false);
             this.pnlFind.ResumeLayout(false);
             this.pnlFind.PerformLayout();
             this.tpgReplace.ResumeLayout(false);
+            this.grpOptions_Replace.ResumeLayout(false);
+            this.pnlStandardOptions_Replace.ResumeLayout(false);
+            this.pnlStandardOptions_Replace.PerformLayout();
+            this.pnlRegExOptions_Replace.ResumeLayout(false);
+            this.pnlRegExOptions_Replace.PerformLayout();
+            this.pnlSearchType_Replace.ResumeLayout(false);
+            this.pnlSearchType_Replace.PerformLayout();
+            this.pnlFindNav_Replace.ResumeLayout(false);
             this.pnlReplaceNav.ResumeLayout(false);
             this.pnlReplace.ResumeLayout(false);
             this.pnlReplace.PerformLayout();
+            this.pnlFind_Replace.ResumeLayout(false);
+            this.pnlFind_Replace.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.mnuExtendedChar.ResumeLayout(false);
@@ -1030,7 +1373,7 @@ namespace CodeEditor_Components
 		private System.Windows.Forms.RadioButton rdoRegex;
 		private System.Windows.Forms.RadioButton rdoStandard;
 		private System.Windows.Forms.GroupBox grpOptions;
-		private System.Windows.Forms.Panel pnlRegexpOptions;
+		private System.Windows.Forms.Panel pnlRegExOptions;
 		private System.Windows.Forms.Panel pnlStandardOptions;
 		private System.Windows.Forms.CheckBox chkWholeWord;
 		private System.Windows.Forms.CheckBox chkMatchCase;
@@ -1110,5 +1453,29 @@ namespace CodeEditor_Components
         private System.Windows.Forms.Button btnSwap;
         internal System.Windows.Forms.CheckBox chkHighlightMatches;
         internal System.Windows.Forms.CheckBox chkMarkLine;
+        private System.Windows.Forms.GroupBox grpOptions_Replace;
+        private System.Windows.Forms.Panel pnlStandardOptions_Replace;
+        private System.Windows.Forms.CheckBox chkWholeWord_Replace;
+        private System.Windows.Forms.CheckBox chkMatchCase_Replace;
+        private System.Windows.Forms.Panel pnlRegExOptions_Replace;
+        private System.Windows.Forms.CheckBox chkSingleline_Replace;
+        private System.Windows.Forms.CheckBox chkMultiline_Replace;
+        private System.Windows.Forms.CheckBox chkIgnorePatternWhitespace_Replace;
+        private System.Windows.Forms.CheckBox chkIgnoreCase_Replace;
+        private System.Windows.Forms.Panel pnlSearchType_Replace;
+        private System.Windows.Forms.CheckBox chkWrap_Replace;
+        private System.Windows.Forms.RadioButton rdoStandard_Replace;
+        private System.Windows.Forms.RadioButton rdoRegex_Replace;
+        private System.Windows.Forms.Label lblSearchType_Replace;
+        private System.Windows.Forms.RadioButton rdoExtended_Replace;
+        internal System.Windows.Forms.CheckBox chkSearchSelection_Replace;
+        private System.Windows.Forms.Panel pnlFindNav_Replace;
+        private System.Windows.Forms.Button btnFindPrevious_Replace;
+        private System.Windows.Forms.Button btnFindNext_Replace;
+        private System.Windows.Forms.Panel pnlFind_Replace;
+        internal CueTextBox txtFind_Replace;
+        private System.Windows.Forms.Label lblFind_Replace;
+        private System.Windows.Forms.Button cmdRecentFind_Replace;
+        private System.Windows.Forms.Button cmdExtCharAndRegExFind_Replace;
     }
 }

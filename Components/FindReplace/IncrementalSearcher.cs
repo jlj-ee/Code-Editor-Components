@@ -1,15 +1,12 @@
+using CodeEditor_Components.SearchTypes;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+
 namespace CodeEditor_Components
 {
-    #region Using Directives
-
-    using CodeEditor_Components.SearchTypes;
-    using System;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Text.RegularExpressions;
-    using System.Windows.Forms;
-
-    #endregion Using Directives
 
     /// <summary>
     /// Class to define the logic for a search toolbar.

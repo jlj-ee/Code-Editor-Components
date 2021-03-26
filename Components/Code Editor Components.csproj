@@ -50,7 +50,7 @@
     <Compile Include="Common\Dialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Common\TextRange.cs" />
+    <Compile Include="Common\TextStructs.cs" />
     <Compile Include="Common\CueTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -82,7 +82,7 @@
     <Compile Include="Common\ValidatingTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="IEditor.cs" />
+    <Compile Include="Common\IEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -102,7 +102,7 @@
     <Compile Include="Suggestions\SuggestionToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="TextBoxWrapper.cs" />
+    <Compile Include="Common\TextBoxWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FindReplace\FindReplaceDialog.resx">

@@ -1,13 +1,9 @@
-﻿#region Using Directives
-
-using System;
+﻿using System;
 using ScintillaNET;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using CodeEditor_Components;
-
-#endregion Using Directives
 
 namespace ScintillaNET_Components
 {
@@ -245,11 +241,20 @@ namespace ScintillaNET_Components
         /// <summary>
         /// Gets the text in the specified range.
         /// </summary>
-        /// <param name="pos">The character position at which the range starts.</param>
-        /// <param name="length">The length in number of characters of the range.</param>
+        /// <param name="pos">The character position at which the range to return starts.</param>
+        /// <param name="length">The length in number of characters of the range to return.</param>
         /// <returns>The string in the given range.</returns>
         public string GetTextRange(int pos, int length) {
             return _scintilla.GetTextRange(pos, length);
+        }
+
+        /// <summary>
+        /// Gets the text in the specified range.
+        /// </summary>
+        /// <param name="range">The <see cref="TextRange"/> to return.</param>
+        /// <returns>The string in the given range.</returns>
+        public string GetTextRange(TextRange range) {
+            return GetTextRange(range.Start, range.End - range.Start);
         }
 
         /// <summary>
@@ -386,6 +391,14 @@ namespace ScintillaNET_Components
         public event KeyEventHandler KeyDown {
             add { _scintilla.KeyDown += value; }
             remove { _scintilla.KeyDown -= value; }
+        }
+
+        /// <summary>
+        /// Handle when text is changed in the targeted control.
+        /// </summary>
+        public event EventHandler TextChanged {
+            add { _scintilla.TextChanged += value; }
+            remove { _scintilla.TextChanged -= value; }
         }
 
         /// <summary>

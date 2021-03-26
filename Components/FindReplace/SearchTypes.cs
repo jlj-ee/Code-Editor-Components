@@ -1,10 +1,6 @@
-﻿#region Using Directives
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-
-#endregion Using Directives
 
 namespace CodeEditor_Components.SearchTypes
 {
@@ -191,8 +187,8 @@ namespace CodeEditor_Components.SearchTypes
             if ((obj == null) || !GetType().Equals(obj.GetType())) {
                 return false;
             }
-            //return SearchRange.Equals(((Search)obj).SearchRange);
-            return true;
+            return SearchRange.Equals(((Search)obj).SearchRange);
+            //return true;
         }
     }
 
@@ -294,7 +290,7 @@ namespace CodeEditor_Components.SearchTypes
                     editor.SelectionStart = findRange.Start;
                     editor.SelectionEnd = findRange.End;
                     editor.ReplaceSelection(replaceString);
-                    findRange.End = findRange.Start + replaceString.Length;
+                    findRange = new TextRange(findRange.Start, findRange.Start + replaceString.Length);
                     SearchRange = new TextRange(findRange.End, SearchRange.End + diff);
 
                     results.Add(findRange);
@@ -368,7 +364,7 @@ namespace CodeEditor_Components.SearchTypes
         /// <see cref="TextRange.Start"/> will be the same as <see cref="TextRange.End"/> if no match was found.</returns>
         public override TextRange Find(IEditor editor) {
             TextRange findRange = base.Find(editor);
-            string text = editor.GetTextRange(SearchRange.Start, SearchRange.End - SearchRange.Start + 1);
+            string text = editor.GetTextRange(SearchRange);
             Match m = SearchExpression.Match(text);
 
             if (!m.Success) {
@@ -392,7 +388,7 @@ namespace CodeEditor_Components.SearchTypes
         /// <param name="editor"><see cref="IEditor"/> control to edit.</param>
         /// <param name="replaceString">String to replace the selection. Can be a regular expression pattern.</param>
         protected override void ReplaceText(IEditor editor, string replaceString) {
-            string searchRangeText = editor.GetTextRange(SearchRange.Start, SearchRange.End - SearchRange.Start);
+            string searchRangeText = editor.GetTextRange(SearchRange);
             editor.ReplaceSelection(SearchExpression.Replace(searchRangeText, replaceString));
         }
 
@@ -410,7 +406,7 @@ namespace CodeEditor_Components.SearchTypes
             try { editor.BeginUndoAction(); }
             catch (NotImplementedException) { }
 
-            string text = editor.GetTextRange(SearchRange.Start, SearchRange.End - SearchRange.Start + 1);
+            string text = editor.GetTextRange(SearchRange);
             SearchExpression.Replace(text,
                 new MatchEvaluator(
                     delegate (Match m) {

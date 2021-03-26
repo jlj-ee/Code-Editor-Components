@@ -1,16 +1,10 @@
+using CodeEditor_Components.SearchTypes;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+
 namespace CodeEditor_Components
 {
-    #region Using Directives
-
-    using CodeEditor_Components.SearchTypes;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Text.RegularExpressions;
-    using System.Windows.Forms;
-
-    #endregion Using Directives
-
     /// <summary>
     /// Class to enable programmatic and GUI-based finding and replacing of text in a <see cref="IEditor"/> control, programmatically or through a <see cref="FindReplaceDialog"/> or <see cref="IncrementalSearcher"/>.
     /// </summary>
@@ -231,14 +225,12 @@ namespace CodeEditor_Components
 
         // Displays the FindReplaceDialog with the specified tab active, and sets the selection/text appropriately.
         private void ShowFindReplaceTab(string tabName) {
-            HideIncrementalSearch();
+            Window.tabAll.SelectedTab = Window.tabAll.TabPages[tabName];
             if (!Window.Visible) {
                 Window.Show(Editor.Target.FindForm());
             }
-
-            Window.tabAll.SelectedTab = Window.tabAll.TabPages[tabName];
-
-            if (Editor.GetLineFromPosition(Editor.SelectionStart) != Editor.GetLineFromPosition(Editor.SelectionEnd)) {
+            //if (Editor.GetLineFromPosition(Editor.SelectionStart) != Editor.GetLineFromPosition(Editor.SelectionEnd)) {
+            if (Editor.SelectionEnd != Editor.SelectionStart) { 
                 Window.chkSearchSelection.Checked = true;
             }
             if (CurrentQuery != null) {

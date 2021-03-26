@@ -47,7 +47,7 @@ namespace CodeEditor_Components
             Location = Point.Empty;
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
 
-            HighlightedItemIndex = -1;
+            HighlightedItemIndex = 0;
             Theme = new ListTheme();
             _toolTipLaunchTimer.Tick += ToolTipLaunchTimer_Tick;
         }
@@ -65,7 +65,7 @@ namespace CodeEditor_Components
             }
             set {
                 _theme = value;
-                BackColor = _theme.BackColorEven;
+                BackColor = _theme.BorderColor;
                 ForeColor = _theme.ForeColor;
             }
         }
@@ -156,7 +156,10 @@ namespace CodeEditor_Components
 
         #region Events & Handlers
 
-        public event EventHandler SuggestionChosen;
+        /// <summary>
+        /// Event that will be generated when a suggestion item is selected.
+        /// </summary>
+        public event EventHandler ItemSelected;
 
         /// <summary>
         /// Handles repainting the list background.
@@ -164,7 +167,7 @@ namespace CodeEditor_Components
         /// <param name="e">Paint event data.</param>
         protected override void OnPaintBackground(PaintEventArgs e) {
             base.OnPaintBackground(e);
-            e.Graphics.Clear(Theme.ImageBackColor);
+            e.Graphics.Clear(Theme.BackColor);
         }
 
         /// <summary>
@@ -174,7 +177,7 @@ namespace CodeEditor_Components
         protected override void OnPaint(PaintEventArgs e) {
             ConfigureScroll();
             int firstVisibleIndex = Math.Max(VerticalScroll.Value / ItemHeight, 0);
-            int lastVisibleIndex = Math.Min((VerticalScroll.Value + ClientSize.Height) / ItemHeight, VisibleItems.Count);
+            int lastVisibleIndex = Math.Min((VerticalScroll.Value + ClientSize.Height) / ItemHeight + 1, VisibleItems.Count);
             int y;
 
             for (int i = firstVisibleIndex; i < lastVisibleIndex; i++) {
@@ -184,11 +187,6 @@ namespace CodeEditor_Components
                 // Set row background of odd rows to alternate color
                 if (i % 2 != 0) {
                     using (var brush = new SolidBrush(_theme.BackColorOdd)) {
-                        e.Graphics.FillRectangle(brush, itemBody);
-                    }
-                }
-                else {
-                    using (var brush = new SolidBrush(_theme.BackColorEven)) {
                         e.Graphics.FillRectangle(brush, itemBody);
                     }
                 }
@@ -227,12 +225,21 @@ namespace CodeEditor_Components
         }
 
         /// <summary>
-        /// Handle the font changing and raise the <see cref="Control.FontChanged"/> event.
+        /// Handles the font changing and raises the <see cref="Control.FontChanged"/> event.
         /// </summary>
         /// <param name="e">Event data.</param>
         protected override void OnFontChanged(EventArgs e) {
             base.OnFontChanged(e);
             MeasureItems();
+        }
+
+        /// <summary>
+        /// Handles the list scrolling and raises the <see cref="ScrollableControl.Scroll"/> event.
+        /// </summary>
+        /// <param name="se">Scroll event data.</param>
+        protected override void OnScroll(ScrollEventArgs se) {
+            base.OnScroll(se);
+            Invalidate();
         }
 
         /// <summary>
@@ -279,7 +286,7 @@ namespace CodeEditor_Components
             base.OnMouseDoubleClick(e);
             if (e.Button == MouseButtons.Left) {
                 _toolTip.Hide(this);
-                SuggestionChosen?.Invoke(this, EventArgs.Empty);
+                OnItemSelected(EventArgs.Empty);
                 Invalidate();
             }
         }
@@ -318,10 +325,16 @@ namespace CodeEditor_Components
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        private void OnItemSelected(EventArgs e) {
+            ItemSelected?.Invoke(this, e);
+        }
+
         // Display the tooltip when the timer hits the specified interval.
         private void ToolTipLaunchTimer_Tick(object sender, EventArgs e) {
             _toolTipLaunchTimer.Stop();
-            ShowToolTip(VisibleItems[SelectedItemIndex]);
+            if (SelectedItemIndex >= 0) {
+                ShowToolTip(VisibleItems[SelectedItemIndex]);
+            }
         }
 
         #endregion Events & Handlers
@@ -380,10 +393,12 @@ namespace CodeEditor_Components
             if ((VisibleItems == null) || (_oldItemCount == VisibleItems.Count)) {
                 return;
             }
+            _oldItemCount = VisibleItems.Count;
             VerticalScroll.SmallChange = ItemHeight;
             VerticalScroll.LargeChange = ItemHeight * 3;
-            AutoScrollMinSize = new Size(0, ItemHeight * VisibleItems.Count + Margin.Size.Height + Location.Y);
-            _oldItemCount = VisibleItems.Count;
+            var height = VisibleItems.Count > 1 ? ItemHeight * VisibleItems.Count + Location.Y - 1 : 0;
+            AutoScrollMinSize = new Size(0, height);
+            PerformLayout();
         }
 
         /// <summary>
@@ -433,10 +448,10 @@ namespace CodeEditor_Components
             int textLength, maxTextLength = 0;
             if (_visibleItems != null) {
                 foreach (var item in _visibleItems) {
-                    textLength = item.GetDisplayText().Length;
+                    textLength = item.DisplayText.Length;
                     if (textLength > maxTextLength) {
                         maxTextLength = textLength;
-                        ItemWidth = TextRenderer.MeasureText(item.GetDisplayText(), Font).Width;
+                        ItemWidth = TextRenderer.MeasureText(item.DisplayText, Font).Width;
                     }
                 }
             }
@@ -457,8 +472,7 @@ namespace CodeEditor_Components
         /// </summary>
         public ListTheme() {
             ForeColor = Color.Black;
-            ImageBackColor = Color.White;
-            BackColorEven = Color.White;
+            BackColor = Color.White;
             BackColorOdd = Color.LightGray;
             SelectedBackColor = Color.LightSkyBlue;
             HighlightedBackColor = Color.Transparent;
@@ -477,12 +491,12 @@ namespace CodeEditor_Components
         /// <summary>
         /// Image background color.
         /// </summary>
-        public Color ImageBackColor { get; set; }
+        public Color BackColor { get; set; }
 
         /// <summary>
         /// Background color for even-numbered rows.
         /// </summary>
-        public Color BackColorEven { get; set; }
+        public Color BorderColor { get; set; }
 
         /// <summary>
         /// Background color for odd-numbered rows.

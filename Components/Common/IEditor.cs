@@ -1,11 +1,7 @@
-﻿#region Using Directives
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-
-#endregion Using Directives
 
 namespace CodeEditor_Components
 {
@@ -129,10 +125,17 @@ namespace CodeEditor_Components
         /// <summary>
         /// Gets the text in the specified range.
         /// </summary>
-        /// <param name="pos">The character position at which the range starts.</param>
-        /// <param name="length">The length in number of characters of the range.</param>
+        /// <param name="pos">The character position at which the range to return starts.</param>
+        /// <param name="length">The length in number of characters of the range to return.</param>
         /// <returns>The string in the given range.</returns>
         string GetTextRange(int pos, int length);
+
+        /// <summary>
+        /// Gets the text in the specified range.
+        /// </summary>
+        /// <param name="range">The <see cref="TextRange"/> to return.</param>
+        /// <returns>The string in the given range.</returns>
+        string GetTextRange(TextRange range);
 
         /// <summary>
         /// Scrolls the targeted control to the current caret position, avoiding the given region.
@@ -202,6 +205,11 @@ namespace CodeEditor_Components
         /// Handle when the keyboard is pressed when the targeted control has focus.
         /// </summary>
         event KeyEventHandler KeyDown;
+
+        /// <summary>
+        /// Handle when text is changed in the targeted control.
+        /// </summary>
+        event EventHandler TextChanged;
 
         /// <summary>
         /// Handle when the targeted control is clicked with the mouse.

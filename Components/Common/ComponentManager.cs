@@ -1,11 +1,6 @@
-﻿#region Using Directives
-
-using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
-#endregion Using Directives
 
 namespace CodeEditor_Components
 {

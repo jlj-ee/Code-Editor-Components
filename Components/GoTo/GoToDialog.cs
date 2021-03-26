@@ -1,9 +1,5 @@
-﻿#region Using Directives
-
-using System;
+﻿using System;
 using System.Windows.Forms;
-
-#endregion Using Directives
 
 namespace CodeEditor_Components
 {

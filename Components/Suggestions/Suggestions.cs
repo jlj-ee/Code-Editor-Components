@@ -1,13 +1,10 @@
-﻿#region Using Directives
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-
-#endregion Using Directives
 
 namespace CodeEditor_Components
 {
@@ -20,6 +17,9 @@ namespace CodeEditor_Components
         #region Fields
 
         private ICollection<SuggestionItem> _items;
+        private TextRange _fragment;
+        private bool _forced;
+        private bool _delete;
 
         #endregion Fields
 
@@ -30,12 +30,14 @@ namespace CodeEditor_Components
         /// </summary>
         /// <param name="editor">>The <see cref="IEditor"/> editor to which the <see cref="Suggestions"/> is attached.</param>
         public Suggestions(IEditor editor) {
+            MinimumFragmentLength = 3;
             MaximumVisibleItems = 5;
+            DelimiterPattern = @"[\s]";
 
             if (editor != null) {
                 Editor = editor;
                 DropDown = CreateDropDownInstance();
-                DropDown.List.SuggestionChosen += ListBox_Selected;
+                DropDown.List.ItemSelected += ListBox_Selected;
                 Font = GetEditorFont();
                 MaximumWidth = 500;
             }
@@ -62,12 +64,14 @@ namespace CodeEditor_Components
                     Editor.LostFocus -= Editor_LostFocus;
                     Editor.MouseDown -= Editor_MouseDown;
                     Editor.KeyDown -= Editor_KeyDown;
+                    Editor.TextChanged -= Editor_TextChanged;
                     Editor.Scroll -= Editor_Scroll;
                 }
                 base.Editor = value;
                 Editor.LostFocus += Editor_LostFocus;
                 Editor.MouseDown += Editor_MouseDown;
                 Editor.KeyDown += Editor_KeyDown;
+                Editor.TextChanged += Editor_TextChanged;
                 Editor.Scroll += Editor_Scroll;
             }
         }
@@ -78,15 +82,29 @@ namespace CodeEditor_Components
         public SuggestionDropDown DropDown { get; private set; }
 
         /// <summary>
-        /// Gets or sets the color theme for the suggestion menu.
+        /// Gets the list of visible suggestion items.
         /// </summary>
-        public ListTheme Theme {
+        [Browsable(false)]
+        public IList<SuggestionItem> VisibleItems {
+            get { return DropDown.List.VisibleItems; }
+            private set { DropDown.List.VisibleItems = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the suggestion text to be displayed in the list.
+        /// </summary>
+        public string[] Items {
             get {
-                return DropDown.List.Theme;
+                if (_items == null) {
+                    return null;
+                }
+                var list = new List<string>();
+                foreach (SuggestionItem item in _items) {
+                    list.Add(item.ToString());
+                }
+                return list.ToArray();
             }
-            set {
-                DropDown.List.Theme = value;
-            }
+            set { SetSuggestions(value); }
         }
 
         /// <summary>
@@ -95,15 +113,21 @@ namespace CodeEditor_Components
         public int MaximumVisibleItems { get; set; }
 
         /// <summary>
-        /// Gets or sets the maximum width in pixels of the list.
+        /// Gets the index of the selected suggestion item.
         /// </summary>
-        public int MaximumWidth {
-            get {
-                return DropDown.MaximumSize.Width;
-            }
-            set {
-                DropDown.MaximumSize = new Size(value, DropDown.MaximumSize.Height);
-            }
+        [Browsable(false)]
+        public int SelectedItemIndex {
+            get { return DropDown.List.SelectedItemIndex; }
+            private set { DropDown.List.SelectedItemIndex = value; }
+        }
+
+        /// <summary>
+        /// Gets the index of the selected suggestion item.
+        /// </summary>
+        [Browsable(false)]
+        public int HighlightedItemIndex {
+            get { return DropDown.List.HighlightedItemIndex; }
+            private set { DropDown.List.HighlightedItemIndex = value; }
         }
 
         /// <summary>
@@ -120,6 +144,11 @@ namespace CodeEditor_Components
         /// Gets or sets the search pattern used to break up text around the caret.
         /// </summary>
         public string DelimiterPattern { get; set; }
+
+        /// <summary>
+        /// Gets or sets the minimum length of text that must be typed to show the suggestion list when <see cref="AutoShow"/> is true.
+        /// </summary>
+        public int MinimumFragmentLength { get; set; }
 
         /// <summary>
         /// Gets or sets whether the targeted editor's font will be used in the suggestion list.
@@ -147,25 +176,53 @@ namespace CodeEditor_Components
         }
 
         /// <summary>
-        /// Gets or sets the suggestion text to be displayed in the list.
+        /// Gets or sets the color theme for the suggestion menu.
         /// </summary>
-        public string[] Items {
+        public ListTheme Theme {
             get {
-                if (_items == null) {
-                    return null;
-                }
-                var list = new List<string>();
-                foreach (SuggestionItem item in _items) {
-                    list.Add(item.ToString());
-                }
-                return list.ToArray();
+                return DropDown.List.Theme;
             }
-            set { SetSuggestions(value); }
+            set {
+                DropDown.List.Theme = value;
+            }
         }
+
+        /// <summary>
+        /// Gets or sets the maximum width in pixels of the list.
+        /// </summary>
+        public int MaximumWidth {
+            get {
+                return DropDown.MaximumSize.Width;
+            }
+            set {
+                DropDown.MaximumSize = new Size(value, DropDown.MaximumSize.Height);
+            }
+        }
+
 
         #endregion Properties
 
         #region Events & Handlers
+
+        /// <summary>
+        /// Triggered when a suggestion has been selected but before it is inserted.
+        /// </summary>
+        public event EventHandler<SelectingEventArgs> SuggestionSelecting;
+
+        /// <summary>
+        /// Triggered when a suggestion has been selected and inserted.
+        /// </summary>
+        public event EventHandler<SelectedEventArgs> SuggestionSelected;
+
+        // Raises the suggestion selecting event.
+        private void OnSuggestionSelecting(SelectingEventArgs e) {
+            SuggestionSelecting?.Invoke(this, e);
+        }
+
+        // Raises the suggestion selected event.
+        private void OnSuggestionSelected(SelectedEventArgs e) {
+            SuggestionSelected?.Invoke(this, e);
+        }
 
         // Called when the editor loses focus. 
         private void Editor_LostFocus(object sender, EventArgs e) {
@@ -184,22 +241,43 @@ namespace CodeEditor_Components
             HideSuggestions();
         }
 
+        // Called when a key is pressed in the editor.
         private void Editor_KeyDown(object sender, KeyEventArgs e) {
-            if (e.Control && (e.KeyCode == Keys.Space)) {
-                ShowSuggestions(true);
-                e.SuppressKeyPress = true;
-                return;
-            }
             if (DropDown.Visible) {
                 if (ProcessKey(e.KeyCode)) {
                     e.SuppressKeyPress = true;
+                    return;
                 }
+            }
+            switch (e.KeyCode) {
+                case Keys.Back:
+                case Keys.Delete:
+                    _delete = true;
+                    return;
+                case Keys.Space:
+                    if (e.Control) {
+                        ShowSuggestions(true);
+                        e.SuppressKeyPress = true;
+                    }
+                    return;
+                default:
+                    _delete = false;
+                    return;
+            }
+        }
+
+        private void Editor_TextChanged(object sender, EventArgs e) {
+            if (DropDown.Visible || !_delete) {
+                ShowSuggestions(false);
+            }
+            else {
+                HideSuggestions();
             }
         }
 
         // Called when an item is double-clicked in the listbox.
         private void ListBox_Selected(object sender, EventArgs e) {
-            Editor.Target.Focus();
+            ProcessSelection();
         }
 
         #endregion Events & Handlers
@@ -209,25 +287,31 @@ namespace CodeEditor_Components
         /// <summary>
         /// Displays the list of suggestions.
         /// </summary>
-        public void ShowSuggestions(bool forceOpened) {
-            if (!DropDown.Visible && (DropDown.List.VisibleItems.Count > 0)) {
-                Point point = Editor.GetPointFromPosition(Editor.CurrentPosition);
+        public void ShowSuggestions(bool forced) {
+            if (forced) _forced = true;
+            BuildVisibleSuggestions(_forced);
+            if (VisibleItems.Count > 0) {
+                Point point = Editor.GetPointFromPosition(_fragment.Start);
                 point.Offset(0, Editor.LineHeight);
 
                 if (UseEditorFont) {
                     Font = GetEditorFont();
                 }
                 // Adjust size according to contents and limits
-                int listWidth = Math.Min(
-                    DropDown.List.ImageWidth + DropDown.List.ItemWidth + SystemInformation.VerticalScrollBarWidth + DropDown.List.Margin.Size.Width + 5,
-                    DropDown.MaximumSize.Width
-                    );
-                int numVisibleItems = Math.Min(MaximumVisibleItems, DropDown.List.VisibleItems.Count);
-                int listHeight = (numVisibleItems * DropDown.List.ItemHeight) + DropDown.List.Margin.Size.Height + DropDown.List.Location.Y;
-                DropDown.Size = new Size(listWidth, listHeight + 1);
+                int numVisibleItems = Math.Min(MaximumVisibleItems, VisibleItems.Count);
+                int listWidth = DropDown.List.ImageWidth + DropDown.List.ItemWidth + SystemInformation.VerticalScrollBarWidth;
+                int listHeight = numVisibleItems * DropDown.List.ItemHeight;
+                DropDown.List.Size = new Size(listWidth, listHeight);
                 DropDown.List.VerticalScroll.Value = 0;
-                DropDown.List.SelectedItemIndex = -1;
+
+                int hostWidth = Math.Min(listWidth + DropDown.List.Margin.Size.Width + 5, DropDown.MaximumSize.Width);
+                int hostHeight = listHeight + DropDown.List.Margin.Size.Height + DropDown.List.Location.Y + 1;
+                DropDown.Size = new Size(hostWidth, hostHeight);
+
                 DropDown.Show(Editor.Target, point, ToolStripDropDownDirection.BelowRight);
+            }
+            else {
+                HideSuggestions();
             }
         }
 
@@ -235,6 +319,7 @@ namespace CodeEditor_Components
         /// Hides the list of suggestions.
         /// </summary>
         public void HideSuggestions() {
+            _forced = false;
             DropDown.Close();
         }
 
@@ -281,7 +366,7 @@ namespace CodeEditor_Components
         private SuggestionDropDown CreateDropDownInstance() {
             return new SuggestionDropDown(this);
         }
-        
+
         /// <summary>
         /// Moves the selection in the suggestion list by the specified delta.
         /// </summary>
@@ -298,6 +383,41 @@ namespace CodeEditor_Components
             DropDown.List.SelectedItemIndex = Math.Max(0, Math.Min(initialIndex + delta, DropDown.List.VisibleItems.Count - 1));
         }
 
+        private void BuildVisibleSuggestions(bool forced) {
+            if (_items == null) {
+                return;
+            }
+
+            var visibleItems = new List<SuggestionItem>();
+            bool itemSelected = false;
+            int selectedItemIndex = -1;
+            TextRange fragment = GetFragment(DelimiterPattern);
+            if (forced || (fragment.End - fragment.Start) >= MinimumFragmentLength) {
+                _fragment = fragment;
+                var fragmentText = Editor.GetTextRange(fragment);
+                if (!string.IsNullOrWhiteSpace(fragmentText)) {
+                    foreach (var item in _items) {
+                        if (item.Match(fragmentText, false)) {
+                            visibleItems.Add(item);
+                            if (!itemSelected) {
+                                itemSelected = true;
+                                selectedItemIndex = visibleItems.Count - 1;
+                            }
+                        }
+                    }
+                }
+            }
+            VisibleItems = visibleItems;
+
+            if (itemSelected) {
+                SelectedItemIndex = selectedItemIndex;
+            }
+            else {
+                SelectedItemIndex = 0;
+            }
+        }
+
+        // Process key presses
         internal bool ProcessKey(Keys key) {
             var page = DropDown.Height / (DropDown.List.ItemHeight);
             switch (key) {
@@ -313,18 +433,16 @@ namespace CodeEditor_Components
                 case Keys.PageUp:
                     MoveSelection(-page);
                     return true;
-                //case Keys.Enter:
-                //    OnSelecting();
-                //    return true;
-                //case Keys.Tab:
-                //    if (!AllowsTabKey)
-                //        break;
-                //    OnSelecting();
-                //    return true;
+                case Keys.Enter:
+                    ProcessSelection();
+                    return true;
+                case Keys.Tab:
+                    ProcessSelection();
+                    return true;
                 case Keys.Left:
                 case Keys.Right:
                     HideSuggestions();
-                    // Do not want to discard left/right
+                    // Do not want to discard
                     return false;
                 case Keys.Escape:
                     HideSuggestions();
@@ -333,40 +451,131 @@ namespace CodeEditor_Components
             return false;
         }
 
+        private void ProcessSelection() {
+            if (SelectedItemIndex < 0) {
+                return;
+            }
+            var selection = VisibleItems[SelectedItemIndex];
+            var selectingArgs = new SelectingEventArgs { Selection = selection, SelectionIndex = SelectedItemIndex };
+            OnSuggestionSelecting(selectingArgs);
+
+            // An external handler could modify the args, so we may have to cancel
+            if (selectingArgs.Cancel) {
+                // Restore the selection to be sure
+                SelectedItemIndex = selectingArgs.SelectionIndex;
+                return;
+            }
+            // Or the external handler may handle the autocomplete
+            if (!selectingArgs.Handled) {
+                // Autocomplete
+                Editor.SelectionStart = _fragment.Start;
+                Editor.SelectionEnd = _fragment.End;
+                Editor.SelectedText = selection.InsertText;
+                var selectedArgs = new SelectedEventArgs { Selection = selection, SelectionIndex = SelectedItemIndex, Control = Editor.Target };
+                selection.OnSuggestionSelected(selectedArgs);
+                OnSuggestionSelected(selectedArgs);
+            }
+            HideSuggestions();
+
+            Editor.Target.Focus();
+        }
+
+        private TextRange GetFragment(string delimiterPattern) {
+            // Use existing selection if available
+            if (Editor.SelectionLength > 0) {
+                return new TextRange(Editor.SelectionStart, Editor.SelectionEnd);
+            }
+
+            string text = Editor.Text;
+            var regex = new Regex(delimiterPattern);
+
+            // Search forwards
+            int i = Editor.SelectionStart;
+            while (i >= 0 && i < text.Length) {
+                if (regex.IsMatch(text[i].ToString())) {
+                    break;
+                }
+                i++;
+            }
+            int fragmentEnd = i;
+
+            if (fragmentEnd != Editor.SelectionStart) {
+                // Search backwards
+                i = Editor.SelectionStart;
+                while (i > 0 && (i - 1) < text.Length) {
+                    if (regex.IsMatch(text[i - 1].ToString())) {
+                        break;
+                    }
+                    i--;
+                }
+            }
+            int fragmentStart = i;
+
+            return new TextRange(fragmentStart, fragmentEnd);
+        }
+
         #endregion Methods
     }
 
-    //public class SelectingEventArgs : EventArgs
-    //{
-    //    public Suggestion Selection { get; internal set; }
-    //    public bool Cancel { get; set; }
-    //    public int SelectionIndex { get; set; }
-    //    public bool Handled { get; set; }
-    //}
+    #region Event Classes
 
-    //public class SelectedEventArgs : EventArgs
-    //{
-    //    public Suggestion Selection { get; internal set; }
-    //    public Control Control { get; set; }
-    //}
+    /// <summary>
+    /// Event data for the selecting event, which is fired when a suggestion has been selected but before it is inserted.
+    /// </summary>
+    public class SelectingEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets the currently-selected suggestion item.
+        /// </summary>
+        public SuggestionItem Selection { get; internal set; }
 
-    //public class HoveredEventArgs : EventArgs
-    //{
-    //    public Suggestion Item { get; internal set; }
-    //}
+        /// <summary>
+        /// Gets the index of the current selection suggestion item.
+        /// </summary>
+        public int SelectionIndex { get; internal set; }
 
+        /// <summary>
+        /// Gets or sets whether the selection should be canceled.
+        /// </summary>
+        public bool Cancel { get; set; }
 
-    //public class PaintItemEventArgs : PaintEventArgs
-    //{
-    //    public RectangleF TextRect { get; internal set; }
-    //    public StringFormat Format { get; internal set; }
-    //    public Font Font { get; internal set; }
-    //    public bool IsSelected { get; internal set; }
-    //    public bool IsHovered { get; internal set; }
-    //    public Theme ThemeColors { get; internal set; }
+        /// <summary>
+        /// Gets or sets whether the selection has been handled externally.
+        /// </summary>
+        public bool Handled { get; set; }
+    }
 
-    //    public PaintItemEventArgs(Graphics graphics, Rectangle clipRect) : base(graphics, clipRect) {
-    //    }
-    //}
+    /// <summary>
+    /// Event data for the selected event, which is fired after inserting the suggestion into the target.
+    /// </summary>
+    public class SelectedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets the currently-selected suggestion item.
+        /// </summary>
+        public SuggestionItem Selection { get; internal set; }
 
+        /// <summary>
+        /// Gets the index of the current selection suggestion item.
+        /// </summary>
+        public int SelectionIndex { get; internal set; }
+
+        /// <summary>
+        /// Gets the text control where the suggestion was inserted.
+        /// </summary>
+        public Control Control { get; internal set; }
+    }
+
+    /// <summary>
+    /// Event data for the hovered event, which is fired when the mouse is over a suggestion, but has not clicked it.
+    /// </summary>
+    public class HoveredEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets the currently-highlighted suggestion item. 
+        /// </summary>
+        public SuggestionItem Highlighted { get; internal set; }
+    }
+
+    #endregion Event Classes
 }

@@ -1,14 +1,9 @@
-﻿#region Using Directives
-
-using ScintillaNET;
+﻿using ScintillaNET;
 using ScintillaNET_Components;
 using CodeEditor_Components;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Drawing;
-
-#endregion Using Directives
 
 namespace Demo
 {

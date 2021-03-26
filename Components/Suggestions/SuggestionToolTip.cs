@@ -1,11 +1,7 @@
-﻿#region Using Directives
-
-using System;
+﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-
-#endregion Using Directives
 
 namespace CodeEditor_Components
 {
@@ -73,7 +69,7 @@ namespace CodeEditor_Components
         /// </summary>
         public Size Size {
             get {
-                return new Size(Math.Max(ToolTipTextSize.Width, ToolTipTitleSize.Width), ToolTipTextSize.Height + ToolTipTitleSize.Height);
+                return new Size(Math.Max(ToolTipTextSize.Width, ToolTipTitleSize.Width), ToolTipTextSize.Height + ToolTipTitleSize.Height + 3);
             }
         }
 
@@ -95,8 +91,8 @@ namespace CodeEditor_Components
             using (var pen = new Pen(Color.Gray)) {
                 e.Graphics.DrawRectangle(pen, new Rectangle(e.Bounds.Location, new Size(e.Bounds.Width - 1, e.Bounds.Height - 1)));
             }
-            var titleRectangle = new Rectangle(new Point(e.Bounds.X, e.Bounds.Y), ToolTipTitleSize);
-            var textRectangle = new Rectangle(new Point(e.Bounds.X, e.Bounds.Y + ToolTipTitleSize.Height), ToolTipTextSize);
+            var titleRectangle = new Rectangle(new Point(e.Bounds.X, e.Bounds.Y + 1), ToolTipTitleSize);
+            var textRectangle = new Rectangle(new Point(e.Bounds.X, e.Bounds.Y + ToolTipTitleSize.Height + 1), ToolTipTextSize);
             TextRenderer.DrawText(e.Graphics, ToolTipTitle, new Font(Font, FontStyle.Bold), titleRectangle, Color.Black, TextFormatFlags.Left);
             TextRenderer.DrawText(e.Graphics, ToolTipText, Font, textRectangle, Color.Black, TextFormatFlags.Left);
         }

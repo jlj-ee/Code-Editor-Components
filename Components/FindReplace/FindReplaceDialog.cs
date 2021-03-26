@@ -1,15 +1,13 @@
+using CodeEditor_Components.SearchTypes;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+
 namespace CodeEditor_Components
 {
-    #region Using Directives
-
-    using CodeEditor_Components.SearchTypes;
-    using System;
-    using System.Collections.Generic;
-    using System.Text.RegularExpressions;
-    using System.Windows.Forms;
-
-    #endregion Using Directives
-
     /// <summary>
     /// Class to define the logic for a Find/Replace <see cref="Dialog"/>.
     /// </summary>
@@ -20,6 +18,18 @@ namespace CodeEditor_Components
         private TextRange _searchRange;
         private Control _menuSource;
         private readonly FindReplace _manager;
+        // Storage fields to be shared across tabs
+        private string _findText;
+        private bool _extended;
+        private bool _regex;
+        private bool _wrap;
+        private bool _searchSelection;
+        private bool _matchCase;
+        private bool _wholeWord;
+        private bool _ignoreCase;
+        private bool _singleline;
+        private bool _multiline;
+        private bool _ignorePatternWhitespace;
 
         #endregion Fields
 
@@ -31,7 +41,16 @@ namespace CodeEditor_Components
         /// <param name="manager"><see cref="FindReplace"/> instance that manages this <see cref="FindReplaceDialog"/>.</param>
         public FindReplaceDialog(FindReplace manager) : base() {
             InitializeComponent();
-
+            _extended = rdoExtended.Checked;
+            _regex = rdoRegex.Checked;
+            _wrap = chkWrap.Checked;
+            _searchSelection = chkSearchSelection.Checked;
+            _matchCase = chkMatchCase.Checked;
+            _wholeWord = chkWholeWord.Checked;
+            _ignoreCase = chkIgnoreCase.Checked;
+            _singleline = chkSingleline.Checked;
+            _multiline = chkMultiline.Checked;
+            _ignorePatternWhitespace = chkIgnorePatternWhitespace.Checked;
             Manager = _manager = manager;
         }
 
@@ -42,26 +61,12 @@ namespace CodeEditor_Components
         /// <summary>
         /// Triggered when a find all action is performed.
         /// </summary>
-        public event FindAllResultsEventHandler FindAllResults;
-
-        /// <summary>
-        /// Handler for the find all action event.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="FindAllResults">The found results.</param>
-        public delegate void FindAllResultsEventHandler(object sender, FindResultsEventArgs FindAllResults);
-
-        /// <summary>
-        /// Handler for the replace all action event.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="FindAllResults">The found results.</param>
-        public delegate void ReplaceAllResultsEventHandler(object sender, ReplaceResultsEventArgs FindAllResults);
+        public event EventHandler<FindResultsEventArgs> FindAllResults;
 
         /// <summary>
         /// Triggered when a replace all action is performed.
         /// </summary>
-        public event ReplaceAllResultsEventHandler ReplaceAllResults;
+        public event EventHandler<ReplaceResultsEventArgs> ReplaceAllResults;
 
         #region Dialog
 
@@ -74,10 +79,13 @@ namespace CodeEditor_Components
             Opacity = 1.0;
             if (_manager.EditorHasSelection()) {
                 chkSearchSelection.Enabled = true;
+                chkSearchSelection_Replace.Enabled = true;
             }
             else {
                 chkSearchSelection.Enabled = false;
+                chkSearchSelection_Replace.Enabled = false;
                 chkSearchSelection.Checked = false;
+                chkSearchSelection_Replace.Checked = false;
             }
 
             // Clear old search range because it may be invalid
@@ -188,9 +196,49 @@ namespace CodeEditor_Components
 
         // Handle swap button click.
         private void BtnSwap_Click(object sender, EventArgs e) {
-            var findString = txtFind.Text;
-            txtFind.Text = txtReplace.Text;
+            var findString = txtFind_Replace.Text;
+            txtFind_Replace.Text = txtReplace.Text;
             txtReplace.Text = findString;
+        }
+
+        // Handle wrap checkbox click.
+        private void ChkWrap_CheckedChanged(object sender, EventArgs e) {
+            _wrap = (sender as CheckBox).Checked;
+        }
+
+        // Handle selection checkbox click.
+        private void ChkSearchSelection_CheckedChanged(object sender, EventArgs e) {
+            _searchSelection = (sender as CheckBox).Checked;
+        }
+
+        // Handle match case checkbox click.
+        private void ChkMatchCase_CheckedChanged(object sender, EventArgs e) {
+            _matchCase = (sender as CheckBox).Checked;
+        }
+
+        // Handle whole word checkbox click.
+        private void ChkWholeWord_CheckedChanged(object sender, EventArgs e) {
+            _wholeWord = (sender as CheckBox).Checked;
+        }
+
+        // Handle multiline checkbox click.
+        private void ChkMultiline_CheckedChanged(object sender, EventArgs e) {
+            _multiline = (sender as CheckBox).Checked;
+        }
+
+        // Handle singeline checkbox click.
+        private void ChkSingleline_CheckedChanged(object sender, EventArgs e) {
+            _singleline = (sender as CheckBox).Checked;
+        }
+
+        // Handle ignore case checkbox click.
+        private void ChkIgnoreCase_CheckedChanged(object sender, EventArgs e) {
+            _ignoreCase = (sender as CheckBox).Checked;
+        }
+
+        // Handle ignore pattern whitespace checkbox click.
+        private void ChkIgnorePatternWhitespace_CheckedChanged(object sender, EventArgs e) {
+            _ignorePatternWhitespace = (sender as CheckBox).Checked;
         }
 
         // Handle highlight checkbox click.
@@ -219,7 +267,7 @@ namespace CodeEditor_Components
 
         // Handle find history menu button click
         private void CmdRecentFind_Click(object sender, EventArgs e) {
-            ShowRecentMenu(cmdRecentFind, _manager.FindHistory);
+            ShowRecentMenu(sender as Button, _manager.FindHistory);
         }
 
         // Handle replace history menu button click
@@ -235,6 +283,10 @@ namespace CodeEditor_Components
                 txtBox = txtFind;
                 mru = _manager.FindHistory;
             }
+            else if (_menuSource == cmdRecentFind_Replace) {
+                txtBox = txtFind_Replace;
+                mru = _manager.FindHistory;
+            }
             else if (_menuSource == cmdRecentReplace) {
                 txtBox = txtReplace;
                 mru = _manager.ReplaceHistory;
@@ -243,8 +295,9 @@ namespace CodeEditor_Components
                 if (e.ClickedItem.Text == "Clear History") {
                     // CLear the history list and disable the history control
                     mru.Clear();
-                    if (_menuSource == cmdRecentFind || _menuSource == cmdRecentFind) {
+                    if (_menuSource == cmdRecentFind || _menuSource == cmdRecentFind_Replace) {
                         cmdRecentFind.Enabled = false;
+                        cmdRecentFind_Replace.Enabled = false;
                     }
                     else {
                         _menuSource.Enabled = false;
@@ -259,7 +312,7 @@ namespace CodeEditor_Components
 
         // Handle extended/regex insert (find) menu button click
         private void CmdExtendedCharFind_Click(object sender, EventArgs e) {
-            ShowExtRegexMenu(cmdExtCharAndRegExFind, mnuRegExCharFind);
+            ShowExtRegexMenu(sender as Button, mnuRegExCharFind);
         }
 
         // Handle extended/regex insert (replace) menu button click
@@ -272,6 +325,9 @@ namespace CodeEditor_Components
             TextBox txtBox = null;
             if (_menuSource == cmdExtCharAndRegExFind) {
                 txtBox = txtFind;
+            }
+            else if (_menuSource == cmdExtCharAndRegExFind_Replace) {
+                txtBox = txtFind_Replace;
             }
             else if (_menuSource == cmdExtCharAndRegExReplace) {
                 txtBox = txtReplace;
@@ -292,13 +348,26 @@ namespace CodeEditor_Components
 
         #region Navigation
 
-        // Handle search type radio buttons changed
+        // Handle find text changed.
+        private void TxtFind_TextChanged(object sender, EventArgs e) {
+            _findText = (sender as TextBox).Text;
+        }
+
+        // Handle search type radio buttons changed.
         private void RdoSearchType_CheckedChanged(object sender, EventArgs e) {
             // Show the appropriate options panel
             if (rdoRegex.Checked) {
-                pnlRegexpOptions.BringToFront();
+                _regex = true;
+                _extended = false;
+                pnlRegExOptions.BringToFront();
             }
-            else {
+            else if (rdoExtended.Checked) {
+                _extended = true;
+                _regex = false;
+                pnlStandardOptions.BringToFront();
+            }
+            else if (rdoStandard.Checked) {
+                _regex = _extended = false;
                 pnlStandardOptions.BringToFront();
             }
 
@@ -307,25 +376,65 @@ namespace CodeEditor_Components
             cmdExtCharAndRegExReplace.Enabled = !rdoStandard.Checked;
         }
 
-        // Handle find/replace tab changed
+        // Handle search type radio buttons changed.
+        private void RdoSearchTypeReplace_CheckedChanged(object sender, EventArgs e) {
+            // Show the appropriate options panel
+            if (rdoRegex_Replace.Checked) {
+                _regex = true;
+                _extended = false;
+                pnlRegExOptions_Replace.BringToFront();
+            }
+            else if (rdoExtended_Replace.Checked) {
+                _extended = true;
+                _regex = false;
+                pnlStandardOptions_Replace.BringToFront();
+            }
+            else if (rdoStandard_Replace.Checked) {
+                _regex = _extended = false;
+                pnlStandardOptions_Replace.BringToFront();
+            }
+
+            // Enable/disable extended/regex insertion menu
+            cmdExtCharAndRegExFind_Replace.Enabled = !rdoStandard_Replace.Checked;
+            cmdExtCharAndRegExReplace.Enabled = !rdoStandard_Replace.Checked;
+        }
+
+        // Handle find/replace tab changed.
         private void TabAll_Selecting(object sender, TabControlCancelEventArgs e) {
-            // Update dialog title and move shared controls to the appropriate page
+            // Update dialog title and data for shared-pupose controls
             if (e.TabPage == tpgFind) {
                 Text = "Find";
-                pnlSearchType.Parent = tpgFind;
-                grpOptions.Parent = tpgFind;
-                pnlFind.Parent = tpgFind;
-                pnlFindNav.Parent = tpgFind;
+                txtFind.Text = txtFind_Replace.Text;
+                chkWrap.Checked = chkWrap_Replace.Checked;
+                chkSearchSelection.Checked = chkSearchSelection_Replace.Checked;
+                rdoExtended.Checked = rdoExtended_Replace.Checked;
+                rdoStandard.Checked = rdoStandard_Replace.Checked;
+                rdoRegex.Checked = rdoRegex_Replace.Checked;
+                chkMatchCase.Checked = chkMatchCase_Replace.Checked;
+                chkWholeWord.Checked = chkWholeWord_Replace.Checked;
+                chkMultiline.Checked = chkMultiline_Replace.Checked;
+                chkSingleline.Checked = chkSingleline_Replace.Checked;
+                chkIgnoreCase.Checked = chkIgnoreCase_Replace.Checked;
+                chkIgnorePatternWhitespace.Checked = chkIgnorePatternWhitespace_Replace.Checked;
                 AcceptButton = btnFindNext;
             }
             else {
                 Text = "Replace";
-                pnlSearchType.Parent = tpgReplace;
-                grpOptions.Parent = tpgReplace;
-                pnlFind.Parent = tpgReplace;
-                pnlFindNav.Parent = tpgReplace;
+                txtFind_Replace.Text = txtFind.Text;
+                chkWrap_Replace.Checked = chkWrap.Checked;
+                chkSearchSelection_Replace.Checked = chkSearchSelection.Checked;
+                rdoExtended_Replace.Checked = rdoExtended.Checked;
+                rdoStandard_Replace.Checked = rdoStandard.Checked;
+                rdoRegex_Replace.Checked = rdoRegex.Checked;
+                chkMatchCase_Replace.Checked = chkMatchCase.Checked;
+                chkWholeWord_Replace.Checked = chkWholeWord.Checked;
+                chkMultiline_Replace.Checked = chkMultiline.Checked;
+                chkSingleline_Replace.Checked = chkSingleline.Checked;
+                chkIgnoreCase_Replace.Checked = chkIgnoreCase.Checked;
+                chkIgnorePatternWhitespace_Replace.Checked = chkIgnorePatternWhitespace.Checked;
                 AcceptButton = btnReplaceNext;
             }
+
         }
 
         #endregion Navigation
@@ -341,19 +450,19 @@ namespace CodeEditor_Components
         private RegexOptions GetRegexOptions() {
             RegexOptions ro = RegexOptions.None;
 
-            if (chkIgnoreCase.Checked) {
+            if (_ignoreCase) {
                 ro |= RegexOptions.IgnoreCase;
             }
 
-            if (chkIgnorePatternWhitespace.Checked) {
+            if (_ignorePatternWhitespace) {
                 ro |= RegexOptions.IgnorePatternWhitespace;
             }
 
-            if (chkMultiline.Checked) {
+            if (_multiline) {
                 ro |= RegexOptions.Multiline;
             }
 
-            if (chkSingleline.Checked) {
+            if (_singleline) {
                 ro |= RegexOptions.Singleline;
             }
 
@@ -376,21 +485,22 @@ namespace CodeEditor_Components
 
         // Adds the find text to the find history.
         private void AddFindHistory() {
-            _manager.AddFindHistory(txtFind.Text);
-            if (!cmdRecentFind.Enabled) {
-                cmdRecentFind.Enabled = true;
-            }
+            _manager.AddFindHistory(_findText);
+            cmdRecentFind.Enabled = true;
+            cmdRecentFind_Replace.Enabled = true;
         }
 
         // Adds the replace text to the replace history.
         private void AddReplaceHistory() {
-            _manager.AddReplaceHistory(txtFind.Text, txtReplace.Text);
-            if (!cmdRecentFind.Enabled) {
-                cmdRecentFind.Enabled = true;
-            }
-            if (!cmdRecentReplace.Enabled) {
-                cmdRecentReplace.Enabled = true;
-            }
+            _manager.AddReplaceHistory(_findText, txtReplace.Text);
+            cmdRecentFind.Enabled = true;
+            cmdRecentFind_Replace.Enabled = true;
+            cmdRecentReplace.Enabled = true;
+        }
+
+        // Gets the location of the pop-up menu relative to the given button.
+        private Point GetMenuLocation(Button btn) {
+            return new Point(btn.ClientRectangle.Location.X + btn.Width / 2, btn.ClientRectangle.Location.Y + btn.Height / 2);
         }
 
         // Shows the history menu.
@@ -404,24 +514,24 @@ namespace CodeEditor_Components
             if (history.Count > 0) {
                 mnuRecent.Items.Add("-");
                 mnuRecent.Items.Add("Clear History");
-                mnuRecent.Show(cmdRecent.PointToScreen(cmdRecent.ClientRectangle.Location));
+                mnuRecent.Show(cmdRecent.PointToScreen(GetMenuLocation(cmdRecent)), ToolStripDropDownDirection.BelowRight);
             }
         }
 
         // Shows the extended/regular expression instertion menu.
         private void ShowExtRegexMenu(Button cmdExtChar, ContextMenuStrip mnuRegEx) {
             _menuSource = cmdExtChar;
-            if (rdoExtended.Checked) {
-                mnuExtendedChar.Show(cmdExtChar.PointToScreen(cmdExtChar.ClientRectangle.Location));
+            if (_extended) {
+                mnuExtendedChar.Show(cmdExtChar.PointToScreen(GetMenuLocation(cmdExtChar)), ToolStripDropDownDirection.BelowRight);
             }
-            else if (rdoRegex.Checked) {
-                mnuRegEx.Show(cmdExtChar.PointToScreen(cmdExtChar.ClientRectangle.Location));
+            else if (_regex) {
+                mnuRegEx.Show(cmdExtChar.PointToScreen(GetMenuLocation(cmdExtChar)), ToolStripDropDownDirection.BelowRight);
             }
         }
 
         // Transforms the given text if necessary to convert e.g. "\r" to the corresponding character.
         private string SanitizeText(string text) {
-            if (rdoExtended.Checked) {
+            if (_extended) {
                 string transformed = text;
                 char nullChar = (char)0;
                 char cr = (char)13;
@@ -443,7 +553,7 @@ namespace CodeEditor_Components
 
         // Returns a search object representing the search query
         private Search GetQuery() {
-            if (chkSearchSelection.Checked) {
+            if (_searchSelection) {
                 if (_searchRange.Start == _searchRange.End) {
                     _searchRange = _manager.GetEditorSelectedRange();
                 }
@@ -452,9 +562,9 @@ namespace CodeEditor_Components
                 _searchRange = _manager.GetEditorWholeRange();
             }
 
-            if (rdoRegex.Checked) {
+            if (_regex) {
                 try {
-                    return new RegexSearch(_searchRange, txtFind.Text, GetRegexOptions());
+                    return new RegexSearch(_searchRange, _findText, GetRegexOptions());
                 }
                 catch (ArgumentException ex) {
                     UpdateStatus("Error in Regular Expression: " + ex.Message);
@@ -462,17 +572,17 @@ namespace CodeEditor_Components
                 }
             }
             else {
-                return new StringSearch(_searchRange, SanitizeText(txtFind.Text), chkMatchCase.Checked, chkWholeWord.Checked);
+                return new StringSearch(_searchRange, SanitizeText(_findText), _matchCase, _wholeWord);
             }
         }
 
         // Use the dialog configuration to search for a match.
         private TextRange FindWrapper(bool searchUp) {
             if (searchUp) {
-                return _manager.FindPrevious(GetQuery(), chkWrap.Checked);
+                return _manager.FindPrevious(GetQuery(), _wrap);
             }
             else {
-                return _manager.FindNext(GetQuery(), chkWrap.Checked);
+                return _manager.FindNext(GetQuery(), _wrap);
             }
         }
 
@@ -485,7 +595,7 @@ namespace CodeEditor_Components
 
         // Use the dialog configuration to replace the first match.
         private TextRange ReplaceWrapper(bool searchUp) {
-            return _manager.Replace(GetQuery(), SanitizeText(txtReplace.Text), chkWrap.Checked);
+            return _manager.Replace(GetQuery(), SanitizeText(txtReplace.Text), _wrap);
         }
 
         // Use the dialog configuration to replace all matches.
@@ -500,7 +610,7 @@ namespace CodeEditor_Components
         // - Run search and navigate to first result
         // - Update status text
         private void ProcessFindReplace(Func<bool, TextRange> findReplace, Action addMru, bool searchUp) {
-            if (txtFind.Text == string.Empty) {
+            if (_findText == string.Empty) {
                 return;
             }
 
@@ -514,7 +624,7 @@ namespace CodeEditor_Components
         // - Run search
         // - Update status text
         private void ProcessFindReplaceAll(Func<List<TextRange>> findReplaceAll, Action addMru, bool replace) {
-            if (txtFind.Text == string.Empty) {
+            if (_findText == string.Empty) {
                 return;
             }
 
@@ -533,23 +643,13 @@ namespace CodeEditor_Components
         #endregion Methods
     }
 
+    #region Event Classes
+
     /// <summary>
     /// Event data for the find all event. 
     /// </summary>
     public class FindResultsEventArgs : EventArgs
     {
-        /// <summary>
-        /// Creates a new <see cref="FindResultsEventArgs"/> instance.
-        /// </summary>
-        /// <param name="manager">Associated <see cref="FindReplace"/> control.</param>
-        /// <param name="findAllResults"><see cref="List{CharacterRange}"/> containing the locations of the found results.</param>
-        public FindResultsEventArgs(FindReplace manager, List<TextRange> findAllResults) {
-            Manager = manager;
-            FindAllResults = findAllResults;
-        }
-
-        #region Properties
-
         /// <summary>
         /// Gets or sets the <see cref="FindReplace"/> control.
         /// </summary>
@@ -560,7 +660,15 @@ namespace CodeEditor_Components
         /// </summary>
         public List<TextRange> FindAllResults { get; set; }
 
-        #endregion Properties
+        /// <summary>
+        /// Creates a new <see cref="FindResultsEventArgs"/> instance.
+        /// </summary>
+        /// <param name="manager">Associated <see cref="FindReplace"/> control.</param>
+        /// <param name="findAllResults"><see cref="List{CharacterRange}"/> containing the locations of the found results.</param>
+        public FindResultsEventArgs(FindReplace manager, List<TextRange> findAllResults) {
+            Manager = manager;
+            FindAllResults = findAllResults;
+        }
     }
 
     /// <summary>
@@ -568,18 +676,6 @@ namespace CodeEditor_Components
     /// </summary>
     public class ReplaceResultsEventArgs : EventArgs
     {
-        /// <summary>
-        /// Creates a new <see cref="ReplaceResultsEventArgs"/> instance.
-        /// </summary>
-        /// <param name="manager">Associated <see cref="FindReplace"/> instance.</param>
-        /// <param name="replaceAllResults"><see cref="List{CharacterRange}"/> containing the locations of the replacements.</param>
-        public ReplaceResultsEventArgs(FindReplace manager, List<TextRange> replaceAllResults) {
-            Manager = manager;
-            ReplaceAllResults = replaceAllResults;
-        }
-
-        #region Properties
-
         /// <summary>
         /// Gets or sets the <see cref="FindReplace"/> object.
         /// </summary>
@@ -590,6 +686,16 @@ namespace CodeEditor_Components
         /// </summary>
         public List<TextRange> ReplaceAllResults { get; set; }
 
-        #endregion Properties
+        /// <summary>
+        /// Creates a new <see cref="ReplaceResultsEventArgs"/> instance.
+        /// </summary>
+        /// <param name="manager">Associated <see cref="FindReplace"/> instance.</param>
+        /// <param name="replaceAllResults"><see cref="List{CharacterRange}"/> containing the locations of the replacements.</param>
+        public ReplaceResultsEventArgs(FindReplace manager, List<TextRange> replaceAllResults) {
+            Manager = manager;
+            ReplaceAllResults = replaceAllResults;
+        }
     }
+
+    #endregion Event Classes
 }

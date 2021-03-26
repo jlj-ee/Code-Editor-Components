@@ -1,5 +1,6 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace CodeEditor_Components
@@ -9,10 +10,13 @@ namespace CodeEditor_Components
     /// </summary>
     public class SuggestionItem
     {
-        /// <summary>
-        /// Gets the <see cref="Suggestions"/> the contains the suggestion.
-        /// </summary>
-        public Suggestions Manager { get; internal set; }
+        #region Fields
+
+        private List<TextMatch> _segments;
+
+        #endregion Fields
+
+        #region Properties
 
         /// <summary>
         /// Gets or sets the text for inserting when selected.
@@ -39,12 +43,16 @@ namespace CodeEditor_Components
         /// </summary>
         public int IconIndex { get; set; }
 
+        #endregion Properties
+
+        #region Constructors
+
         /// <summary>
         /// Constructs a suggestion with the given insertion text.
         /// </summary>
         /// <param name="insertText">Text to be inserted if the suggestion is selected.</param>
         public SuggestionItem(string insertText) {
-            InsertText = insertText;
+            InsertText = DisplayText = insertText;
         }
 
         /// <summary>
@@ -60,44 +68,15 @@ namespace CodeEditor_Components
             ToolTipText = toolTipText;
         }
 
-        /// <summary>
-        /// Gets the text that will be used to replace the target fragment.
-        /// </summary>
-        /// <returns>The text that will replace the target fragment.</returns>
-        public virtual string GetReplacementText() {
-            return InsertText;
-        }
+        #endregion MyRegion
+
+        #region Events & Handlers
 
         /// <summary>
-        /// Gets the text that will be used to display the suggestion in the list.
+        /// Event that is raised when this item is selected. Override for advanced functionality.
         /// </summary>
-        /// <returns><see cref="DisplayText"/> if it is not null, otherwise <see cref="InsertText"/>.</returns>
-        public virtual string GetDisplayText() {
-            return DisplayText ?? InsertText;
-        }
-
-        /// <summary>
-        /// Gets the string representation of the suggestion.
-        /// </summary>
-        /// <returns><see cref="DisplayText"/> if it is not null, otherwise <see cref="InsertText"/>.</returns>
-        public override string ToString() {
-            return GetDisplayText();
-        }
-
-        /// <summary>
-        /// Compares the given text fragment with this suggestion.
-        /// </summary>
-        /// <param name="fragmentText">Text fragment to compare with the suggestion.</param>
-        /// <returns><see cref="DisplayState"/> which indicates whether the suggestion will be displayed.</returns>
-        //public virtual DisplayState Compare(string fragmentText) {
-        //    if (InsertText.StartsWith(fragmentText, StringComparison.InvariantCultureIgnoreCase) && InsertText != fragmentText) {
-        //        return DisplayState.Selected;
-        //    }
-        //    else {
-        //        return DisplayState.Disabled;
-        //    }
-        //}
-        //public virtual void OnSelected(SelectedEventArgs e) { }
+        /// <param name="e">Selected item event data.</param>
+        public virtual void OnSuggestionSelected(SelectedEventArgs e) { }
 
         /// <summary>
         /// Overrides the paint method to draw the suggestion item.
@@ -105,9 +84,111 @@ namespace CodeEditor_Components
         /// <param name="e">Paint suggestion event data.</param>
         public virtual void OnPaint(PaintSuggestionEventArgs e) {
             // Center text vertically
-            Point centeredPoint = new Point(e.TextRect.Left, e.TextRect.Y + e.TextRect.Height / 2 - e.Font.Height / 2);
-            TextRenderer.DrawText(e.Graphics, GetDisplayText(), e.Font, centeredPoint, e.Theme.ForeColor);
+            Point centeredPoint = new Point(e.TextRect.Left + 3, e.TextRect.Y + e.TextRect.Height / 2 - e.Font.Height / 2);
+            // Iterate over segments and emphasize matches
+            TextFormatFlags format = TextFormatFlags.NoPadding;
+            using (Font boldFont = new Font(e.Font, FontStyle.Bold)) {
+                foreach (TextMatch s in _segments) {
+                    Font font = s.IsMatch ? boldFont : e.Font;
+                    TextRenderer.DrawText(e.Graphics, s.Text, font, centeredPoint, e.Theme.ForeColor, format);
+                    centeredPoint.X += TextRenderer.MeasureText(e.Graphics, s.Text, font, Size.Empty, format).Width;
+                }
+            }
         }
+
+        #endregion Events & Handlers
+
+        #region Methods
+
+        /// <summary>
+        /// Gets the string representation of the suggestion.
+        /// </summary>
+        /// <returns><see cref="DisplayText"/> if it is not null, otherwise <see cref="InsertText"/>.</returns>
+        public override string ToString() {
+            return DisplayText;
+        }
+
+        /// <summary>
+        /// Compares the given pattern to the suggestion item.
+        /// </summary>
+        /// <param name="pattern">String pattern to compare.</param>
+        /// <param name="matchCase">If true, the case of pattern must match the item case for a match to be found.</param>
+        /// <returns>True if a pattern match was found.</returns>
+        public bool Match(string pattern, bool matchCase) {
+            try {
+                // Try an exact match first
+                Match match = new Regex(pattern, matchCase ? RegexOptions.None : RegexOptions.IgnoreCase).Match(DisplayText);
+                if (match.Success) {
+                    _segments = new List<TextMatch>();
+                    var end = match.Index + match.Length;
+                    if (match.Index > 0) _segments.Add(new TextMatch(DisplayText.Substring(0, match.Index), false));
+                    _segments.Add(new TextMatch(DisplayText.Substring(match.Index, match.Length), true));
+                    if (end < DisplayText.Length) _segments.Add(new TextMatch(DisplayText.Substring(end, DisplayText.Length - end), false));
+                    return true;
+                }
+            }
+            catch (System.ArgumentException) { /* Error in regular expression. */ }
+            // Fuzzy match
+            return FuzzyMatch(pattern, matchCase);
+        }
+
+        /// <summary>
+        /// Compares the given pattern to the suggestion item using a fuzzy technique.
+        /// </summary>
+        /// <param name="pattern">String pattern to compare.</param>
+        /// <param name="matchCase">If true, the case of pattern must match the item case for a match to be found.</param>
+        /// <returns>True if a pattern match was found.</returns>
+        protected virtual bool FuzzyMatch(string pattern, bool matchCase) {
+            _segments = new List<TextMatch>();
+            string source = DisplayText;
+            if (!matchCase) {
+                pattern = pattern.ToLower();
+                source = source.ToLower();
+            }
+            bool patternMatched = false;
+            int sourceIndex = 0, patternIndex;
+            for (patternIndex = 0; patternIndex < pattern.Length; patternIndex++) {
+                int start = sourceIndex;
+                for (; sourceIndex < source.Length; sourceIndex++) {
+                    // If the characters match, add the corresponding segments
+                    if (source[sourceIndex] == pattern[patternIndex]) {
+                        // Only a full match if every pattern character has been matched
+                        patternMatched = (patternIndex == pattern.Length - 1);
+                        // If the match is at the beginning, add or modify a segment for the match
+                        if (start == sourceIndex) {
+                            // If no segments have been added yet, add one
+                            if (_segments.Count == 0) {
+                                _segments.Add(new TextMatch(DisplayText.Substring(sourceIndex, 1), true));
+                            }
+                            // Append the existing segment
+                            else {
+                                TextMatch last = _segments[_segments.Count - 1];
+                                _segments[_segments.Count - 1] = new TextMatch(last.Text + DisplayText[sourceIndex], last.IsMatch);
+                            }
+                        }
+                        // If the match is in the middle, add segments for the match and for the preceding characters
+                        else {
+                            _segments.Add(new TextMatch(DisplayText.Substring(start, sourceIndex - start), false));
+                            _segments.Add(new TextMatch(DisplayText.Substring(sourceIndex, 1), true));
+                        }
+                        // Move on to the next source and pattern characters
+                        sourceIndex++;
+                        break;
+                    }
+                }
+                // Stop matching when every source character has been checked
+                if (sourceIndex >= source.Length) {
+                    break;
+                }
+            }
+            // If not all of the source characters were checked, add a segment for those remaining characters
+            if (sourceIndex < source.Length) {
+                _segments.Add(new TextMatch(DisplayText.Substring(sourceIndex, source.Length - sourceIndex), false));
+            }
+            return patternMatched;
+        }
+
+        #endregion Methods
     }
 
     /// <summary>
@@ -119,7 +200,7 @@ namespace CodeEditor_Components
         /// Gets the rectangle in which item text will be drawn.
         /// </summary>
         public Rectangle TextRect { get; internal set; }
-        
+
         /// <summary>
         /// Gets the font that will be used to draw item text.
         /// </summary>
@@ -137,26 +218,5 @@ namespace CodeEditor_Components
         /// <param name="ClipRectangle"></param>
         public PaintSuggestionEventArgs(Graphics Graphics, Rectangle ClipRectangle) : base(Graphics, ClipRectangle) {
         }
-    }
-
-    /// <summary>
-    /// Enumeration of display states for a <see cref="SuggestionItem"/>.
-    /// </summary>
-    public enum DisplayState
-    {
-        /// <summary>
-        /// Suggestion will not be displayed.
-        /// </summary>
-        Disabled,
-
-        /// <summary>
-        /// Suggestion will be displayed.
-        /// </summary>
-        Enabled,
-
-        /// <summary>
-        /// Suggestion will be displayed and selected.
-        /// </summary>
-        Selected
     }
 }
