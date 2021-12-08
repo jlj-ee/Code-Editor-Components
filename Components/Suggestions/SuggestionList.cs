@@ -82,8 +82,8 @@ namespace CodeEditor_Components
             get { return _selectedItemIndex; }
             set {
                 _selectedItemIndex = Math.Max(-1, Math.Min(value, VisibleItems.Count - 1));
-                if ((_selectedItemIndex >= 0) && (_selectedItemIndex < VisibleItems.Count)) {
-                    //if (!Focused) Focus();
+                bool inRange = (_selectedItemIndex >= 0) && (_selectedItemIndex < VisibleItems.Count);
+                if (inRange) {
                     EnsureVisible();
                     StartToolTipCountdown();
                 }
@@ -116,7 +116,6 @@ namespace CodeEditor_Components
             set {
                 _visibleItems = value;
                 MeasureItems();
-                SelectedItemIndex = -1;
                 ConfigureScroll();
                 Invalidate();
             }
@@ -285,7 +284,7 @@ namespace CodeEditor_Components
         protected override void OnMouseDoubleClick(MouseEventArgs e) {
             base.OnMouseDoubleClick(e);
             if (e.Button == MouseButtons.Left) {
-                _toolTip.Hide(this);
+                _toolTip.Hide(Parent);
                 OnItemSelected(EventArgs.Empty);
                 Invalidate();
             }
@@ -332,7 +331,7 @@ namespace CodeEditor_Components
         // Display the tooltip when the timer hits the specified interval.
         private void ToolTipLaunchTimer_Tick(object sender, EventArgs e) {
             _toolTipLaunchTimer.Stop();
-            if (SelectedItemIndex >= 0) {
+            if ((SelectedItemIndex >= 0) && Visible) {
                 ShowToolTip(VisibleItems[SelectedItemIndex]);
             }
         }
@@ -350,7 +349,7 @@ namespace CodeEditor_Components
             string text = item.ToolTipText;
 
             if (string.IsNullOrEmpty(title) && string.IsNullOrEmpty(text)) {
-                _toolTip.Hide(this);
+                _toolTip.Hide(Parent);
                 _toolTip.RemoveAll();
                 return;
             }
@@ -363,7 +362,8 @@ namespace CodeEditor_Components
                 if (Parent.PointToScreen(location).X + _toolTip.Size.Width > Screen.FromControl(this).Bounds.Right) {
                     location.Offset(-(Width + _toolTip.Size.Width + 2 * TOOLTIP_PADDING), 0);
                 }
-                _toolTip.Show(hasText ? text : title, this, location);
+                // Make sure to connect the tooltip to the parent or it will not show unless the list has focus
+                _toolTip.Show(hasText ? text : title, Parent, location);
             }
         }
 
@@ -382,8 +382,8 @@ namespace CodeEditor_Components
         /// <summary>
         /// Hide list UI elements.
         /// </summary>
-        internal void Close() {
-            _toolTip.Hide(this);
+        internal void Close() {            
+            _toolTip.Hide(Parent);
         }
 
         /// <summary>
@@ -405,6 +405,7 @@ namespace CodeEditor_Components
         /// Scrolls the list to the selected item.
         /// </summary>
         private void EnsureVisible() {
+            HighlightedItemIndex = -1;
             int y = (SelectedItemIndex * ItemHeight) - VerticalScroll.Value;
             if (y < 0) {
                 VerticalScroll.Value = SelectedItemIndex * ItemHeight;
@@ -436,8 +437,7 @@ namespace CodeEditor_Components
         /// <summary>
         /// Starts the timer so that the tooltip will be displayed if double-click does not occur within the timer interval.
         /// </summary>
-        private void StartToolTipCountdown(int interval = 1000) {
-            _toolTip.Hide(this);
+        private void StartToolTipCountdown(int interval = 100) {
             _toolTipLaunchTimer.Stop();
             _toolTipLaunchTimer.Interval = interval;
             _toolTipLaunchTimer.Start();

@@ -268,7 +268,10 @@ namespace CodeEditor_Components
 
         private void Editor_TextChanged(object sender, EventArgs e) {
             if (DropDown.Visible || !_delete) {
-                ShowSuggestions(false);
+                TextRange fragment = GetFragment(DelimiterPattern, false);
+                if ((fragment.End - fragment.Start) >= MinimumFragmentLength) {
+                    ShowSuggestions(false);
+                }
             }
             else {
                 HideSuggestions();
@@ -391,8 +394,8 @@ namespace CodeEditor_Components
             var visibleItems = new List<SuggestionItem>();
             bool itemSelected = false;
             int selectedItemIndex = -1;
-            TextRange fragment = GetFragment(DelimiterPattern);
-            if (forced || (fragment.End - fragment.Start) >= MinimumFragmentLength) {
+            TextRange fragment = GetFragment(DelimiterPattern, forced);
+            if (forced || ((fragment.End - fragment.Start) >= MinimumFragmentLength)) {
                 _fragment = fragment;
                 var fragmentText = Editor.GetTextRange(fragment);
                 if (!string.IsNullOrWhiteSpace(fragmentText)) {
@@ -413,7 +416,7 @@ namespace CodeEditor_Components
                 SelectedItemIndex = selectedItemIndex;
             }
             else {
-                SelectedItemIndex = 0;
+                SelectedItemIndex = -1;
             }
         }
 
@@ -480,7 +483,7 @@ namespace CodeEditor_Components
             Editor.Target.Focus();
         }
 
-        private TextRange GetFragment(string delimiterPattern) {
+        private TextRange GetFragment(string delimiterPattern, bool forced) {
             // Use existing selection if available
             if (Editor.SelectionLength > 0) {
                 return new TextRange(Editor.SelectionStart, Editor.SelectionEnd);
@@ -490,7 +493,9 @@ namespace CodeEditor_Components
             var regex = new Regex(delimiterPattern);
 
             // Search forwards
-            int i = Editor.SelectionStart;
+            int start = Editor.SelectionStart;
+            if (forced) start--;
+            int i = start;
             while (i >= 0 && i < text.Length) {
                 if (regex.IsMatch(text[i].ToString())) {
                     break;
@@ -499,7 +504,7 @@ namespace CodeEditor_Components
             }
             int fragmentEnd = i;
 
-            if (fragmentEnd != Editor.SelectionStart) {
+            if (fragmentEnd != start) {
                 // Search backwards
                 i = Editor.SelectionStart;
                 while (i > 0 && (i - 1) < text.Length) {
